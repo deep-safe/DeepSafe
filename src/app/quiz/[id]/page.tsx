@@ -106,8 +106,13 @@ export default function QuizPage() {
             setScore(score + 1);
         } else {
             decrementLives();
-            const { error } = await supabase.rpc('decrement_hearts');
-            if (error) console.error('Error decrementing hearts:', error);
+
+            // Sync with backend if logged in
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { error } = await supabase.rpc('decrement_hearts');
+                if (error) console.error('❌ Error decrementing hearts:', JSON.stringify(error, null, 2));
+            }
 
             if (lives <= 1) {
                 setShowShopModal(true);
@@ -125,19 +130,44 @@ export default function QuizPage() {
 
                 // Call the complete_level RPC
                 try {
-                    const { data, error } = await supabase.rpc('complete_level', {
-                        p_user_id: (await supabase.auth.getUser()).data.user?.id!,
-                        p_level_id: params.id as string,
-                        p_score: score + (isCorrect ? 1 : 0) // Add current question to score if correct
-                    });
+                    const { data: { user } } = await supabase.auth.getUser();
 
-                    if (error) throw error;
-                    console.log('Level completed:', data);
+                    if (user) {
+                        const { data, error } = await supabase.rpc('complete_level', {
+                            p_user_id: user.id,
+                            p_level_id: params.id as string,
+                            p_score: score + (isCorrect ? 1 : 0)
+                        });
+
+                        if (error) {
+                            console.warn('⚠️ Error completing level (RPC), attempting direct insert:', error);
+                            // Fallback: Insert directly into user_progress
+                            const { error: insertError } = await supabase
+                                .from('user_progress')
+                                .upsert({
+                                    user_id: user.id,
+                                    quiz_id: params.id as string,
+                                    score: score + (isCorrect ? 1 : 0),
+                                    status: 'completed',
+                                    completed_at: new Date().toISOString()
+                                }, { onConflict: 'user_id, quiz_id' });
+
+                            if (insertError) {
+                                console.error('❌ Failed to save progress manually:', insertError);
+                            } else {
+                                console.log('✅ Progress saved manually via fallback');
+                            }
+                        } else {
+                            console.log('✅ Level completed successfully:', data);
+                        }
+                    } else {
+                        console.warn('⚠️ User not logged in, skipping level completion RPC');
+                    }
 
                     // Refresh router to update Saga Map state
                     router.refresh();
                 } catch (error) {
-                    console.error('Error completing level:', error);
+                    console.error('❌ Unexpected error completing level:', error);
                 }
             }
         } else {
@@ -159,10 +189,13 @@ export default function QuizPage() {
                     <p className="text-xl font-medium text-cyber-blue">Data Secured: +{quiz.xpReward} XP</p>
                 </div>
                 <button
-                    onClick={() => router.push('/')}
+                    onClick={() => {
+                        router.refresh(); // Force refresh to update Saga Map
+                        router.push('/dashboard');
+                    }}
                     className="px-8 py-3 bg-cyber-blue text-cyber-dark rounded-full font-bold text-lg shadow-[0_0_15px_rgba(69,162,158,0.5)] hover:bg-cyber-green transition-all hover:scale-105"
                 >
-                    Continue
+                    Return to Base
                 </button>
             </div>
         );

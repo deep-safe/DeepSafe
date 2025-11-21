@@ -221,8 +221,8 @@ export function SagaMap({ levels }: SagaMapProps) {
                                                     isBoss && isLocked && "border-cyber-red/30 border-dashed"
                                                 )}
                                             >
-                                                {/* Next Up Badge */}
-                                                {isNextUp && (
+                                                {/* Next Up Badge - Hide if Boss (Threat Detected takes priority) */}
+                                                {isNextUp && !isBoss && (
                                                     <div className="absolute top-0 right-0 bg-yellow-500/10 text-yellow-500 text-[10px] font-bold px-3 py-1 rounded-bl-xl border-l border-b border-yellow-500/50 font-orbitron tracking-wider flex items-center gap-1 shadow-[0_0_10px_rgba(234,179,8,0.2)]">
                                                         <Lock className="w-3 h-3" />
                                                         NEXT UNLOCK

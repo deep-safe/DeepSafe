@@ -12,6 +12,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
 const supabase = createClient<Database>(supabaseUrl, supabaseKey);
 
+import { MOCK_QUIZZES } from '@/lib/mockData';
+
 export default function Dashboard() {
   const [levels, setLevels] = useState<SagaLevel[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,39 +21,43 @@ export default function Dashboard() {
   useEffect(() => {
     async function fetchSagaState() {
       try {
-        const { data, error } = await supabase.rpc('get_user_saga_state');
+        // 1. Fetch User Progress directly
+        const { data: { user } } = await supabase.auth.getUser();
+        let completedIds = new Set<string>();
 
-        // ... (Mock data fallback logic kept for safety, but we focus on the main path)
-        if (error) {
-          console.warn('Error fetching saga state, using mock data:', error);
-          // Fallback to mock data (simplified for brevity in this view)
-          const mockLevels: SagaLevel[] = [
-            { id: '1', day_number: 1, title: 'Introduction to Cyber Safety', is_boss_level: false, xp_reward: 50, module_title: 'Week 1: Foundations', theme_color: '#45A29E', order_index: 1, status: 'active' },
-            { id: '2', day_number: 2, title: 'Spotting Phishing Emails', is_boss_level: false, xp_reward: 50, module_title: 'Week 1: Foundations', theme_color: '#45A29E', order_index: 2, status: 'locked' },
-          ];
-          setLevels(mockLevels);
-          setLoading(false);
-          return;
+        if (user) {
+          const { data: progressData, error: progressError } = await supabase
+            .from('user_progress')
+            .select('quiz_id')
+            .eq('user_id', user.id)
+            .eq('status', 'completed');
+
+          if (progressData) {
+            progressData.forEach(p => completedIds.add(p.quiz_id));
+          }
         }
 
-        const result = data as any;
-        // Assuming get_user_saga_state returns all levels and user progress
-        // If it doesn't return progress with status, we might need to adjust.
-        // But based on previous code, it seemed to return { levels: [], completed_level_ids: [] }
+        // 2. Use MOCK_QUIZZES as the source of truth for Level Structure
+        const rawLevels: SagaLevel[] = MOCK_QUIZZES.map((q, index) => ({
+          id: q.id,
+          day_number: index + 1,
+          title: q.title,
+          is_boss_level: q.is_special_mission || false, // Map special mission to boss level visual
+          xp_reward: q.xpReward,
+          module_title: q.id === '1' || q.id === '2' || q.id === '3' ? 'Week 1: Foundations' :
+            q.id === '4' ? 'Week 2: Social Engineering' : 'Week 3: Deepfakes',
+          theme_color: null,
+          order_index: index,
+          status: 'locked'
+        }));
 
-        const completedIds = new Set((result.completed_level_ids || []).map((i: any) => i.quiz_id));
-        const rawLevels = result.levels || [];
-
-        if (rawLevels.length === 0) {
-          setLoading(false);
-          return;
-        }
-
-        // 1. Determine Status & Max Day
+        // 3. Determine Status & Max Day
         let maxUnlockedDay = 0;
         let isNextUnlocked = true; // The first non-completed level is the active one
 
-        const processedLevels: SagaLevel[] = rawLevels.map((l: any) => {
+        console.log('🔍 Debug: Completed IDs found:', Array.from(completedIds));
+
+        const processedLevels: SagaLevel[] = rawLevels.map((l) => {
           const isCompleted = completedIds.has(l.id);
           let status: 'locked' | 'active' | 'completed' = 'locked';
 
@@ -64,47 +70,36 @@ export default function Dashboard() {
             isNextUnlocked = false;
           }
 
-          return {
-            id: l.id,
-            day_number: l.day_number,
-            title: l.title,
-            is_boss_level: l.is_boss_level,
-            xp_reward: l.xp_reward,
-            module_title: l.module_title,
-            theme_color: l.theme_color,
-            order_index: l.order_index,
-            status
-          };
+          return { ...l, status };
         });
 
-        // 2. Fog of War Filter
-        // Logic: Show ALL levels in the current module + ALL levels in the next module (Spoiler)
+        console.log('🔍 Debug: Processed Levels:', processedLevels.map(l => `${l.id}: ${l.status}`));
 
-        // Get unique modules in order
+        // 4. Fog of War Filter
         const uniqueModules = Array.from(new Set(processedLevels.map(l => l.module_title)));
-
-        // Find the module of the highest unlocked level (maxUnlockedDay)
-        // Note: We need to find the level object that corresponds to maxUnlockedDay to get its module
         const currentLevelObj = processedLevels.find(l => l.day_number === maxUnlockedDay) || processedLevels[0];
         const currentModuleIndex = uniqueModules.indexOf(currentLevelObj.module_title);
-
-        // Determine visible modules (Current + Next)
-        // If currentModuleIndex is -1 (shouldn't happen), default to showing first 2 modules
         const targetIndex = currentModuleIndex === -1 ? 0 : currentModuleIndex;
-        const visibleModules = uniqueModules.slice(0, targetIndex + 2); // +2 because slice end is exclusive (so index + 1 is included)
-
+        const visibleModules = uniqueModules.slice(0, targetIndex + 2);
         const visibleLevels = processedLevels.filter(l => visibleModules.includes(l.module_title));
 
         setLevels(visibleLevels);
       } catch (err) {
         console.error('Unexpected error:', err);
-        setLoading(false);
       } finally {
         setLoading(false);
       }
     }
 
     fetchSagaState();
+
+    const handleFocus = () => {
+      console.log('🔄 Tab focused, refreshing saga state...');
+      fetchSagaState();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
   if (loading) {
