@@ -8,7 +8,7 @@ import { useUserStore } from '@/store/useUserStore';
 import { calculateRewards } from '@/lib/gamification';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { createClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
 import { Database } from '@/types/supabase';
 import { VisualQuizCard } from '@/components/gamification/VisualQuizCard';
 import { QuizActionPanel } from '@/components/gamification/QuizActionPanel';
@@ -17,7 +17,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
-const supabase = createClient<Database>(supabaseUrl, supabaseKey);
+const supabase = createBrowserClient<Database>(supabaseUrl, supabaseKey);
 
 export default function QuizPage() {
     const params = useParams();
@@ -35,7 +35,13 @@ export default function QuizPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchQuizData = async () => {
+        const checkAuthAndFetch = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                router.push('/login');
+                return;
+            }
+
             try {
                 setLoading(true);
                 // 1. Fetch Level Info
@@ -84,9 +90,9 @@ export default function QuizPage() {
         };
 
         if (params.id) {
-            fetchQuizData();
+            checkAuthAndFetch();
         }
-    }, [params.id]);
+    }, [params.id, router]);
 
     if (!quiz) return <div className="p-4 text-cyber-blue animate-pulse">Inizializzazione Sistema...</div>;
 

@@ -5,14 +5,14 @@ import Link from 'next/link';
 import { CheckCircle, Lock, PlayCircle, Flame, Heart, Zap } from 'lucide-react';
 import { SagaMap, SagaLevel } from '@/components/gamification/SagaMap';
 import { cn } from '@/lib/utils';
-import { createClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
 import { Database } from '@/types/supabase';
 import { motion } from 'framer-motion';
 import { useUserStore } from '@/store/useUserStore';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
-const supabase = createClient<Database>(supabaseUrl, supabaseKey);
+const supabase = createBrowserClient<Database>(supabaseUrl, supabaseKey);
 
 
 

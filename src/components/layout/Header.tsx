@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { Heart, Flame } from 'lucide-react';
 import { useUserStore } from '@/store/useUserStore';
 
 export function Header() {
@@ -23,17 +22,7 @@ export function Header() {
                     </Link>
                 </div>
 
-                <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-1 text-orange-500">
-                        <Flame className="w-5 h-5 fill-current" />
-                        <span className="font-bold">{streak}</span>
-                    </div>
 
-                    <div className="flex items-center space-x-1 text-red-500">
-                        <Heart className="w-5 h-5 fill-current" />
-                        <span className="font-bold">{lives}</span>
-                    </div>
-                </div>
             </div>
         </header>
     );

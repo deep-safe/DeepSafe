@@ -57,6 +57,8 @@ export async function middleware(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     const path = request.nextUrl.pathname
 
+    console.log(`🛡️ Middleware: Path=${path}, User=${user ? 'Logged In' : 'Guest'}`)
+
     // 1. Redirect unauthenticated users to login
     // Protects: /dashboard, /leaderboard, /profile, /shop, /quiz, /learn
     if (!user && (

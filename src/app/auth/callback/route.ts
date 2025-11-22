@@ -1,51 +1,56 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { cookies } from 'next/headers'
+import { NextResponse } from 'next/server'
 
-/**
- * Server-Side Auth Callback for OAuth
- * Handles the OAuth callback from Supabase after Google authentication
- */
 export async function GET(request: Request) {
-    const requestUrl = new URL(request.url);
-    const code = requestUrl.searchParams.get('code');
-    const error = requestUrl.searchParams.get('error');
-    const errorDescription = requestUrl.searchParams.get('error_description');
+    const { searchParams, origin } = new URL(request.url)
+    const code = searchParams.get('code')
+    const next = searchParams.get('next') ?? '/dashboard'
 
-    // Handle OAuth errors (e.g., user cancelled login)
-    if (error) {
-        console.error('OAuth Error:', error, errorDescription);
-        return NextResponse.redirect(
-            `${requestUrl.origin}/login?error=auth_failed&message=${encodeURIComponent(errorDescription || 'Authentication failed')}`
-        );
-    }
-
-    // Exchange code for session
     if (code) {
-        try {
-            const cookieStore = cookies();
-            const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-
-            const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-
-            if (exchangeError) {
-                console.error('Session Exchange Error:', exchangeError);
-                return NextResponse.redirect(
-                    `${requestUrl.origin}/login?error=auth_failed&message=${encodeURIComponent(exchangeError.message)}`
-                );
+        const cookieStore = await cookies()
+        const supabase = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            {
+                cookies: {
+                    getAll() {
+                        return cookieStore.getAll()
+                    },
+                    setAll(cookiesToSet) {
+                        try {
+                            cookiesToSet.forEach(({ name, value, options }) =>
+                                cookieStore.set(name, value, options)
+                            )
+                        } catch {
+                            // The `setAll` method was called from a Server Component.
+                            // This can be ignored if you have middleware refreshing
+                            // user sessions.
+                        }
+                    },
+                },
             }
-
-            // Successfully authenticated - redirect to dashboard
-            return NextResponse.redirect(`${requestUrl.origin}/`);
-
-        } catch (err: any) {
-            console.error('Unexpected Error:', err);
-            return NextResponse.redirect(
-                `${requestUrl.origin}/login?error=auth_failed&message=${encodeURIComponent(err.message || 'Unexpected error occurred')}`
-            );
+        )
+        const { error } = await supabase.auth.exchangeCodeForSession(code)
+        if (!error) {
+            console.log('✅ Auth Callback: Session exchanged successfully')
+            const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
+            const isLocalEnv = process.env.NODE_ENV === 'development'
+            if (isLocalEnv) {
+                // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
+                return NextResponse.redirect(`${origin}${next}`)
+            } else if (forwardedHost) {
+                return NextResponse.redirect(`https://${forwardedHost}${next}`)
+            } else {
+                return NextResponse.redirect(`${origin}${next}`)
+            }
+        } else {
+            console.error('❌ Auth Callback Error:', error)
         }
+    } else {
+        console.error('❌ Auth Callback: No code found')
     }
 
-    // No code provided - redirect to login
-    return NextResponse.redirect(`${requestUrl.origin}/login?error=no_code`);
+    // If no code or error, return to login with error
+    return NextResponse.redirect(`${origin}/login?error=auth_code_error`)
 }

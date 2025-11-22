@@ -3,7 +3,10 @@
 import React, { useEffect, useRef, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, Check, Skull, Shield, Play, X, AlertCircle, Bot, Smartphone, Eye } from 'lucide-react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useSystemUI } from '@/context/SystemUIContext';
+import { createBrowserClient } from '@supabase/ssr';
+import { Database } from '@/types/supabase';
 import { cn } from '@/lib/utils';
 
 export interface SagaLevel {
@@ -28,6 +31,10 @@ export function SagaMap({ levels }: SagaMapProps) {
     const [showLockedModal, setShowLockedModal] = useState(false);
     const [lockedLevel, setLockedLevel] = useState<SagaLevel | null>(null);
 
+    const router = useRouter();
+    const { openModal } = useSystemUI();
+    const supabase = createBrowserClient<Database>(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+
     // Auto-scroll to active level
     useEffect(() => {
         if (activeNodeRef.current) {
@@ -38,6 +45,21 @@ export function SagaMap({ levels }: SagaMapProps) {
     const handleLockedClick = (level: SagaLevel) => {
         setLockedLevel(level);
         setShowLockedModal(true);
+    };
+
+    const handleLevelClick = async (levelId: string) => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            openModal({
+                title: 'ACCESSO NEGATO',
+                message: 'Devi identificarti per salvare i progressi della missione.',
+                type: 'alert',
+                actionLabel: 'ACCEDI',
+                onAction: () => router.push('/login')
+            });
+        } else {
+            router.push(`/quiz/${levelId}`);
+        }
     };
 
     if (levels.length === 0) {
@@ -81,11 +103,6 @@ export function SagaMap({ levels }: SagaMapProps) {
                                 // Find if this is the "Next Up" level (first locked level)
                                 const isNextUp = isLocked && levels.find(l => l.status === 'locked')?.id === level.id;
 
-                                const LevelWrapper = isLocked ? 'div' : Link;
-                                const wrapperProps = isLocked
-                                    ? { onClick: () => handleLockedClick(level) }
-                                    : { href: `/quiz/${level.id}` };
-
                                 // Determine Icon
                                 let LevelIcon = Shield;
                                 if (level.module_title.includes('AI')) LevelIcon = Bot;
@@ -99,8 +116,8 @@ export function SagaMap({ levels }: SagaMapProps) {
                                         ref={isActive ? activeNodeRef : null}
                                         className="relative"
                                     >
-                                        <LevelWrapper
-                                            {...wrapperProps as any}
+                                        <div
+                                            onClick={() => isLocked ? handleLockedClick(level) : handleLevelClick(level.id)}
                                             className={cn(
                                                 "flex items-center gap-4 group cursor-pointer transition-all duration-300",
                                                 isLocked && !isNextUp && "opacity-80 hover:opacity-100",
@@ -274,7 +291,7 @@ export function SagaMap({ levels }: SagaMapProps) {
                                                     </div>
                                                 )}
                                             </div>
-                                        </LevelWrapper>
+                                        </div>
                                     </div>
                                 );
                             })}

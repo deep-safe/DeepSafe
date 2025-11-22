@@ -1,19 +1,11 @@
 'use client';
 
-
-
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { createClient } from '@supabase/supabase-js';
+// ⚠️ CAMBIO IMPORTANTE: Usiamo la libreria specifica per SSR
+import { createBrowserClient } from '@supabase/ssr';
 import { motion } from 'framer-motion';
-import { Database } from '@/types/supabase';
 import { Loader2, AlertCircle, CheckCircle, Shield } from 'lucide-react';
-import { cn } from '@/lib/utils';
-
-// Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
-const supabase = createClient<Database>(supabaseUrl, supabaseKey);
 
 function LoginContent() {
     const [loading, setLoading] = useState(false);
@@ -22,18 +14,23 @@ function LoginContent() {
     const error = searchParams.get('error');
     const errorMessage = searchParams.get('message');
 
-    // Ensure client-side rendering for particles
+    // Inizializziamo il client Browser che gestisce automaticamente il PKCE flow
+    const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
     useEffect(() => {
         setMounted(true);
     }, []);
 
     const handleGoogleLogin = async () => {
-        console.log('🔵 Google login button clicked');
-        setLoading(true);
         try {
+            setLoading(true);
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
+                    // Questo è l'URL dove l'utente torna dopo Google
                     redirectTo: `${window.location.origin}/auth/callback`,
                     queryParams: {
                         access_type: 'offline',
@@ -42,9 +39,8 @@ function LoginContent() {
                 },
             });
             if (error) throw error;
-        } catch (err: any) {
-            console.error('❌ Login error:', err);
-            alert(err.message || 'Failed to initiate login');
+        } catch (error: any) {
+            console.error('Login error:', error);
             setLoading(false);
         }
     };
