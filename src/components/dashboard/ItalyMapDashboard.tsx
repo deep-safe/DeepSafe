@@ -9,6 +9,7 @@ import ProvinceModal from './ProvinceModal';
 import ScannerHUD from './ScannerHUD';
 import { Lock, ArrowLeft, Map } from 'lucide-react';
 import { getRegionBoundingBox } from '@/utils/svgUtils';
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 const ITALY_VIEWBOX = "0 0 800 1000";
 
@@ -206,15 +207,33 @@ const ItalyMapDashboard: React.FC = () => {
                 )}
             </AnimatePresence>
 
+
             {/* Main Map Area */}
             <main className="w-full h-full flex items-center justify-center p-0">
-                <ItalyMapSVG
-                    onProvinceClick={handleProvinceClick}
-                    onProvinceHover={handleProvinceHover}
-                    viewBox={viewBox}
-                    activeRegion={currentRegion}
-                    highlightedId={hoveredTarget?.type === 'REGION' ? hoveredTarget.id : (selectedTarget?.type === 'REGION' ? selectedTarget.id : (hoveredTarget?.id || selectedTarget?.id || null))}
-                />
+                <TransformWrapper
+                    initialScale={0.9}
+                    minScale={0.5}
+                    maxScale={4}
+                    centerOnInit={true}
+                    wheel={{ step: 0.1 }}
+                    pinch={{ disabled: false }}
+                    panning={{ disabled: false }}
+                    limitToBounds={true}
+                    alignmentAnimation={{ sizeX: 0, sizeY: 0 }}
+                >
+                    <TransformComponent
+                        wrapperClass="!w-full !h-full bg-slate-950"
+                        contentClass="!w-full !h-full flex items-center justify-center"
+                    >
+                        <ItalyMapSVG
+                            onProvinceClick={handleProvinceClick}
+                            onProvinceHover={handleProvinceHover}
+                            viewBox={viewBox}
+                            activeRegion={currentRegion}
+                            highlightedId={hoveredTarget?.type === 'REGION' ? hoveredTarget.id : (selectedTarget?.type === 'REGION' ? selectedTarget.id : (hoveredTarget?.id || selectedTarget?.id || null))}
+                        />
+                    </TransformComponent>
+                </TransformWrapper>
             </main>
 
             {/* Scanner HUD */}

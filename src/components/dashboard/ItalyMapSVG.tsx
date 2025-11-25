@@ -39,7 +39,7 @@ const ItalyMapSVG: React.FC<ItalyMapSVGProps> = ({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1, viewBox }}
                 transition={{ duration: 0.8, ease: "easeInOut" }}
-                preserveAspectRatio="xMidYMid slice"
+                preserveAspectRatio="xMidYMid meet"
             >
                 <defs>
                     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
