@@ -169,6 +169,12 @@ const ItalyMapDashboard: React.FC = () => {
 
     const activeTarget = hoveredTarget || selectedTarget;
 
+    // Calculate Progress
+    const unlockedCount = useMemo(() => {
+        return provincesData.filter(p => p.status === 'unlocked' || p.status === 'safe').length;
+    }, []);
+    const totalProvinces = provincesData.length;
+
     const showToast = (message: string, type: 'info' | 'error') => {
         setToast({ message, type });
         setTimeout(() => setToast(null), 3000);
@@ -182,55 +188,26 @@ const ItalyMapDashboard: React.FC = () => {
             <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-amber-900/10 rounded-full blur-[120px] pointer-events-none" />
 
             {/* HUD Elements */}
-            <TopBar />
+            <TopBar progress={unlockedCount} total={totalProvinces} />
 
-            {/* Navigation Header / Breadcrumbs */}
-            <div className="absolute top-24 left-0 w-full z-20 px-4 md:px-8 pointer-events-none">
-                <div className="flex items-center justify-between max-w-4xl mx-auto">
-                    <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center gap-2 pointer-events-auto"
+            {/* Back Button (Only in Regional View) */}
+            <AnimatePresence>
+                {viewMode === 'REGION' && (
+                    <motion.button
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        onClick={handleBackToItaly}
+                        className="absolute top-6 left-6 z-40 flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/80 border border-slate-700 hover:border-cyan-500/50 text-slate-300 hover:text-cyan-400 transition-all backdrop-blur-md shadow-lg group"
                     >
-                        <AnimatePresence mode="wait">
-                            {viewMode === 'REGION' && (
-                                <motion.button
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -10 }}
-                                    onClick={handleBackToItaly}
-                                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900/80 border border-slate-700 hover:border-cyan-500/50 text-slate-300 hover:text-cyan-400 transition-all backdrop-blur-md shadow-lg group"
-                                >
-                                    <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                                    <span className="text-xs font-orbitron font-bold tracking-wider">ITALIA</span>
-                                </motion.button>
-                            )}
-                        </AnimatePresence>
-
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900/50 border border-slate-800/50 backdrop-blur-sm">
-                            <Map className="w-4 h-4 text-cyan-500" />
-                            <div className="flex items-center text-xs font-orbitron font-bold tracking-widest text-slate-400">
-                                <span className={viewMode === 'ITALY' ? 'text-cyan-400 text-glow' : ''}>ITALIA</span>
-                                {currentRegion && (
-                                    <>
-                                        <span className="mx-2 text-slate-600">/</span>
-                                        <motion.span
-                                            initial={{ opacity: 0, x: 10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            className="text-cyan-400 text-glow uppercase"
-                                        >
-                                            {currentRegion}
-                                        </motion.span>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    </motion.div>
-                </div>
-            </div>
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                        <span className="text-xs font-orbitron font-bold tracking-wider">TORNA ALL'ITALIA</span>
+                    </motion.button>
+                )}
+            </AnimatePresence>
 
             {/* Main Map Area */}
-            <main className="w-full h-full flex items-center justify-center p-4 md:p-8 pt-20 pb-24">
+            <main className="w-full h-full flex items-center justify-center p-0">
                 <ItalyMapSVG
                     onProvinceClick={handleProvinceClick}
                     onProvinceHover={handleProvinceHover}

@@ -18,28 +18,28 @@ const ItalyMapSVG: React.FC<ItalyMapSVGProps> = ({
     activeRegion,
     highlightedId
 }) => {
-    // Filter provinces if a region is active (Level 2)
-    // Actually, we can just render all and let the viewBox handle the zoom, 
-    // BUT rendering only the active region's provinces is cleaner and avoids artifacts outside the view.
-    // However, keeping all allows for smoother transitions if we animate the viewBox.
-    // Let's keep all for now to keep it simple, or filter if performance is an issue.
-    // Given the requirement "render ONLY that specific Region", I should filter.
-
-    const visibleProvinces = activeRegion
-        ? provincesData.filter(p => p.region === activeRegion)
-        : provincesData;
+    // Group provinces by region for National View
+    const regions = React.useMemo(() => {
+        const groups: Record<string, Province[]> = {};
+        provincesData.forEach(p => {
+            if (!groups[p.region]) groups[p.region] = [];
+            groups[p.region].push(p);
+        });
+        return groups;
+    }, []);
 
     return (
-        <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-slate-950/50 rounded-xl border border-slate-800/50 backdrop-blur-sm shadow-2xl">
+        <>
             {/* Grid Background Effect */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20 pointer-events-none" />
 
             <motion.svg
                 viewBox={viewBox}
-                className="w-full h-full max-w-4xl max-h-[80vh]"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1, viewBox }}
+                className="w-full h-full"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, viewBox }}
                 transition={{ duration: 0.8, ease: "easeInOut" }}
+                preserveAspectRatio="xMidYMid slice"
             >
                 <defs>
                     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -48,25 +48,53 @@ const ItalyMapSVG: React.FC<ItalyMapSVGProps> = ({
                     </filter>
                 </defs>
 
-                {/* Render Provinces */}
-                {visibleProvinces.map((province) => (
-                    <ProvincePath
-                        key={province.id}
-                        province={province}
-                        onProvinceClick={onProvinceClick}
-                        onProvinceHover={onProvinceHover}
-                        isRegionMode={!!activeRegion}
-                        isRegionHovered={!activeRegion && highlightedId === province.region}
-                        isProvinceHighlighted={!!activeRegion && highlightedId === province.id}
-                    />
+                {/* LEVEL 1: NATIONAL VIEW (Regions) */}
+                {!activeRegion && Object.entries(regions).map(([regionName, provinces]) => (
+                    <g
+                        key={regionName}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            // Click any province in the region to trigger region selection
+                            onProvinceClick(provinces[0]);
+                        }}
+                        onMouseEnter={() => {
+                            // Hover any province triggers region hover
+                            onProvinceHover(provinces[0]);
+                        }}
+                        onMouseLeave={() => onProvinceHover(null)}
+                        className="cursor-pointer"
+                    >
+                        {provinces.map((province) => (
+                            <ProvincePath
+                                key={province.id}
+                                province={province}
+                                onProvinceClick={() => { }} // Handled by group
+                                onProvinceHover={() => { }} // Handled by group
+                                isRegionMode={false}
+                                isRegionHovered={highlightedId === regionName}
+                                isProvinceHighlighted={false} // No individual highlight in Level 1
+                            />
+                        ))}
+                    </g>
                 ))}
-            </motion.svg>
 
-            {/* Decorative Elements */}
-            <div className="absolute bottom-4 right-4 text-slate-500 text-xs font-mono">
-                {activeRegion ? `REGION: ${activeRegion}` : 'VIEW: NATIONAL'}
-            </div>
-        </div>
+                {/* LEVEL 2: REGIONAL VIEW (Provinces) */}
+                {activeRegion && provincesData
+                    .filter(p => p.region === activeRegion)
+                    .map((province) => (
+                        <ProvincePath
+                            key={province.id}
+                            province={province}
+                            onProvinceClick={onProvinceClick}
+                            onProvinceHover={onProvinceHover}
+                            isRegionMode={true}
+                            isRegionHovered={false}
+                            isProvinceHighlighted={highlightedId === province.id}
+                        />
+                    ))
+                }
+            </motion.svg>
+        </>
     );
 };
 
