@@ -1,106 +1,146 @@
 'use client';
 
-import { useState } from 'react';
-import { Trophy, Users, Globe, UserPlus } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { createBrowserClient } from '@supabase/ssr';
+import { Database } from '@/types/supabase';
+import { motion } from 'framer-motion';
+import { Activity, Globe, Users, Medal, Cpu } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { FriendList } from '@/components/social/FriendList';
 
-// Mock data for now, will be replaced by Supabase fetch
-const MOCK_LEADERBOARD = {
-    global: [
-        { id: '1', username: 'AI_Master', xp: 2500, avatar: '🤖', rank: 1 },
-        { id: '2', username: 'DeepLearner', xp: 2350, avatar: '🧠', rank: 2 },
-        { id: '3', username: 'SafetyFirst', xp: 2100, avatar: '🛡️', rank: 3 },
-        { id: '4', username: 'NeuralNet', xp: 1800, avatar: '🕸️', rank: 4 },
-        { id: '5', username: 'You', xp: 1200, avatar: '👤', rank: 15 },
-    ],
-    friends: [
-        { id: '2', username: 'DeepLearner', xp: 2350, avatar: '🧠', rank: 1 },
-        { id: '5', username: 'You', xp: 1200, avatar: '👤', rank: 2 },
-        { id: '6', username: 'NewbieBot', xp: 500, avatar: '👶', rank: 3 },
-    ]
-};
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
+const supabase = createBrowserClient<Database>(supabaseUrl, supabaseKey);
+
+interface LeaderboardEntry {
+    id: string;
+    username: string;
+    avatar_url: string | null;
+    xp: number;
+    rank: number;
+}
 
 export default function LeaderboardPage() {
-    const [activeTab, setActiveTab] = useState<'global' | 'friends'>('global');
+    const [user, setUser] = useState<any>(null);
+    const [leaderboardTab, setLeaderboardTab] = useState<'global' | 'friends'>('global');
+    const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
+    const [userRank, setUserRank] = useState<number>(0);
 
-    const list = MOCK_LEADERBOARD[activeTab];
+    useEffect(() => {
+        const getUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            setUser(user);
+        };
+        getUser();
+    }, []);
+
+    useEffect(() => {
+        fetchLeaderboard();
+    }, [user, leaderboardTab]);
+
+    const fetchLeaderboard = async () => {
+        // Mock data
+        const mockData: LeaderboardEntry[] = Array.from({ length: 10 }).map((_, i) => ({
+            id: `user-${i}`,
+            username: i === 0 ? 'CyberMaster' : `Agente_${100 + i}`,
+            avatar_url: null,
+            xp: 5000 - (i * 200),
+            rank: i + 1
+        }));
+
+        if (user) {
+            setUserRank(42);
+        }
+
+        setLeaderboardData(mockData);
+    };
 
     return (
-        <div className="space-y-6">
-            <div className="text-center space-y-2">
-                <h1 className="text-2xl font-bold flex items-center justify-center gap-2">
-                    <Trophy className="text-yellow-500 fill-current" />
-                    Classifica
-                </h1>
-                <p className="text-zinc-500 dark:text-zinc-400">Scopri chi guida la rivoluzione della sicurezza.</p>
-            </div>
+        <div className="space-y-8 pb-32 relative p-4 pt-8">
+            {/* Background Grid */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(69,162,158,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(69,162,158,0.03)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none -z-10" />
 
-            {/* Tabs */}
-            <div className="flex p-1 bg-zinc-100 dark:bg-zinc-900 rounded-xl">
-                <button
-                    onClick={() => setActiveTab('global')}
-                    className={cn(
-                        "flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all",
-                        activeTab === 'global'
-                            ? "bg-white dark:bg-zinc-800 shadow-sm text-blue-600 dark:text-blue-400"
-                            : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300"
-                    )}
-                >
-                    <Globe className="w-4 h-4" />
-                    Globale
-                </button>
-                <button
-                    onClick={() => setActiveTab('friends')}
-                    className={cn(
-                        "flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all",
-                        activeTab === 'friends'
-                            ? "bg-white dark:bg-zinc-800 shadow-sm text-blue-600 dark:text-blue-400"
-                            : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300"
-                    )}
-                >
-                    <Users className="w-4 h-4" />
-                    Amici
-                </button>
-            </div>
+            <div className="space-y-4">
+                <div className="flex items-center justify-center gap-2 mb-6">
+                    <Activity className="w-6 h-6 text-cyber-blue" />
+                    <h1 className="text-2xl font-bold font-orbitron text-white tracking-wider text-glow">STATO RETE</h1>
+                </div>
 
-            {activeTab === 'friends' ? (
-                <FriendList
-                    friends={MOCK_LEADERBOARD.friends}
-                    currentUserId="5" // Mock ID for "You"
-                    referralCode="ABC123" // Mock code
-                />
-            ) : (
-                <div className="space-y-3">
-                    {MOCK_LEADERBOARD.global.map((user) => (
-                        <div
-                            key={user.id}
+                <div className="flex p-1 bg-black/40 rounded-xl border border-cyber-gray/20 max-w-md mx-auto">
+                    <button
+                        onClick={() => setLeaderboardTab('global')}
+                        className={cn(
+                            "flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
+                            leaderboardTab === 'global'
+                                ? "bg-cyber-blue/10 text-cyber-blue border border-cyber-blue/30 shadow-[0_0_10px_rgba(69,162,158,0.1)]"
+                                : "text-zinc-600 hover:text-zinc-400"
+                        )}
+                    >
+                        <Globe className="w-4 h-4" /> Globale
+                    </button>
+                    <button
+                        onClick={() => setLeaderboardTab('friends')}
+                        className={cn(
+                            "flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
+                            leaderboardTab === 'friends'
+                                ? "bg-cyber-blue/10 text-cyber-blue border border-cyber-blue/30 shadow-[0_0_10px_rgba(69,162,158,0.1)]"
+                                : "text-zinc-600 hover:text-zinc-400"
+                        )}
+                    >
+                        <Users className="w-4 h-4" /> Squadra
+                    </button>
+                </div>
+
+                <div className="space-y-2 max-w-md mx-auto">
+                    {leaderboardData.map((entry, index) => (
+                        <motion.div
+                            key={entry.id}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
                             className={cn(
-                                "flex items-center p-4 rounded-xl border-2 transition-all",
-                                user.username === 'You'
-                                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800"
-                                    : "border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-950"
+                                "flex items-center p-3 rounded-xl border transition-all relative overflow-hidden",
+                                entry.id === user?.id
+                                    ? "border-cyber-blue bg-cyber-blue/5"
+                                    : "border-white/5 bg-black/20 hover:bg-white/5"
                             )}
                         >
+                            {entry.id === user?.id && (
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-cyber-blue shadow-[0_0_10px_#66FCF1]" />
+                            )}
+
                             <div className={cn(
-                                "w-8 h-8 flex items-center justify-center font-bold rounded-full mr-4",
-                                user.rank <= 3 ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-500" : "text-zinc-500"
+                                "w-8 h-8 flex items-center justify-center font-bold font-mono rounded-full mr-3 text-sm",
+                                index === 0 ? "text-yellow-500 drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]" :
+                                    index === 1 ? "text-zinc-300" :
+                                        index === 2 ? "text-amber-700" : "text-zinc-600"
                             )}>
-                                {user.rank}
+                                {index < 3 ? <Medal className="w-5 h-5" /> : `#${entry.rank}`}
                             </div>
 
-                            <div className="w-10 h-10 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center text-xl mr-3">
-                                {user.avatar}
+                            <div className="w-8 h-8 bg-cyber-gray/30 rounded-full flex items-center justify-center mr-3 overflow-hidden border border-white/10">
+                                {entry.avatar_url ? (
+                                    <img src={entry.avatar_url} alt={entry.username} className="w-full h-full object-cover" />
+                                ) : (
+                                    <Cpu className="w-4 h-4 text-cyber-gray" />
+                                )}
                             </div>
 
                             <div className="flex-1">
-                                <h3 className="font-bold text-sm">{user.username}</h3>
-                                <p className="text-xs text-zinc-500 dark:text-zinc-400">{user.xp} XP</p>
+                                <h3 className={cn(
+                                    "font-bold text-sm tracking-wide",
+                                    entry.id === user?.id ? "text-cyber-blue text-glow" : "text-zinc-300"
+                                )}>
+                                    {entry.username}
+                                </h3>
                             </div>
-                        </div>
+
+                            <div className="text-right">
+                                <span className="font-mono text-cyber-purple font-bold text-xs tracking-wider">{entry.xp} XP</span>
+                            </div>
+                        </motion.div>
                     ))}
                 </div>
-            )}
+            </div>
         </div>
     );
 }

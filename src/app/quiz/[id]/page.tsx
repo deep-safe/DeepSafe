@@ -154,6 +154,23 @@ export default function QuizPage() {
     const currentQuestion = quiz.questions[currentQuestionIndex];
     const isLastQuestion = currentQuestionIndex === quiz.questions.length - 1;
 
+    // Safety check: if no questions or invalid index, show error
+    if (!currentQuestion) {
+        return (
+            <div className="p-8 text-center space-y-4">
+                <AlertTriangle className="w-16 h-16 text-cyber-red mx-auto" />
+                <h2 className="text-xl font-bold text-cyber-red">Errore Sistema</h2>
+                <p className="text-cyber-gray">Nessuna domanda disponibile per questo livello.</p>
+                <Link
+                    href="/dashboard"
+                    className="inline-block px-6 py-3 bg-cyber-blue text-cyber-dark rounded-xl font-bold hover:bg-cyber-green transition-colors"
+                >
+                    Torna alla Dashboard
+                </Link>
+            </div>
+        );
+    }
+
     const handleAnswer = async (optionIndex: number) => {
         if (selectedOption !== null) return; // Prevent multiple clicks
         setSelectedOption(optionIndex);

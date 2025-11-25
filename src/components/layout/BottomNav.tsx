@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Map, Trophy, ShoppingBag, User } from 'lucide-react';
+import { Map, Trophy, ShoppingBag, User, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { useHaptics } from '@/hooks/useHaptics';
@@ -15,7 +15,7 @@ export function BottomNav() {
     if (pathname?.startsWith('/quiz')) return null;
 
     const navItems = [
-        { id: 'home', icon: Map, label: 'Mappa', path: '/dashboard' },
+        { id: 'home', icon: LayoutDashboard, label: 'Home', path: '/dashboard' },
         { id: 'leaderboard', icon: Trophy, label: 'Classifica', path: '/leaderboard' },
         { id: 'shop', icon: ShoppingBag, label: 'Negozio', path: '/shop' },
         { id: 'profile', icon: User, label: 'Profilo', path: '/profile' },

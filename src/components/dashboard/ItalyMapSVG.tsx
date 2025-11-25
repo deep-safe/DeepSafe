@@ -1,0 +1,48 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Province, provincesData } from '@/data/provincesData';
+import ProvincePath from './ProvincePath';
+
+interface ItalyMapSVGProps {
+    onProvinceClick: (province: Province) => void;
+}
+
+const ItalyMapSVG: React.FC<ItalyMapSVGProps> = ({ onProvinceClick }) => {
+    return (
+        <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-slate-950/50 rounded-xl border border-slate-800/50 backdrop-blur-sm shadow-2xl">
+            {/* Grid Background Effect */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20 pointer-events-none" />
+
+            <motion.svg
+                viewBox="0 0 800 1000" // Adjusted viewBox for the mock data coordinates
+                className="w-full h-full max-w-4xl max-h-[80vh]"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+                <defs>
+                    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="5" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+
+                {/* Render Provinces */}
+                {provincesData.map((province) => (
+                    <ProvincePath
+                        key={province.id}
+                        province={province}
+                        onProvinceClick={onProvinceClick}
+                    />
+                ))}
+            </motion.svg>
+
+            {/* Decorative Elements */}
+            <div className="absolute bottom-4 right-4 text-slate-500 text-xs font-mono">
+                COORDS: 41.8719° N, 12.5674° E
+            </div>
+        </div>
+    );
+};
+
+export default ItalyMapSVG;

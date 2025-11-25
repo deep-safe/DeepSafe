@@ -37,20 +37,13 @@ interface Profile {
     bio?: string;
 }
 
-interface LeaderboardEntry {
-    id: string;
-    username: string;
-    avatar_url: string | null;
-    xp: number;
-    rank: number;
-}
+
 
 import { MissionControl } from '@/components/gamification/MissionControl';
 import { ArtifactGrid } from '@/components/gamification/ArtifactGrid';
 import { Mission } from '@/components/gamification/MissionCard';
 import { Badge } from '@/components/gamification/BadgeCard';
-import { InstallPWA } from '@/components/gamification/InstallPWA';
-import { PushNotificationManager } from '@/components/notifications/PushNotificationManager';
+
 const MOCK_MISSIONS: Mission[] = [
     { id: '1', title: 'Accesso Giornaliero', target_count: 1, current_count: 1, reward_xp: 50, is_completed: true, is_claimed: false, frequency: 'daily' },
     { id: '2', title: 'Maestro dei Quiz', target_count: 3, current_count: 2, reward_xp: 150, is_completed: false, is_claimed: false, frequency: 'daily' },
@@ -81,10 +74,7 @@ export default function ProfilePage() {
     const [editName, setEditName] = useState('');
     const [editBio, setEditBio] = useState('');
 
-    // Leaderboard State
-    const [leaderboardTab, setLeaderboardTab] = useState<'global' | 'friends'>('global');
-    const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
-    const [userRank, setUserRank] = useState<number>(0);
+
 
     // Gamification State
     const [missions, setMissions] = useState<Mission[]>(MOCK_MISSIONS);
@@ -106,11 +96,7 @@ export default function ProfilePage() {
         fetchProfile();
     }, []);
 
-    useEffect(() => {
-        if (user) {
-            fetchLeaderboard();
-        }
-    }, [user, leaderboardTab]);
+
 
     const fetchProfile = async () => {
         try {
@@ -146,22 +132,7 @@ export default function ProfilePage() {
         }
     };
 
-    const fetchLeaderboard = async () => {
-        // Mock data
-        const mockData: LeaderboardEntry[] = Array.from({ length: 10 }).map((_, i) => ({
-            id: `user-${i}`,
-            username: i === 0 ? 'CyberMaster' : `Agente_${100 + i}`,
-            avatar_url: null,
-            xp: 5000 - (i * 200),
-            rank: i + 1
-        }));
 
-        if (profile) {
-            setUserRank(42);
-        }
-
-        setLeaderboardData(mockData);
-    };
 
     const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         try {
@@ -433,95 +404,13 @@ export default function ProfilePage() {
                     <div className="absolute inset-0 bg-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                     <Trophy className="w-6 h-6 text-yellow-500 animate-pulse" />
                     <div className="text-center">
-                        <div className="text-2xl font-bold font-mono text-white">{userRank > 0 ? `#${userRank}` : '--'}</div>
+                        <div className="text-2xl font-bold font-mono text-white">#42</div>
                         <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold">Rango Globale</div>
                     </div>
                 </div>
             </div>
 
-            {/* Section C: Holo-Leaderboard */}
-            <div className="space-y-4">
-                <div className="flex items-center gap-2 mb-2">
-                    <Activity className="w-4 h-4 text-cyber-blue" />
-                    <h3 className="text-sm font-bold font-orbitron text-white tracking-wider">STATO RETE</h3>
-                </div>
 
-                <div className="flex p-1 bg-black/40 rounded-xl border border-cyber-gray/20">
-                    <button
-                        onClick={() => setLeaderboardTab('global')}
-                        className={cn(
-                            "flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
-                            leaderboardTab === 'global'
-                                ? "bg-cyber-blue/10 text-cyber-blue border border-cyber-blue/30 shadow-[0_0_10px_rgba(69,162,158,0.1)]"
-                                : "text-zinc-600 hover:text-zinc-400"
-                        )}
-                    >
-                        <Globe className="w-3 h-3" /> Globale
-                    </button>
-                    <button
-                        onClick={() => setLeaderboardTab('friends')}
-                        className={cn(
-                            "flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
-                            leaderboardTab === 'friends'
-                                ? "bg-cyber-blue/10 text-cyber-blue border border-cyber-blue/30 shadow-[0_0_10px_rgba(69,162,158,0.1)]"
-                                : "text-zinc-600 hover:text-zinc-400"
-                        )}
-                    >
-                        <Users className="w-3 h-3" /> Squadra
-                    </button>
-                </div>
-
-                <div className="space-y-2">
-                    {leaderboardData.map((entry, index) => (
-                        <motion.div
-                            key={entry.id}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className={cn(
-                                "flex items-center p-3 rounded-xl border transition-all relative overflow-hidden",
-                                entry.id === user?.id
-                                    ? "border-cyber-blue bg-cyber-blue/5"
-                                    : "border-white/5 bg-black/20 hover:bg-white/5"
-                            )}
-                        >
-                            {entry.id === user?.id && (
-                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-cyber-blue shadow-[0_0_10px_#66FCF1]" />
-                            )}
-
-                            <div className={cn(
-                                "w-8 h-8 flex items-center justify-center font-bold font-mono rounded-full mr-3 text-sm",
-                                index === 0 ? "text-yellow-500 drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]" :
-                                    index === 1 ? "text-zinc-300" :
-                                        index === 2 ? "text-amber-700" : "text-zinc-600"
-                            )}>
-                                {index < 3 ? <Medal className="w-5 h-5" /> : `#${entry.rank}`}
-                            </div>
-
-                            <div className="w-8 h-8 bg-cyber-gray/30 rounded-full flex items-center justify-center mr-3 overflow-hidden border border-white/10">
-                                {entry.avatar_url ? (
-                                    <img src={entry.avatar_url} alt={entry.username} className="w-full h-full object-cover" />
-                                ) : (
-                                    <Cpu className="w-4 h-4 text-cyber-gray" />
-                                )}
-                            </div>
-
-                            <div className="flex-1">
-                                <h3 className={cn(
-                                    "font-bold text-sm tracking-wide",
-                                    entry.id === user?.id ? "text-cyber-blue text-glow" : "text-zinc-300"
-                                )}>
-                                    {entry.username}
-                                </h3>
-                            </div>
-
-                            <div className="text-right">
-                                <span className="font-mono text-cyber-purple font-bold text-xs tracking-wider">{entry.xp} XP</span>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-            </div>
 
             {/* Divider: AGENT RECORD */}
             <div className="relative flex items-center gap-4 py-4">
@@ -536,19 +425,7 @@ export default function ProfilePage() {
             {/* Section E: Artifact Grid */}
             <ArtifactGrid badges={badges} onSelectBadge={setSelectedBadge} />
 
-            {/* Divider: SYSTEM PROTOCOLS */}
-            <div className="relative flex items-center gap-4 py-4 mt-8">
-                <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent via-cyber-gray to-transparent" />
-                <div className="text-xs font-mono text-cyber-gray uppercase tracking-[0.2em]">// PROTOCOLLI SISTEMA</div>
-                <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent via-cyber-gray to-transparent" />
-            </div>
 
-            // ... inside component
-            {/* Section F: PWA Install */}
-            <div className="px-1 space-y-4">
-                <InstallPWA />
-                <PushNotificationManager />
-            </div>
 
             {/* Badge Inspection Modal */}
             <AnimatePresence>
