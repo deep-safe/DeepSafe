@@ -26,61 +26,66 @@ export function BadgeCard({ badge, onClick }: BadgeCardProps) {
     const isRare = badge.rarity === 'rare';
 
     // Colors based on rarity
-    const borderColor = isLegendary ? "bg-amber-500" : isRare ? "bg-cyber-purple" : "bg-cyber-blue";
-    const glowColor = isLegendary ? "shadow-amber-500/50" : isRare ? "shadow-cyber-purple/50" : "shadow-cyber-blue/50";
+    const borderColor = isLegendary ? "border-amber-500" : isRare ? "border-cyber-purple" : "border-cyber-blue";
+    const bgColor = isLegendary ? "bg-amber-500/10" : isRare ? "bg-cyber-purple/10" : "bg-cyber-blue/5";
+    const textColor = isLegendary ? "text-amber-500" : isRare ? "text-cyber-purple" : "text-cyber-blue";
+    const iconBg = isLegendary ? "bg-amber-500/20" : isRare ? "bg-cyber-purple/20" : "bg-cyber-blue/20";
 
     return (
         <motion.div
-            whileHover={{ scale: 1.1, zIndex: 20 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => onClick(badge)}
             className={cn(
-                "relative w-[100px] h-[115px] cursor-pointer group flex items-center justify-center",
-                badge.is_unlocked ? "opacity-100" : "opacity-40 grayscale"
+                "relative p-4 rounded-xl border transition-all duration-300 overflow-hidden group w-full cursor-pointer",
+                badge.is_unlocked
+                    ? `${borderColor} ${bgColor} shadow-[0_0_15px_rgba(0,0,0,0.3)] hover:shadow-[0_0_20px_rgba(102,252,241,0.2)]`
+                    : "border-cyber-gray/30 bg-cyber-dark/50 opacity-60 grayscale"
             )}
         >
-            {/* 1. Outer Hexagon (The Border) */}
-            <div
-                className={cn(
-                    "absolute inset-0 transition-all duration-300",
-                    badge.is_unlocked ? borderColor : "bg-cyber-gray",
-                    badge.is_unlocked && "group-hover:shadow-[0_0_15px_currentColor]"
-                )}
-                style={{
-                    clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)"
-                }}
-            >
-                {/* Gradient Overlay for Border */}
-                <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent" />
-            </div>
+            {/* Background Grid Pattern */}
+            <div className="absolute inset-0 opacity-10 bg-[linear-gradient(rgba(69,162,158,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(69,162,158,0.5)_1px,transparent_1px)] bg-[size:20px_20px]" />
 
-            {/* 2. Inner Hexagon (The Content) */}
-            <div
-                className="absolute inset-[2px] bg-cyber-dark flex flex-col items-center justify-center z-10"
-                style={{
-                    clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)"
-                }}
-            >
-                {/* Background Gradient inside content */}
+            <div className="relative z-10 flex items-center gap-4">
+                {/* Icon Box */}
                 <div className={cn(
-                    "absolute inset-0 opacity-20",
-                    badge.is_unlocked
-                        ? `bg-gradient-to-br ${isLegendary ? "from-amber-500" : isRare ? "from-cyber-purple" : "from-cyber-blue"} to-transparent`
-                        : "bg-cyber-gray"
-                )} />
-
-                {/* Icon */}
-                <div className="relative z-10 text-3xl mb-1 transform transition-transform group-hover:scale-110">
-                    {badge.is_unlocked ? badge.icon_url : <Lock className="w-6 h-6 text-zinc-600" />}
+                    "w-12 h-12 rounded-lg flex items-center justify-center text-2xl border border-white/10",
+                    badge.is_unlocked ? iconBg : "bg-cyber-gray/20"
+                )}>
+                    {badge.is_unlocked ? badge.icon_url : <Lock className="w-5 h-5 text-zinc-500" />}
                 </div>
 
-                {/* Rarity Dot */}
-                {badge.is_unlocked && (
-                    <div className={cn(
-                        "w-1.5 h-1.5 rounded-full mt-1 shadow-[0_0_5px_currentColor]",
-                        isLegendary ? "bg-amber-500 text-amber-500" : isRare ? "bg-cyber-purple text-cyber-purple" : "bg-cyber-blue text-cyber-blue"
-                    )} />
-                )}
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                    <h3 className={cn(
+                        "font-bold font-orbitron tracking-wide truncate",
+                        badge.is_unlocked ? "text-white" : "text-zinc-500"
+                    )}>
+                        {badge.name}
+                    </h3>
+                    <div className="flex items-center gap-2 mt-1">
+                        <span className={cn(
+                            "text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded",
+                            badge.is_unlocked ? `${iconBg} ${textColor}` : "bg-zinc-800 text-zinc-500"
+                        )}>
+                            {badge.rarity || 'Common'}
+                        </span>
+                        {badge.is_unlocked && (
+                            <span className="text-[10px] text-cyber-green font-mono">
+                                +{badge.xp_bonus} XP
+                            </span>
+                        )}
+                    </div>
+                </div>
+
+                {/* Status Indicator */}
+                <div className="flex flex-col items-end justify-center">
+                    {badge.is_unlocked ? (
+                        <div className={cn("w-2 h-2 rounded-full animate-pulse", textColor.replace('text-', 'bg-'))} />
+                    ) : (
+                        <Lock className="w-4 h-4 text-zinc-600" />
+                    )}
+                </div>
             </div>
         </motion.div>
     );

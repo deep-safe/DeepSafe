@@ -54,27 +54,42 @@ const TopBar: React.FC<TopBarProps> = () => {
             </div>
 
             {/* ROW 2: Progress */}
-            <div className="flex justify-between items-center w-full">
+            <div className="flex justify-center items-center w-full mt-2">
                 <motion.div
-                    initial={{ y: -20, opacity: 0 }}
+                    initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.4 }}
-                    className="flex items-center gap-3 pointer-events-auto w-full"
+                    className="flex flex-col items-center w-full max-w-md pointer-events-auto"
                 >
-                    {/* Progress Widget */}
-                    <div className="bg-black/40 backdrop-blur-md border border-cyber-gray/30 rounded-2xl p-3 flex-1 max-w-[200px] shadow-lg">
-                        <div className="flex justify-between items-center mb-1.5">
-                            <span className="text-[9px] text-zinc-400 uppercase font-bold tracking-widest font-mono">Progress</span>
-                            <span className="text-[10px] text-cyber-blue font-mono font-bold">3%</span>
-                        </div>
-                        <div className="h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/5">
+                    {/* Label & Value */}
+                    <div className="flex justify-between w-full px-2 mb-1">
+                        <span className="text-[9px] text-cyber-blue/80 font-mono tracking-[0.2em] uppercase">Sincronizzazione</span>
+                        <span className="text-[10px] text-white font-orbitron font-bold text-glow">3/107 • 3%</span>
+                    </div>
+
+                    {/* Bar Container with Brackets */}
+                    <div className="relative w-full flex items-center gap-2">
+                        {/* Left Bracket */}
+                        <div className="h-3 w-1 border-l border-t border-b border-cyber-blue/50 rounded-l-sm" />
+
+                        {/* The Bar */}
+                        <div className="flex-1 h-1 bg-black/60 rounded-full overflow-hidden relative">
+                            {/* Background Grid Pattern in Bar */}
+                            <div className="absolute inset-0 opacity-30 bg-[repeating-linear-gradient(90deg,transparent,transparent_2px,#000_2px,#000_4px)]" />
+
                             <motion.div
-                                className="h-full bg-gradient-to-r from-cyber-blue to-cyan-400 shadow-[0_0_10px_rgba(69,162,158,0.5)]"
+                                className="h-full bg-gradient-to-r from-cyber-blue via-cyan-400 to-white shadow-[0_0_15px_rgba(102,252,241,0.6)] relative"
                                 initial={{ width: 0 }}
                                 animate={{ width: '3%' }}
-                                transition={{ duration: 1, delay: 0.5 }}
-                            />
+                                transition={{ duration: 1.5, ease: "circOut", delay: 0.5 }}
+                            >
+                                {/* Leading Edge Flare */}
+                                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-3 bg-white blur-[2px]" />
+                            </motion.div>
                         </div>
+
+                        {/* Right Bracket */}
+                        <div className="h-3 w-1 border-r border-t border-b border-cyber-blue/50 rounded-r-sm" />
                     </div>
                 </motion.div>
             </div>

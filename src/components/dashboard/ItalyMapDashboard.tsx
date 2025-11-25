@@ -5,18 +5,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Province } from '@/data/provincesData';
 import ItalyMapSVG from './ItalyMapSVG';
 import TopBar from './TopBar';
+import ProvinceModal from './ProvinceModal';
 import { Lock } from 'lucide-react';
 
 const ItalyMapDashboard: React.FC = () => {
     const [toast, setToast] = useState<{ message: string; type: 'info' | 'error' } | null>(null);
+    const [selectedProvince, setSelectedProvince] = useState<Province | null>(null);
 
     const handleProvinceClick = (province: Province) => {
-        if (province.status === 'locked') {
-            showToast(`Access Denied: ${province.name} is currently locked. Complete previous regions first.`, 'error');
-        } else {
-            console.log(`Open Mission Select for: ${province.name}`);
-            showToast(`Mission Select: ${province.name}`, 'info');
-            // Here you would open the actual modal
+        setSelectedProvince(province);
+    };
+
+    const handleStartMission = () => {
+        if (selectedProvince) {
+            console.log(`Starting mission for: ${selectedProvince.name}`);
+            showToast(`Missione avviata: ${selectedProvince.name}`, 'info');
+            setSelectedProvince(null);
+            // Navigate to mission page or start logic here
         }
     };
 
@@ -39,6 +44,17 @@ const ItalyMapDashboard: React.FC = () => {
             <main className="w-full h-full flex items-center justify-center p-4 md:p-8 pt-20 pb-24">
                 <ItalyMapSVG onProvinceClick={handleProvinceClick} />
             </main>
+
+            {/* Province Selection Modal */}
+            <AnimatePresence>
+                {selectedProvince && (
+                    <ProvinceModal
+                        province={selectedProvince}
+                        onClose={() => setSelectedProvince(null)}
+                        onStartMission={handleStartMission}
+                    />
+                )}
+            </AnimatePresence>
 
             {/* Toast Notification */}
             <AnimatePresence>
