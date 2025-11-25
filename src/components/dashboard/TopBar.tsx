@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flame, Shield, Trophy } from 'lucide-react';
+import { Flame, Heart, Trophy } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface TopBarProps {
@@ -10,7 +10,7 @@ const TopBar: React.FC<TopBarProps> = () => {
     return (
         <div className="absolute top-0 left-0 w-full p-4 z-10 flex flex-col gap-3 pointer-events-none">
 
-            {/* ROW 1: Rank & Streak */}
+            {/* ROW 1: Rank, Streak & Hearts */}
             <div className="flex justify-between items-start w-full">
                 <motion.div
                     initial={{ y: -20, opacity: 0 }}
@@ -25,7 +25,7 @@ const TopBar: React.FC<TopBarProps> = () => {
                         </div>
                         <div>
                             <div className="text-[9px] text-zinc-400 uppercase font-bold tracking-widest font-mono">Classifica</div>
-                            <div className="text-sm font-bold font-orbitron text-white group-hover:text-amber-400 transition-colors">#4 Generale</div>
+                            <div className="text-sm font-bold font-orbitron text-white group-hover:text-amber-400 transition-colors">#4</div>
                         </div>
                     </div>
 
@@ -36,13 +36,24 @@ const TopBar: React.FC<TopBarProps> = () => {
                         </div>
                         <div>
                             <div className="text-[9px] text-zinc-400 uppercase font-bold tracking-widest font-mono">Serie</div>
-                            <div className="text-sm font-bold font-orbitron text-white group-hover:text-orange-400 transition-colors">Day 4</div>
+                            <div className="text-sm font-bold font-orbitron text-white group-hover:text-orange-400 transition-colors">4</div>
+                        </div>
+                    </div>
+
+                    {/* Hearts Widget */}
+                    <div className="bg-black/40 backdrop-blur-md border border-cyber-gray/30 rounded-2xl p-2 pr-4 flex items-center gap-3 shadow-lg group hover:border-red-500/50 transition-all duration-300">
+                        <div className="bg-gradient-to-br from-red-500/20 to-pink-600/20 p-2 rounded-xl border border-red-500/30">
+                            <Heart className="w-5 h-5 text-red-500 fill-red-500/20 animate-pulse drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+                        </div>
+                        <div>
+                            <div className="text-[9px] text-zinc-400 uppercase font-bold tracking-widest font-mono">Cuori</div>
+                            <div className="text-sm font-bold font-orbitron text-white group-hover:text-red-400 transition-colors">5</div>
                         </div>
                     </div>
                 </motion.div>
             </div>
 
-            {/* ROW 2: Progress & Lives */}
+            {/* ROW 2: Progress */}
             <div className="flex justify-between items-center w-full">
                 <motion.div
                     initial={{ y: -20, opacity: 0 }}
@@ -64,24 +75,6 @@ const TopBar: React.FC<TopBarProps> = () => {
                                 transition={{ duration: 1, delay: 0.5 }}
                             />
                         </div>
-                    </div>
-
-                    {/* Lives Widget */}
-                    <div className="bg-black/40 backdrop-blur-md border border-cyber-gray/30 rounded-2xl p-2 px-3 flex items-center gap-2 shadow-lg ml-auto">
-                        <div className="flex -space-x-1.5">
-                            {[1, 2, 3, 4, 5].map((life) => (
-                                <motion.div
-                                    key={life}
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    transition={{ delay: 0.5 + (life * 0.1) }}
-                                >
-                                    <Shield className="w-4 h-4 text-cyber-blue fill-cyber-blue/20 drop-shadow-[0_0_5px_rgba(69,162,158,0.5)]" />
-                                </motion.div>
-                            ))}
-                        </div>
-                        <div className="w-px h-3 bg-white/10 mx-1" />
-                        <span className="text-[10px] text-zinc-400 font-mono">14:20</span>
                     </div>
                 </motion.div>
             </div>
