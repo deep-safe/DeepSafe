@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Province, provincesData } from '@/data/provincesData';
 import ItalyMapSVG from './ItalyMapSVG';
@@ -23,16 +24,27 @@ interface MapTarget {
 }
 
 const ItalyMapDashboard: React.FC = () => {
-    const [toast, setToast] = useState<{ message: string; type: 'info' | 'error' } | null>(null);
-    const { unlockedProvinces } = useUserStore();
+    const searchParams = useSearchParams();
+    const initialRegionParam = searchParams.get('region');
 
-    // Merge static data with persisted unlocked status
+    const [toast, setToast] = useState<{ message: string; type: 'info' | 'error' } | null>(null);
+    const { unlockedProvinces, provinceScores } = useUserStore();
+
+    // Merge static data with persisted unlocked status and scores
     const dynamicProvincesData = useMemo(() => {
-        return provincesData.map(p => ({
-            ...p,
-            status: unlockedProvinces.includes(p.id) ? 'unlocked' : (p.status === 'safe' ? 'safe' : 'locked')
-        })) as Province[];
-    }, [unlockedProvinces]);
+        return provincesData.map(p => {
+            const scoreData = provinceScores[p.id] || { score: 0, maxScore: 10, isCompleted: false };
+            const isUnlocked = unlockedProvinces.includes(p.id);
+
+            return {
+                ...p,
+                status: isUnlocked ? 'unlocked' : (p.status === 'safe' ? 'safe' : 'locked'),
+                userScore: scoreData.score,
+                maxScore: scoreData.maxScore,
+                isCompleted: scoreData.isCompleted
+            };
+        }) as Province[];
+    }, [unlockedProvinces, provinceScores]);
 
     // Calculate initial Italy ViewBox based on all provinces
     const initialItalyViewBox = useMemo(() => {
@@ -45,11 +57,36 @@ const ItalyMapDashboard: React.FC = () => {
         return `${bbox.minX - paddingX / 2} ${bbox.minY - paddingY / 2} ${bbox.width + paddingX} ${bbox.height + paddingY}`;
     }, [dynamicProvincesData]);
 
-    const [viewBox, setViewBox] = useState(initialItalyViewBox);
+    // Helper to calculate region box (hoisted for initialization)
+    const getRegionBox = (regionName: string) => {
+        const regionProvinces = provincesData.filter(p => p.region === regionName); // Use static data for init
+        const paths = regionProvinces.map(p => p.path);
+        const bbox = getRegionBoundingBox(paths);
+
+        if (!bbox) return initialItalyViewBox;
+
+        // Add 20% padding
+        const paddingX = bbox.width * 0.2;
+        const paddingY = bbox.height * 0.2;
+        const minX = bbox.minX - paddingX / 2;
+        const minY = bbox.minY - paddingY / 2;
+        const width = bbox.width + paddingX;
+        const height = bbox.height + paddingY;
+
+        return `${minX} ${minY} ${width} ${height}`;
+    };
+
+    // Initialize State based on URL param
+    const [viewBox, setViewBox] = useState(() => {
+        if (initialRegionParam) {
+            return getRegionBox(initialRegionParam);
+        }
+        return initialItalyViewBox;
+    });
 
     // Navigation State
-    const [viewMode, setViewMode] = useState<'ITALY' | 'REGION'>('ITALY');
-    const [currentRegion, setCurrentRegion] = useState<string | null>(null);
+    const [viewMode, setViewMode] = useState<'ITALY' | 'REGION'>(initialRegionParam ? 'REGION' : 'ITALY');
+    const [currentRegion, setCurrentRegion] = useState<string | null>(initialRegionParam || null);
 
     // Interaction State
     const [hoveredTarget, setHoveredTarget] = useState<MapTarget | null>(null);

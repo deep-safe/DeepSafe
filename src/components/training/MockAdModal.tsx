@@ -8,7 +8,7 @@ interface MockAdModalProps {
     onReward: () => void;
 }
 
-const AD_DURATION = 10; // Seconds
+const AD_DURATION = 5; // Seconds
 
 const MockAdModal: React.FC<MockAdModalProps> = ({ isOpen, onClose, onReward }) => {
     const [timeLeft, setTimeLeft] = useState(AD_DURATION);

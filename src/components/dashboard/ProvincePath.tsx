@@ -20,7 +20,12 @@ const ProvincePath: React.FC<ProvincePathProps> = ({
     isRegionHovered,
     isProvinceHighlighted
 }) => {
-    const { status, path } = province;
+    const { status, path, userScore = 0, maxScore = 10 } = province;
+
+    // Mastery Logic
+    const percentage = maxScore > 0 ? (userScore / maxScore) * 100 : 0;
+    const isMastered = percentage === 100;
+    const isPassed = percentage >= 60;
 
     const isLocked = status === 'locked';
     const isUnlocked = status === 'unlocked';
@@ -50,22 +55,41 @@ const ProvincePath: React.FC<ProvincePathProps> = ({
     };
 
     const getFillColor = () => {
-        if (isProvinceHighlighted) return 'rgba(6, 182, 212, 0.3)'; // Cyan highlight
-        if (isRegionHovered) return 'rgba(6, 182, 212, 0.2)'; // Region highlight
+        if (isProvinceHighlighted) return isMastered ? 'rgba(251, 191, 36, 0.4)' : 'rgba(6, 182, 212, 0.3)'; // Gold or Cyan highlight
+        if (isRegionHovered) return isMastered ? 'rgba(251, 191, 36, 0.3)' : 'rgba(6, 182, 212, 0.2)'; // Region highlight
         if (isRegionMode) return 'rgba(30, 41, 59, 0.8)'; // Dim others in region mode
-        return 'rgba(30, 41, 59, 0.4)'; // Default
+
+        // Default State Colors
+        if (isMastered) return 'rgba(251, 191, 36, 0.2)'; // Gold
+        if (isPassed) return 'rgba(6, 182, 212, 0.2)'; // Cyan
+        if (isUnlocked) return 'rgba(59, 130, 246, 0.15)'; // Blue/Slate for unlocked but not passed
+
+        return 'rgba(30, 41, 59, 0.4)'; // Locked
     };
 
     const getStrokeColor = () => {
-        if (isProvinceHighlighted) return '#22d3ee'; // Cyan
-        if (isRegionHovered) return '#06b6d4'; // Cyan-500
+        if (isProvinceHighlighted) return isMastered ? '#fbbf24' : '#22d3ee';
+        if (isRegionHovered) return isMastered ? '#f59e0b' : '#06b6d4';
+
+        if (isMastered) return '#fbbf24'; // Amber-400
+        if (isPassed) return '#22d3ee'; // Cyan-400
+        if (isUnlocked) return '#3b82f6'; // Blue-500
+
         return '#334155'; // Slate-700
     };
 
     const getStrokeWidth = () => {
         if (isProvinceHighlighted) return 2;
         if (isRegionHovered) return 1.5;
+        if (isMastered) return 1.5; // Emphasize mastered
         return 0.5;
+    };
+
+    // Dynamic Filter for Neon Glow
+    const getFilter = () => {
+        if (isMastered) return 'url(#glow)';
+        if (isPassed && isProvinceHighlighted) return 'drop-shadow(0 0 2px #22d3ee)';
+        return undefined;
     };
 
     return (
@@ -87,18 +111,15 @@ const ProvincePath: React.FC<ProvincePathProps> = ({
                 fill={getFillColor()}
                 stroke={getStrokeColor()}
                 strokeWidth={getStrokeWidth()}
+                style={{ filter: getFilter() }}
                 className={cn(
                     "transition-all duration-300",
-                    // Base Styles if not overridden by inline styles
-                    // We keep these for fallback or specific status effects if needed, 
-                    // but the inline styles above take precedence for the main logic.
                     isLocked && "fill-slate-900/80",
-                    isUnlocked && "fill-cyan-900/40",
-                    isSafe && "fill-amber-700/60",
+                    // Remove old fill classes as we use inline styles for dynamic control
                 )}
                 animate={isUnlocked ? {
-                    fillOpacity: [0.3, 0.6, 0.3],
-                    strokeOpacity: [0.5, 1, 0.5],
+                    fillOpacity: isMastered ? [0.2, 0.4, 0.2] : [0.2, 0.3, 0.2],
+                    strokeOpacity: [0.6, 1, 0.6],
                 } : {}}
                 transition={isUnlocked ? pulseTransition : {}}
             />

@@ -78,12 +78,3 @@ CRON_SECRET=tua_stringa_segreta_super_lunga
     *   Esegui lo script per schedulare il job.
 
 ---
-
-### 🗺️ Map Persistence Setup
-
-Per salvare i progressi della mappa nel database:
-
-1.  **Database Update**:
-    *   Vai su Supabase -> SQL Editor.
-    *   Apri il file `supabase_map_persistence.sql`.
-    *   Esegui lo script per aggiungere la colonna `unlocked_provinces` alla tabella `profiles`.

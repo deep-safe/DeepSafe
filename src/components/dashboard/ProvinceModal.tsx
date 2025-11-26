@@ -105,6 +105,25 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                         <p className="text-slate-400 text-sm leading-relaxed">
                             {theme.description}
                         </p>
+
+                        {/* Score Display for Completed Provinces */}
+                        {province.isCompleted && (
+                            <div className="flex items-center gap-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] text-slate-500 uppercase font-bold">Punteggio</span>
+                                    <span className="text-xl font-bold text-amber-400 font-orbitron">
+                                        {province.userScore}/{province.maxScore}
+                                    </span>
+                                </div>
+                                <div className="h-8 w-[1px] bg-slate-700" />
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] text-slate-500 uppercase font-bold">Stato</span>
+                                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                                        Completato
+                                    </span>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Action Button */}

@@ -16,6 +16,7 @@ interface UserState {
     hasInfiniteLives: boolean;
     lastRefillTime: number | null;
     unlockedProvinces: string[]; // IDs of unlocked provinces
+    provinceScores: Record<string, { score: number; maxScore: number; isCompleted: boolean }>;
 
     // Actions
     addXp: (amount: number) => void;
@@ -26,6 +27,7 @@ interface UserState {
     refillLives: () => void;
     setInfiniteLives: (active: boolean) => void;
     unlockProvince: (id: string) => void;
+    updateProvinceScore: (id: string, score: number, maxScore: number, isCompleted: boolean) => void;
     refreshProfile: () => Promise<void>;
 }
 
@@ -39,8 +41,44 @@ export const useUserStore = create<UserState>()(
             hasInfiniteLives: false,
             lastRefillTime: null,
             unlockedProvinces: ['CB', 'IS', 'AQ', 'CH', 'PE', 'TE', 'BA', 'BT', 'BR', 'FG', 'LE', 'TA'], // Default unlocked: Molise, Abruzzo, Puglia
+            provinceScores: {
+                'CB': { score: 10, maxScore: 10, isCompleted: true }, // Mock Perfect
+                'IS': { score: 8, maxScore: 10, isCompleted: true },  // Mock Passed
+                'AQ': { score: 5, maxScore: 10, isCompleted: false }, // Mock In Progress
+            },
 
             addXp: (amount) => set((state) => ({ xp: state.xp + amount })),
+            updateProvinceScore: async (id, score, maxScore, isCompleted) => {
+                const state = get();
+                const currentData = state.provinceScores[id] || { score: 0, maxScore: 10, isCompleted: false };
+
+                // Logic: Only update if score is higher OR if it wasn't completed before
+                const shouldUpdate = score > currentData.score || (!currentData.isCompleted && isCompleted);
+
+                if (!shouldUpdate) return;
+
+                const newScores = {
+                    ...state.provinceScores,
+                    [id]: {
+                        score: Math.max(score, currentData.score), // Keep highest score
+                        maxScore,
+                        isCompleted: isCompleted || currentData.isCompleted // Keep completed status
+                    }
+                };
+                set({ provinceScores: newScores });
+
+                try {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (user) {
+                        await supabase
+                            .from('profiles')
+                            .update({ province_scores: newScores })
+                            .eq('id', user.id);
+                    }
+                } catch (err) {
+                    console.error('Error syncing province scores:', err);
+                }
+            },
             incrementStreak: () => set((state) => ({ streak: state.streak + 1 })),
             resetStreak: () => set({ streak: 0 }),
             decrementLives: async () => {
@@ -110,7 +148,7 @@ export const useUserStore = create<UserState>()(
 
                     const { data: profile, error } = await supabase
                         .from('profiles')
-                        .select('xp, current_hearts, highest_streak, unlocked_provinces')
+                        .select('xp, current_hearts, highest_streak, unlocked_provinces, province_scores')
                         .eq('id', user.id)
                         .single();
 
@@ -124,7 +162,12 @@ export const useUserStore = create<UserState>()(
                             xp: profile.xp ?? 0,
                             lives: profile.current_hearts ?? 5,
                             streak: profile.highest_streak ?? 0,
-                            unlockedProvinces: profile.unlocked_provinces ?? ['CB', 'IS', 'AQ', 'CH', 'PE', 'TE', 'BA', 'BT', 'BR', 'FG', 'LE', 'TA']
+                            unlockedProvinces: profile.unlocked_provinces ?? ['CB', 'IS', 'AQ', 'CH', 'PE', 'TE', 'BA', 'BT', 'BR', 'FG', 'LE', 'TA'],
+                            provinceScores: (profile.province_scores as any) ?? {
+                                'CB': { score: 10, maxScore: 10, isCompleted: true },
+                                'IS': { score: 8, maxScore: 10, isCompleted: true },
+                                'AQ': { score: 5, maxScore: 10, isCompleted: false },
+                            }
                         });
                         console.log('🔄 Profile refreshed from DB:', profile);
                     }
