@@ -1,7 +1,10 @@
-'use client';
-
+import { Suspense } from 'react';
 import ItalyMapDashboard from '@/components/dashboard/ItalyMapDashboard';
 
 export default function Dashboard() {
-  return <ItalyMapDashboard />;
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-cyan-500">INITIALIZING MAP DATA...</div>}>
+      <ItalyMapDashboard />
+    </Suspense>
+  );
 }

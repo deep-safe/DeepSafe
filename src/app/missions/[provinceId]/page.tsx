@@ -9,11 +9,14 @@ import { BottomNav } from '@/components/layout/BottomNav';
 import { missionsData } from '@/data/missionsData';
 import { provincesData } from '@/data/provincesData';
 
+import { useUserStore } from '@/store/useUserStore';
+
 export default function MissionSelectionPage() {
     const params = useParams();
     const router = useRouter();
     const provinceId = params.provinceId as string;
     const [selectedMissionId, setSelectedMissionId] = useState<string | null>(null);
+    const { unlockedProvinces } = useUserStore();
 
     const province = provincesData.find(p => p.id === provinceId);
     const missions = missionsData[provinceId] || [];
@@ -47,7 +50,7 @@ export default function MissionSelectionPage() {
                 <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-cyber-purple/10 blur-[80px] rounded-full" />
             </div>
 
-            <TopBar />
+            <TopBar progress={unlockedProvinces.length} total={provincesData.length} />
 
             <main className="pt-40 px-4 max-w-md mx-auto space-y-8 relative z-10">
                 {/* Header */}
@@ -96,8 +99,8 @@ export default function MissionSelectionPage() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.1 }}
                                 className={`rounded-3xl border transition-all duration-500 overflow-hidden ${selectedMissionId === mission.id
-                                        ? 'bg-slate-800/90 border-cyber-blue shadow-[0_0_30px_rgba(102,252,241,0.15)]'
-                                        : 'bg-slate-800/40 border-slate-700/50 hover:border-slate-600 hover:bg-slate-800/60'
+                                    ? 'bg-slate-800/90 border-cyber-blue shadow-[0_0_30px_rgba(102,252,241,0.15)]'
+                                    : 'bg-slate-800/40 border-slate-700/50 hover:border-slate-600 hover:bg-slate-800/60'
                                     } backdrop-blur-md`}
                             >
                                 {/* Mission Header Card */}
@@ -106,8 +109,8 @@ export default function MissionSelectionPage() {
                                     className="w-full p-6 text-left flex items-start space-x-5"
                                 >
                                     <div className={`p-4 rounded-2xl transition-colors duration-300 ${selectedMissionId === mission.id
-                                            ? 'bg-cyber-blue/20 text-cyber-blue shadow-[0_0_15px_rgba(102,252,241,0.3)]'
-                                            : 'bg-slate-700/30 text-slate-400'
+                                        ? 'bg-cyber-blue/20 text-cyber-blue shadow-[0_0_15px_rgba(102,252,241,0.3)]'
+                                        : 'bg-slate-700/30 text-slate-400'
                                         }`}>
                                         <Target className="w-7 h-7" />
                                     </div>

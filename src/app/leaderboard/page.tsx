@@ -104,7 +104,8 @@ export default function LeaderboardPage() {
 
             setLeaderboardData(formattedData);
         } catch (err) {
-            console.error('Error fetching leaderboard:', err);
+            console.error('Error fetching leaderboard:', JSON.stringify(err, null, 2));
+            console.error('Full Error Object:', err);
         } finally {
             setLoading(false);
         }
@@ -134,7 +135,8 @@ export default function LeaderboardPage() {
 
             setPendingRequests(requests);
         } catch (err) {
-            console.error('Error fetching requests:', err);
+            console.error('Error fetching requests:', JSON.stringify(err, null, 2));
+            console.error('Full Error Object:', err);
         }
     };
 

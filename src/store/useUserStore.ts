@@ -17,7 +17,12 @@ interface UserState {
     hasInfiniteLives: boolean;
     lastRefillTime: number | null;
     unlockedProvinces: string[]; // IDs of unlocked provinces
-    provinceScores: Record<string, { score: number; maxScore: number; isCompleted: boolean }>;
+    provinceScores: Record<string, {
+        score: number;
+        maxScore: number;
+        isCompleted: boolean;
+        missions?: Record<string, { score: number; maxScore: number; isCompleted: boolean }>;
+    }>;
     lastLoginDate: string | null; // ISO Date string YYYY-MM-DD
     earnedBadges: { id: string; earned_at: string }[];
     streakFreezes: number;
@@ -38,6 +43,7 @@ interface UserState {
     setInfiniteLives: (active: boolean) => void;
     unlockProvince: (id: string) => Promise<void>;
     updateProvinceScore: (id: string, score: number, maxScore: number, isCompleted: boolean) => Promise<void>;
+    updateMissionScore: (provinceId: string, missionId: string, score: number, maxScore: number, isCompleted: boolean) => Promise<void>;
     refreshProfile: () => Promise<void>;
     checkBadges: () => Promise<{ newBadges: string[] }>;
 }
@@ -188,6 +194,7 @@ export const useUserStore = create<UserState>()(
                 const newScores = {
                     ...state.provinceScores,
                     [id]: {
+                        ...currentData,
                         score: Math.max(score, currentData.score), // Keep highest score
                         maxScore,
                         isCompleted: isCompleted || currentData.isCompleted // Keep completed status
@@ -205,6 +212,73 @@ export const useUserStore = create<UserState>()(
                     }
                 } catch (err) {
                     console.error('Error syncing province scores:', err);
+                }
+            },
+
+            updateMissionScore: async (provinceId, missionId, score, maxScore, isCompleted) => {
+                const state = get();
+                const provinceData = state.provinceScores[provinceId] || { score: 0, maxScore: 0, isCompleted: false, missions: {} };
+                const currentMissions = provinceData.missions || {};
+                const currentMissionData = currentMissions[missionId] || { score: 0, maxScore: 0, isCompleted: false };
+
+                // Only update if score is higher or newly completed
+                if (score <= currentMissionData.score && currentMissionData.isCompleted) {
+                    // Nothing to update for this mission
+                    return;
+                }
+
+                const newMissionData = {
+                    score: Math.max(score, currentMissionData.score),
+                    maxScore,
+                    isCompleted: isCompleted || currentMissionData.isCompleted
+                };
+
+                const newMissions = {
+                    ...currentMissions,
+                    [missionId]: newMissionData
+                };
+
+                // Recalculate Province Totals
+                // Sum of all mission scores
+                let totalScore = 0;
+                let totalMaxScore = 0;
+                let allCompleted = true;
+
+                // We need to be careful here. If we have missions in the store that are not in the current list (e.g. deleted),
+                // we might want to keep them or filter them. For now, we just sum up what's in the store.
+                // Ideally, we'd sum based on the actual available missions, but the store doesn't know about quizData directly.
+                // So we'll trust the accumulated state for now.
+                Object.values(newMissions).forEach(m => {
+                    totalScore += m.score;
+                    totalMaxScore += m.maxScore;
+                    if (!m.isCompleted) allCompleted = false;
+                });
+
+                const newProvinceData = {
+                    ...provinceData,
+                    score: totalScore,
+                    maxScore: totalMaxScore,
+                    isCompleted: allCompleted && Object.keys(newMissions).length > 0, // Simplified logic
+                    missions: newMissions
+                };
+
+                const newScores = {
+                    ...state.provinceScores,
+                    [provinceId]: newProvinceData
+                };
+
+                set({ provinceScores: newScores });
+
+                try {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (user) {
+                        await supabase
+                            .from('profiles')
+                            .update({ province_scores: newScores })
+                            .eq('id', user.id);
+                    }
+                } catch (err) {
+                    console.error('Error syncing mission scores:', err);
                 }
             },
             incrementStreak: async () => {

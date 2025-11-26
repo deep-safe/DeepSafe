@@ -20,7 +20,7 @@ export default function TrainingPillPage() {
     const missionId = searchParams.get('missionId');
     const problemId = params?.problemId as string;
 
-    const { addXp, unlockProvince, lives, decrementLives, addHeart, refillLives, unlockedProvinces, updateProvinceScore } = useUserStore();
+    const { addXp, unlockProvince, lives, decrementLives, addHeart, refillLives, unlockedProvinces, updateProvinceScore, updateMissionScore } = useUserStore();
 
     const [lesson, setLesson] = useState<TrainingLesson | null>(null);
     const [mode, setMode] = useState<'LESSON' | 'QUIZ' | 'COMPLETE'>('LESSON');
@@ -126,7 +126,11 @@ export default function TrainingPillPage() {
             if (provinceId) {
                 unlockProvince(provinceId);
                 // Save Score
-                updateProvinceScore(provinceId, score, lesson.questions.length, true);
+                if (missionId) {
+                    updateMissionScore(provinceId, missionId, score, lesson.questions.length, true);
+                } else {
+                    updateProvinceScore(provinceId, score, lesson.questions.length, true);
+                }
             }
             setMode('COMPLETE');
         }

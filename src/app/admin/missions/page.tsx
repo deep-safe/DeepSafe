@@ -4,7 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { Database } from '@/types/supabase';
 import { useRouter } from 'next/navigation';
-import { BookOpen, Plus, X, Save, ArrowLeft, Trash2, MapPin, Clock, Award, ChevronRight, Check, Pencil } from 'lucide-react';
+import { BookOpen, Plus, X, Save, ArrowLeft, Trash2, MapPin, Clock, Award, ChevronRight, Check, Pencil, Upload, Link, Image as ImageIcon } from 'lucide-react';
+
+// ... existing code ...
+
+
 import { provincesData } from '@/data/provincesData';
 
 // Initialize Supabase Client
@@ -134,6 +138,30 @@ export default function AdminMissionsPage() {
         newOptions[oIndex] = value;
         newQuestions[qIndex].options = newOptions;
         setQuestions(newQuestions);
+    };
+
+    const handleImageUpload = async (file: File, index: number) => {
+        try {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+            const filePath = `${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('mission-images')
+                .upload(filePath, file);
+
+            if (uploadError) {
+                throw uploadError;
+            }
+
+            const { data } = supabase.storage
+                .from('mission-images')
+                .getPublicUrl(filePath);
+
+            updateQuestion(index, 'image_url', data.publicUrl);
+        } catch (error: any) {
+            alert('Error uploading image: ' + error.message);
+        }
     };
 
     const handleSave = async () => {
@@ -455,15 +483,90 @@ export default function AdminMissionsPage() {
                                                 </div>
 
                                                 {q.type === 'image_true_false' && (
-                                                    <div className="mb-4">
-                                                        <label className="block text-xs font-mono text-slate-500 mb-1">Image URL</label>
-                                                        <input
-                                                            type="text"
-                                                            value={q.image_url || ''}
-                                                            onChange={e => updateQuestion(qIndex, 'image_url', e.target.value)}
-                                                            className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-xs focus:border-cyan-500 outline-none font-mono text-cyan-400"
-                                                            placeholder="https://..."
-                                                        />
+                                                    <div className="mb-4 bg-slate-900/50 p-4 rounded-lg border border-slate-800">
+                                                        <div className="flex items-center justify-between mb-3">
+                                                            <label className="text-xs font-mono text-slate-500">Image Source</label>
+                                                            <div className="flex bg-slate-950 rounded-lg p-1 border border-slate-800">
+                                                                <button
+                                                                    onClick={() => {
+                                                                        const newQ = [...questions];
+                                                                        // @ts-ignore
+                                                                        newQ[qIndex].imageInputType = 'url';
+                                                                        setQuestions(newQ);
+                                                                    }}
+                                                                    className={`px-3 py-1 rounded text-xs font-bold flex items-center gap-2 transition-colors ${
+                                                                        // @ts-ignore
+                                                                        (q.imageInputType !== 'upload') ? 'bg-cyan-900/50 text-cyan-400' : 'text-slate-500 hover:text-slate-300'
+                                                                        }`}
+                                                                >
+                                                                    <Link className="w-3 h-3" /> URL
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => {
+                                                                        const newQ = [...questions];
+                                                                        // @ts-ignore
+                                                                        newQ[qIndex].imageInputType = 'upload';
+                                                                        setQuestions(newQ);
+                                                                    }}
+                                                                    className={`px-3 py-1 rounded text-xs font-bold flex items-center gap-2 transition-colors ${
+                                                                        // @ts-ignore
+                                                                        (q.imageInputType === 'upload') ? 'bg-cyan-900/50 text-cyan-400' : 'text-slate-500 hover:text-slate-300'
+                                                                        }`}
+                                                                >
+                                                                    <Upload className="w-3 h-3" /> Upload
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* @ts-ignore */}
+                                                        {q.imageInputType === 'upload' ? (
+                                                            <div className="space-y-3">
+                                                                <div className="border-2 border-dashed border-slate-700 rounded-lg p-6 text-center hover:border-cyan-500/50 transition-colors relative group">
+                                                                    <input
+                                                                        type="file"
+                                                                        accept="image/*"
+                                                                        onChange={(e) => {
+                                                                            if (e.target.files?.[0]) {
+                                                                                handleImageUpload(e.target.files[0], qIndex);
+                                                                            }
+                                                                        }}
+                                                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                                                    />
+                                                                    <div className="flex flex-col items-center gap-2 text-slate-500 group-hover:text-cyan-400 transition-colors">
+                                                                        <Upload className="w-8 h-8" />
+                                                                        <span className="text-xs font-mono">Click to upload image</span>
+                                                                    </div>
+                                                                </div>
+                                                                {q.image_url && (
+                                                                    <div className="relative aspect-video rounded-lg overflow-hidden border border-slate-700 bg-black">
+                                                                        <img src={q.image_url} alt="Preview" className="w-full h-full object-contain" />
+                                                                        <div className="absolute top-2 right-2 bg-black/50 px-2 py-1 rounded text-[10px] font-mono text-green-400 border border-green-900/50">
+                                                                            UPLOADED
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        ) : (
+                                                            <div className="space-y-3">
+                                                                <input
+                                                                    type="text"
+                                                                    value={q.image_url || ''}
+                                                                    onChange={e => updateQuestion(qIndex, 'image_url', e.target.value)}
+                                                                    className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-xs focus:border-cyan-500 outline-none font-mono text-cyan-400"
+                                                                    placeholder="https://example.com/image.jpg"
+                                                                />
+                                                                {q.image_url && (
+                                                                    <div className="relative aspect-video rounded-lg overflow-hidden border border-slate-700 bg-black">
+                                                                        <img
+                                                                            src={q.image_url}
+                                                                            alt="Preview"
+                                                                            className="w-full h-full object-contain"
+                                                                            onError={(e) => (e.currentTarget.style.display = 'none')}
+                                                                        />
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 )}
 

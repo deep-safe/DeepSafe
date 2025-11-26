@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock, MapPin, ShieldAlert, ChevronRight, Crosshair, Scan, Target } from 'lucide-react';
+import { X, Lock, MapPin, ShieldAlert, ChevronRight, Crosshair, Scan, Target, Star, RotateCcw } from 'lucide-react';
 import { Province } from '@/data/provincesData';
 import { getLessonsForProvince, TrainingLesson } from '@/data/quizData';
 import { useRouter } from 'next/navigation';
+import { useUserStore } from '@/store/useUserStore';
 
 interface ProvinceModalProps {
     province: Province | null;
@@ -15,6 +16,7 @@ interface ProvinceModalProps {
 export default function ProvinceModal({ province, onClose }: ProvinceModalProps) {
     const router = useRouter();
     const [missions, setMissions] = React.useState<TrainingLesson[]>([]);
+    const { provinceScores } = useUserStore();
 
     React.useEffect(() => {
         if (province) {
@@ -29,6 +31,10 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
     const isLocked = province.status === 'locked';
     const hasMultipleMissions = missions.length > 1;
     const singleMission = missions[0];
+
+    // Get Province Data from Store
+    const provinceData = provinceScores[province.id] || { score: 0, maxScore: 0, isCompleted: false, missions: {} };
+    const missionScores = provinceData.missions || {};
 
     // Calculate progress percentage
     const progressPercent = province.maxScore > 0 ? Math.round((province.userScore / province.maxScore) * 100) : 0;
@@ -114,30 +120,59 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                             {hasMultipleMissions ? (
                                 // Multiple Missions Stack
                                 <div className="flex flex-col gap-3">
-                                    {missions.map((mission) => (
-                                        <button
-                                            key={mission.id}
-                                            onClick={() => router.push(`/training/mission-1?provinceId=${province.id}&missionId=${mission.id}`)}
-                                            className="group relative flex items-center justify-between p-4 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900 transition-all duration-300"
-                                        >
-                                            <div className="flex flex-col items-start gap-1">
-                                                <span className="text-sm font-bold text-white group-hover:text-cyan-400 transition-colors">
-                                                    {mission.title}
-                                                </span>
-                                                <div className="flex items-center gap-3 text-[10px] font-mono text-slate-500">
-                                                    <span className="flex items-center gap-1">
-                                                        <span className="text-amber-500">★</span> {mission.xpReward} XP
-                                                    </span>
-                                                    <span className="flex items-center gap-1">
-                                                        <span>⏱</span> {mission.estimatedTime}
-                                                    </span>
+                                    {missions.map((mission) => {
+                                        const mScore = missionScores[mission.id] || { score: 0, maxScore: 0, isCompleted: false };
+                                        const isPerfect = mScore.score === mScore.maxScore && mScore.maxScore > 0;
+                                        const isPassed = mScore.isCompleted;
+
+                                        return (
+                                            <button
+                                                key={mission.id}
+                                                onClick={() => router.push(`/training/mission-1?provinceId=${province.id}&missionId=${mission.id}`)}
+                                                className={`group relative flex items-center justify-between p-4 rounded-xl border transition-all duration-300 w-full text-left ${isPassed
+                                                    ? 'bg-slate-900/80 border-slate-700 hover:border-emerald-500/50'
+                                                    : 'bg-slate-900/50 border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900'
+                                                    }`}
+                                            >
+                                                <div className="flex flex-col items-start gap-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className={`text-sm font-bold transition-colors ${isPassed ? 'text-emerald-400' : 'text-white group-hover:text-cyan-400'}`}>
+                                                            {mission.title}
+                                                        </span>
+                                                        {isPassed && (
+                                                            <div className="flex items-center gap-0.5">
+                                                                {[1, 2, 3].map((star) => (
+                                                                    <Star
+                                                                        key={star}
+                                                                        className={`w-3 h-3 ${isPerfect || (star < 3 && isPassed) ? 'text-amber-400 fill-amber-400' : 'text-slate-700'}`}
+                                                                    />
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex items-center gap-3 text-[10px] font-mono text-slate-500">
+                                                        <span className="flex items-center gap-1">
+                                                            <span className="text-amber-500">★</span> {mission.xpReward} XP
+                                                        </span>
+                                                        <span className="flex items-center gap-1">
+                                                            <span>⏱</span> {mission.estimatedTime}
+                                                        </span>
+                                                        {isPassed && !isPerfect && (
+                                                            <span className="text-cyan-500 flex items-center gap-1">
+                                                                <RotateCcw className="w-3 h-3" /> RETRY FOR PERFECT
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="px-3 py-1 rounded bg-slate-950 border border-slate-800 text-[10px] font-mono text-slate-400 group-hover:text-cyan-500 group-hover:border-cyan-900 transition-colors">
-                                                {mission.level || 'SEMPLICE'}
-                                            </div>
-                                        </button>
-                                    ))}
+                                                <div className={`px-3 py-1 rounded border text-[10px] font-mono transition-colors ${isPassed
+                                                    ? 'bg-emerald-950/30 border-emerald-900/50 text-emerald-500'
+                                                    : 'bg-slate-950 border-slate-800 text-slate-400 group-hover:text-cyan-500 group-hover:border-cyan-900'
+                                                    }`}>
+                                                    {isPassed ? 'COMPLETED' : (mission.level || 'SEMPLICE')}
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
                                 </div>
                             ) : (
                                 // Single Mission Action
