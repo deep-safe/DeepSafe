@@ -64,7 +64,7 @@ const ProvincePath: React.FC<ProvincePathProps> = ({
         if (isPassed) return 'rgba(6, 182, 212, 0.2)'; // Cyan
         if (isUnlocked) return 'rgba(59, 130, 246, 0.15)'; // Blue/Slate for unlocked but not passed
 
-        return 'rgba(15, 23, 42, 0.9)'; // Locked - Very Dark Slate
+        return 'rgba(0, 0, 0, 0.95)'; // Locked - Pitch Black / Void
     };
 
     const getStrokeColor = () => {
