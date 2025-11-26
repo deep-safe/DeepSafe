@@ -116,6 +116,51 @@ export interface Database {
                     }
                 ]
             }
+            shop_items: {
+                Row: {
+                    id: string
+                    name: string
+                    description: string
+                    icon: string
+                    cost: number
+                    type: string
+                    rarity: string
+                    stock: number | null
+                    is_limited: boolean
+                    effect_type: string
+                    effect_value: number | null
+                    created_at: string
+                }
+                Insert: {
+                    id: string
+                    name: string
+                    description: string
+                    icon: string
+                    cost: number
+                    type?: string
+                    rarity?: string
+                    stock?: number | null
+                    is_limited?: boolean
+                    effect_type?: string
+                    effect_value?: number | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    name?: string
+                    description?: string
+                    icon?: string
+                    cost?: number
+                    type?: string
+                    rarity?: string
+                    stock?: number | null
+                    is_limited?: boolean
+                    effect_type?: string
+                    effect_value?: number | null
+                    created_at?: string
+                }
+                Relationships: []
+            }
             badges: {
                 Row: {
                     id: string

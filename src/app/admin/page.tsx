@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { Database } from '@/types/supabase';
 import { useRouter } from 'next/navigation';
-import { Shield, Users, Coins, Search, Save, Ban, RefreshCw, Crown, Package, Medal, Zap, Trash2, Plus, X } from 'lucide-react';
+import { Shield, Users, Coins, Search, Save, Ban, RefreshCw, Crown, Package, Medal, Zap, Trash2, Plus, X, ShoppingCart } from 'lucide-react';
 import { BADGES_DATA } from '@/data/badgesData';
 
 // Initialize Supabase Client
@@ -239,6 +239,13 @@ export default function AdminPage() {
                     >
                         <Medal className="w-4 h-4" />
                         MANAGE BADGES
+                    </button>
+                    <button
+                        onClick={() => router.push('/admin/shop')}
+                        className="px-4 py-2 bg-yellow-900/30 border border-yellow-700/50 rounded hover:bg-yellow-900/50 text-yellow-400 font-mono text-xs transition-colors flex items-center gap-2"
+                    >
+                        <ShoppingCart className="w-4 h-4" />
+                        MANAGE SHOP
                     </button>
                     <button
                         onClick={handleResetDaily}

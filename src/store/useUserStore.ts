@@ -92,6 +92,18 @@ export const useUserStore = create<UserState>()(
                 const state = get();
                 if (state.credits < cost) return false;
 
+                // Fetch item details from DB to verify effect
+                const { data: itemData, error } = await supabase
+                    .from('shop_items')
+                    .select('*')
+                    .eq('id', itemId)
+                    .single();
+
+                if (error || !itemData) {
+                    console.error('Error fetching item details:', error);
+                    return false;
+                }
+
                 // Deduct credits
                 const newCredits = state.credits - cost;
 
@@ -99,21 +111,38 @@ export const useUserStore = create<UserState>()(
                 let newStreakFreezes = state.streakFreezes;
                 let newLives = state.lives;
                 let newInventory = [...state.inventory];
+                let newXp = state.xp;
 
-                if (itemId === 'streak_freeze') {
-                    newStreakFreezes += 1;
-                } else if (itemId === 'system_reboot') {
-                    newLives = state.maxLives;
-                } else {
-                    // Generic item added to inventory
-                    newInventory.push(itemId);
+                switch (itemData.effect_type) {
+                    case 'streak_freeze':
+                        newStreakFreezes += (itemData.effect_value || 1);
+                        break;
+                    case 'restore_lives':
+                        newLives = state.maxLives;
+                        break;
+                    case 'double_xp':
+                        // In a real app, we'd store an expiry timestamp in DB
+                        // For now, let's just add to inventory or handle as consumable
+                        newInventory.push(itemId);
+                        break;
+                    case 'mystery_box':
+                        // Logic handled in component for visual effect, but here we could grant random reward
+                        // For simplicity, we'll assume the component handles the "opening" and calls specific actions
+                        // But to be safe, let's just grant a small XP bonus if bought directly via store logic
+                        newXp += 50;
+                        break;
+                    default:
+                        // Generic item added to inventory
+                        newInventory.push(itemId);
+                        break;
                 }
 
                 set({
                     credits: newCredits,
                     streakFreezes: newStreakFreezes,
                     lives: newLives,
-                    inventory: newInventory
+                    inventory: newInventory,
+                    xp: newXp
                 });
 
                 try {
@@ -123,7 +152,8 @@ export const useUserStore = create<UserState>()(
                             credits: newCredits,
                             streak_freezes: newStreakFreezes,
                             current_hearts: newLives,
-                            inventory: newInventory
+                            inventory: newInventory,
+                            xp: newXp
                         }).eq('id', user.id);
                     }
                 } catch (err) { console.error('Error syncing purchase:', err); }
