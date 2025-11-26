@@ -43,8 +43,19 @@ The map is the central navigation hub.
 ## 🔥 Streak Logic
 
 Streaks are the primary retention metric.
-- **Definition**: Completing at least one lesson per 24-hour period.
+- **Definition**: Logging in consecutively every day (24-hour period).
+- **Daily Reward**: Upon the first login of the day, a "Streak Reward" modal appears with a fire animation to celebrate progress.
+- **Missed Day**: If you miss a day, the streak resets to 1.
 - **Streak Freeze**: An item purchasable in the Shop. If equipped, it automatically consumes itself to save your streak if you miss a day.
+
+## 🏆 Province Mastery
+
+The map reflects your skill level through a dynamic coloring system:
+- **Locked**: Dark Grey. Cannot be accessed yet.
+- **Unlocked**: Blue/Slate. Available to play.
+- **Passed (Cyan)**: You completed the mission but missed some questions.
+- **Perfect (Gold)**: You answered 100% of questions correctly. The province glows with a golden neon effect.
+- **High Score System**: The map always preserves your **best** performance. Replaying a mission and getting a lower score will NOT overwrite your Gold status.
 
 ## 🏅 Badges
 

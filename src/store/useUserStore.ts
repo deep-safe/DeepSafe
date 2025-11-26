@@ -17,11 +17,13 @@ interface UserState {
     lastRefillTime: number | null;
     unlockedProvinces: string[]; // IDs of unlocked provinces
     provinceScores: Record<string, { score: number; maxScore: number; isCompleted: boolean }>;
+    lastLoginDate: string | null; // ISO Date string YYYY-MM-DD
 
     // Actions
     addXp: (amount: number) => void;
     incrementStreak: () => void;
     resetStreak: () => void;
+    setLastLoginDate: (date: string) => void;
     decrementLives: () => void;
     addHeart: (amount: number) => void;
     refillLives: () => void;
@@ -46,6 +48,7 @@ export const useUserStore = create<UserState>()(
                 'IS': { score: 8, maxScore: 10, isCompleted: true },  // Mock Passed
                 'AQ': { score: 5, maxScore: 10, isCompleted: false }, // Mock In Progress
             },
+            lastLoginDate: null,
 
             addXp: (amount) => set((state) => ({ xp: state.xp + amount })),
             updateProvinceScore: async (id, score, maxScore, isCompleted) => {
@@ -79,8 +82,35 @@ export const useUserStore = create<UserState>()(
                     console.error('Error syncing province scores:', err);
                 }
             },
-            incrementStreak: () => set((state) => ({ streak: state.streak + 1 })),
-            resetStreak: () => set({ streak: 0 }),
+            incrementStreak: async () => {
+                const state = get();
+                const newStreak = state.streak + 1;
+                set({ streak: newStreak });
+                try {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (user) {
+                        await supabase.from('profiles').update({ highest_streak: newStreak }).eq('id', user.id);
+                    }
+                } catch (err) { console.error('Error syncing streak:', err); }
+            },
+            resetStreak: async () => {
+                set({ streak: 1 });
+                try {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (user) {
+                        await supabase.from('profiles').update({ highest_streak: 1 }).eq('id', user.id);
+                    }
+                } catch (err) { console.error('Error syncing streak:', err); }
+            },
+            setLastLoginDate: async (date) => {
+                set({ lastLoginDate: date });
+                try {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (user) {
+                        await supabase.from('profiles').update({ last_login: date }).eq('id', user.id);
+                    }
+                } catch (err) { console.error('Error syncing last login:', err); }
+            },
             decrementLives: async () => {
                 const state = get();
                 const newLives = Math.max(0, state.lives - 1);
@@ -148,12 +178,12 @@ export const useUserStore = create<UserState>()(
 
                     const { data: profile, error } = await supabase
                         .from('profiles')
-                        .select('xp, current_hearts, highest_streak, unlocked_provinces, province_scores')
+                        .select('xp, current_hearts, highest_streak, unlocked_provinces, province_scores, last_login')
                         .eq('id', user.id)
                         .single();
 
                     if (error) {
-                        console.error('Error refreshing profile:', error);
+                        console.error('Error refreshing profile:', JSON.stringify(error, null, 2));
                         return;
                     }
 
@@ -167,7 +197,8 @@ export const useUserStore = create<UserState>()(
                                 'CB': { score: 10, maxScore: 10, isCompleted: true },
                                 'IS': { score: 8, maxScore: 10, isCompleted: true },
                                 'AQ': { score: 5, maxScore: 10, isCompleted: false },
-                            }
+                            },
+                            lastLoginDate: profile.last_login ?? null
                         });
                         console.log('🔄 Profile refreshed from DB:', profile);
                     }

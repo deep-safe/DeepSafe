@@ -77,4 +77,3 @@ CRON_SECRET=tua_stringa_segreta_super_lunga
     *   **IMPORTANTE**: Modifica `YOUR_APP_URL` con l'URL del tuo sito (es. `https://tuo-progetto.vercel.app`) e `YOUR_CRON_SECRET` con la chiave generata sopra.
     *   Esegui lo script per schedulare il job.
 
----

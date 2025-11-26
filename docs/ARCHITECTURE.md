@@ -43,7 +43,10 @@ The central user record, linked 1:1 with `auth.users`.
 - `current_hearts` (Int): Current lives (Max 5).
 - `is_premium` (Bool): "Deepsafe Elite" status.
 - `streak_freeze_active` (Bool): Whether a freeze is equipped.
-- `highest_streak` (Int): Best daily streak record.
+- `highest_streak` (Int): Current daily streak count.
+- `last_login` (Text): ISO Date string (YYYY-MM-DD) of the last login.
+- `unlocked_provinces` (Array): List of unlocked province IDs.
+- `province_scores` (JSONB): Record of scores per province `{ "ID": { "score": 10, "maxScore": 10, "isCompleted": true } }`.
 
 ### `levels`
 Defines the content hierarchy.

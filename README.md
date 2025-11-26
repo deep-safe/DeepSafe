@@ -18,7 +18,15 @@ To democratize AI safety knowledge through gamification. We believe that learnin
 - **💰 Cyber Supply Depot**: A fully integrated Shop with Stripe payments (Subscriptions, Power-ups) and Ad-based rewards.
 - **📱 PWA Native Feel**: Installable on iOS and Android with offline capabilities and native-like navigation.
 
-## ⚡ Quick Start
+## 🚀 Recent Updates (Gamification & Persistence)
+
+- **Daily Streak System**: Tracks consecutive logins with a visual "Fire" reward modal. Syncs with Supabase to prevent data loss.
+- **Province Mastery**: Map provinces now glow Gold (Perfect) or Cyan (Passed) based on your quiz performance.
+- **Score Persistence**: Your best scores are saved to the database. Replaying a mission only updates the score if you improve.
+- **Regional View Persistence**: The map remembers which region you were viewing when you return from a mission.
+- **Tactical HUD**: A new "Scanner" interface for selecting and entering regions/provinces.
+
+## 🛠️ Tech Stack
 
 ### Prerequisites
 - **Node.js** (v18 or higher)

@@ -12,6 +12,8 @@ import { Lock, ArrowLeft, Map } from 'lucide-react';
 import { getRegionBoundingBox } from '@/utils/svgUtils';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useUserStore } from '@/store/useUserStore';
+import { useDailyStreak } from '@/hooks/useDailyStreak';
+import StreakRewardModal from './StreakRewardModal';
 
 const ITALY_VIEWBOX = "0 0 800 1000";
 
@@ -28,7 +30,13 @@ const ItalyMapDashboard: React.FC = () => {
     const initialRegionParam = searchParams.get('region');
 
     const [toast, setToast] = useState<{ message: string; type: 'info' | 'error' } | null>(null);
-    const { unlockedProvinces, provinceScores } = useUserStore();
+    const { unlockedProvinces, provinceScores, refreshProfile } = useUserStore();
+    const { streak: currentStreak, showModal: showStreakModal, closeModal: closeStreakModal } = useDailyStreak();
+
+    // Refresh profile on mount to sync with DB
+    React.useEffect(() => {
+        refreshProfile();
+    }, [refreshProfile]);
 
     // Merge static data with persisted unlocked status and scores
     const dynamicProvincesData = useMemo(() => {
@@ -307,6 +315,13 @@ const ItalyMapDashboard: React.FC = () => {
                     />
                 )}
             </AnimatePresence>
+
+            {/* Streak Reward Modal */}
+            <StreakRewardModal
+                isOpen={showStreakModal}
+                streak={currentStreak}
+                onClose={closeStreakModal}
+            />
 
             {/* Toast Notification */}
             <AnimatePresence>
