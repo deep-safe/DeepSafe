@@ -52,24 +52,14 @@ const ItalyMapSVG: React.FC<ItalyMapSVGProps> = ({
                 {!activeRegion && Object.entries(regions).map(([regionName, provinces]) => (
                     <g
                         key={regionName}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            // Click any province in the region to trigger region selection
-                            onProvinceClick(provinces[0]);
-                        }}
-                        onMouseEnter={() => {
-                            // Hover any province triggers region hover
-                            onProvinceHover(provinces[0]);
-                        }}
-                        onMouseLeave={() => onProvinceHover(null)}
                         className="cursor-pointer"
                     >
                         {provinces.map((province) => (
                             <ProvincePath
                                 key={province.id}
                                 province={province}
-                                onProvinceClick={() => { }} // Handled by group
-                                onProvinceHover={() => { }} // Handled by group
+                                onProvinceClick={onProvinceClick}
+                                onProvinceHover={onProvinceHover}
                                 isRegionMode={false}
                                 isRegionHovered={highlightedId === regionName}
                                 isProvinceHighlighted={false} // No individual highlight in Level 1

@@ -14,6 +14,12 @@ interface ProvinceModalProps {
 export default function ProvinceModal({ province, onClose }: ProvinceModalProps) {
     const router = useRouter();
 
+    const handleStartMission = () => {
+        // In a real app, this would use the province ID to fetch the specific mission
+        // For this demo, we'll route to a generic mission or use the province ID if we had data for it
+        router.push(`/training/mission-1`);
+    };
+
     if (!province) return null;
 
     const isLocked = province.status === 'locked';

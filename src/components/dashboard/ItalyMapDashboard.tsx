@@ -221,19 +221,23 @@ const ItalyMapDashboard: React.FC = () => {
                     panning={{ disabled: false }}
                     limitToBounds={true}
                     alignmentAnimation={{ sizeX: 0, sizeY: 0 }}
-                    onPanningStart={() => setSelectedTarget(null)}
                 >
                     <TransformComponent
                         wrapperClass="!w-full !h-full bg-slate-950"
                         contentClass="!w-full !h-full flex items-center justify-center"
                     >
-                        <ItalyMapSVG
-                            onProvinceClick={handleProvinceClick}
-                            onProvinceHover={handleProvinceHover}
-                            viewBox={viewBox}
-                            activeRegion={currentRegion}
-                            highlightedId={hoveredTarget?.type === 'REGION' ? hoveredTarget.id : (selectedTarget?.type === 'REGION' ? selectedTarget.id : (hoveredTarget?.id || selectedTarget?.id || null))}
-                        />
+                        <div
+                            className="w-full h-full flex items-center justify-center"
+                            onClick={() => setSelectedTarget(null)}
+                        >
+                            <ItalyMapSVG
+                                onProvinceClick={handleProvinceClick}
+                                onProvinceHover={handleProvinceHover}
+                                viewBox={viewBox}
+                                activeRegion={currentRegion}
+                                highlightedId={hoveredTarget?.type === 'REGION' ? hoveredTarget.id : (selectedTarget?.type === 'REGION' ? selectedTarget.id : (hoveredTarget?.id || selectedTarget?.id || null))}
+                            />
+                        </div>
                     </TransformComponent>
                 </TransformWrapper>
             </main>
