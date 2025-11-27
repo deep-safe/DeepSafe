@@ -256,7 +256,7 @@ export default function AdminShopPage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-mono text-slate-500 mb-1">Description</label>
+                                    <label className="block text-xs font-mono text-slate-500 mb-1">Description (Shown in Confirmation)</label>
                                     <textarea
                                         value={formData.description}
                                         onChange={e => setFormData({ ...formData, description: e.target.value })}
@@ -434,79 +434,7 @@ export default function AdminShopPage() {
                 </div>
             )}
 
-            {/* Loot Modal */}
-            {isLootModalOpen && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-slate-900 border border-slate-700 rounded-xl w-full max-w-lg overflow-hidden shadow-2xl">
-                        <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-800/50">
-                            <h3 className="font-orbitron font-bold text-white flex items-center gap-2">
-                                <Zap className="w-5 h-5 text-purple-400" />
-                                MANAGE LOOT TABLE
-                            </h3>
-                            <button onClick={() => setIsLootModalOpen(false)} className="text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
-                        </div>
-                        <div className="p-6">
-                            <div className="mb-6 space-y-2 max-h-60 overflow-y-auto">
-                                {lootTable.length === 0 && <p className="text-slate-500 italic text-sm">No loot defined. Defaults to 50 XP.</p>}
-                                {lootTable.map(loot => (
-                                    <div key={loot.id} className="flex items-center justify-between bg-slate-800 p-3 rounded-lg border border-slate-700">
-                                        <div>
-                                            <div className="font-bold text-white text-sm">{loot.description}</div>
-                                            <div className="text-xs text-slate-400 font-mono">
-                                                {loot.reward_type.toUpperCase()} +{loot.reward_value} | Weight: {loot.weight}
-                                            </div>
-                                        </div>
-                                        <button onClick={() => handleDeleteLoot(loot.id)} className="text-slate-500 hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
-                                    </div>
-                                ))}
-                            </div>
 
-                            <div className="pt-4 border-t border-slate-800">
-                                <h4 className="text-xs font-bold text-slate-400 mb-3 uppercase">Add New Reward</h4>
-                                <div className="grid grid-cols-2 gap-3 mb-3">
-                                    <select
-                                        value={newLoot.reward_type}
-                                        onChange={e => setNewLoot({ ...newLoot, reward_type: e.target.value })}
-                                        className="bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-sm"
-                                    >
-                                        <option value="xp">XP</option>
-                                        <option value="credits">Credits</option>
-                                        <option value="streak_freeze">Streak Freeze</option>
-                                        <option value="lives">Lives</option>
-                                    </select>
-                                    <input
-                                        type="number"
-                                        placeholder="Value"
-                                        value={newLoot.reward_value}
-                                        onChange={e => setNewLoot({ ...newLoot, reward_value: parseInt(e.target.value) })}
-                                        className="bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-sm"
-                                    />
-                                    <input
-                                        type="number"
-                                        placeholder="Weight"
-                                        value={newLoot.weight}
-                                        onChange={e => setNewLoot({ ...newLoot, weight: parseInt(e.target.value) })}
-                                        className="bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-sm"
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Description"
-                                        value={newLoot.description}
-                                        onChange={e => setNewLoot({ ...newLoot, description: e.target.value })}
-                                        className="bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-sm"
-                                    />
-                                </div>
-                                <button
-                                    onClick={handleAddLoot}
-                                    className="w-full py-2 bg-purple-600 hover:bg-purple-500 text-white rounded font-bold text-sm transition-colors"
-                                >
-                                    ADD REWARD
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

@@ -12,6 +12,7 @@ import { Database } from '@/types/supabase';
 // Stripe is handled via API redirect, no need to load it here
 // import { loadStripe } from '@stripe/stripe-js';
 import { MysteryBoxModal } from '@/components/shop/MysteryBoxModal';
+import { PurchaseConfirmationModal } from '@/components/shop/PurchaseConfirmationModal';
 
 // Initialize Supabase Client
 const supabase = createBrowserClient<Database>(
@@ -30,6 +31,10 @@ function ShopContent() {
     const [mysteryBoxOpen, setMysteryBoxOpen] = useState(false);
     const [shopItems, setShopItems] = useState<ShopItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    // Confirmation Modal State
+    const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+    const [itemToBuy, setItemToBuy] = useState<ShopItem | null>(null);
 
     // Calculate Map Progress for TopBar
     const totalProvinces = provincesData.length;
@@ -162,10 +167,10 @@ function ShopContent() {
         }
     };
 
-    const handleBuy = async (item: ShopItem) => {
-        // Check if it's a mystery box type
+    const handleBuyClick = (item: ShopItem) => {
+        // Check if it's a mystery box type - these have their own flow
         if (item.effect_type === 'mystery_box') {
-            await buyMysteryItem(item.id, item.cost);
+            buyMysteryItem(item.id, item.cost);
             return;
         }
 
@@ -175,18 +180,28 @@ function ShopContent() {
             return;
         }
 
-        setIsBuying(item.id);
-        const result = await buyItem(item.id, item.cost);
+        // Open Confirmation Modal
+        setItemToBuy(item);
+        setConfirmModalOpen(true);
+    };
+
+    const confirmPurchase = async () => {
+        if (!itemToBuy) return;
+
+        setIsBuying(itemToBuy.id);
+        const result = await buyItem(itemToBuy.id, itemToBuy.cost);
         setIsBuying(null);
+        setConfirmModalOpen(false);
 
         if (result.success) {
-            setFeedback({ type: 'success', message: `${item.name} acquistato!` });
+            setFeedback({ type: 'success', message: `${itemToBuy.name} acquistato con successo!` });
             // Refresh shop items to update stock
             fetchShopItems();
         } else {
             setFeedback({ type: 'error', message: result.message || 'Errore durante l\'acquisto.' });
         }
         setTimeout(() => setFeedback(null), 3000);
+        setItemToBuy(null);
     };
 
     const [mysteryReward, setMysteryReward] = useState<{ type: string; value: number } | null>(null);
@@ -302,7 +317,7 @@ function ShopContent() {
                                         </div>
                                     </div>
                                     <button
-                                        onClick={() => handleBuy(dailyDealItem)}
+                                        onClick={() => handleBuyClick(dailyDealItem)}
                                         className="ml-auto px-4 py-2 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-lg transition-colors font-orbitron text-sm"
                                     >
                                         COMPRA
@@ -342,6 +357,14 @@ function ShopContent() {
                             isOpening={!!isBuying && (isBuying === 'mystery_box' || shopItems.find(i => i.id === isBuying)?.effect_type === 'mystery_box')}
                         />
 
+                        <PurchaseConfirmationModal
+                            isOpen={confirmModalOpen}
+                            onClose={() => setConfirmModalOpen(false)}
+                            onConfirm={confirmPurchase}
+                            item={itemToBuy}
+                            isProcessing={!!isBuying}
+                        />
+
                         {/* Regular Items Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {regularItems.map(item => (
@@ -361,7 +384,7 @@ function ShopContent() {
                                     <p className="text-xs text-slate-400 mb-4 h-10 leading-relaxed overflow-hidden">{item.description}</p>
 
                                     <button
-                                        onClick={() => handleBuy(item)}
+                                        onClick={() => handleBuyClick(item)}
                                         disabled={isBuying === item.id || credits < item.cost}
                                         className={`w-full py-2 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all ${credits >= item.cost
                                             ? 'bg-slate-800 hover:bg-cyan-600 text-white hover:shadow-[0_0_15px_rgba(8,145,178,0.4)]'
