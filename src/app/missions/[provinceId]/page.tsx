@@ -8,6 +8,9 @@ import TopBar from '@/components/dashboard/TopBar';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { missionsData } from '@/data/missionsData';
 import { provincesData } from '@/data/provincesData';
+import { createBrowserClient } from '@supabase/ssr';
+import { Database } from '@/types/supabase';
+import { useSystemUI } from '@/context/SystemUIContext';
 
 import { useUserStore } from '@/store/useUserStore';
 
@@ -17,6 +20,12 @@ export default function MissionSelectionPage() {
     const provinceId = params.provinceId as string;
     const [selectedMissionId, setSelectedMissionId] = useState<string | null>(null);
     const { unlockedProvinces } = useUserStore();
+    const { openModal } = useSystemUI();
+
+    const supabase = createBrowserClient<Database>(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
 
     const province = provincesData.find(p => p.id === provinceId);
     const missions = missionsData[provinceId] || [];
@@ -40,6 +49,22 @@ export default function MissionSelectionPage() {
             case 'Hard': return 'text-red-400 border-red-400/30 bg-red-400/10';
             default: return 'text-gray-400';
         }
+    };
+
+    const handleStartMission = async (problemId: string) => {
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (!user) {
+            openModal({
+                title: 'Accesso Richiesto',
+                message: 'Devi effettuare l\'accesso per iniziare una missione e salvare i tuoi progressi.',
+                actionLabel: 'ACCEDI',
+                onAction: () => router.push('/login')
+            });
+            return;
+        }
+
+        router.push(`/training/${problemId}`);
     };
 
     return (
@@ -67,7 +92,7 @@ export default function MissionSelectionPage() {
                             animate={{ opacity: 1, x: 0 }}
                             className="flex flex-col"
                         >
-                            <span className="text-[10px] font-mono text-cyber-blue uppercase tracking-[0.2em] mb-1">Mission Control</span>
+                            <span className="text-[10px] font-mono text-cyber-blue uppercase tracking-[0.2em] mb-1">MISSIONI GIORNALIERE</span>
                             <h1 className="text-3xl font-orbitron font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-slate-400 drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
                                 {province.name}
                             </h1>
@@ -174,7 +199,13 @@ export default function MissionSelectionPage() {
                                                                 {problem.description}
                                                             </p>
 
-                                                            <button className="w-full py-3 rounded-xl bg-slate-700 group-hover:bg-cyber-blue text-white group-hover:text-slate-900 font-bold font-orbitron text-sm transition-all duration-300 shadow-lg group-hover:shadow-[0_0_20px_rgba(102,252,241,0.4)] flex items-center justify-center space-x-2">
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleStartMission(problem.id);
+                                                                }}
+                                                                className="w-full py-3 rounded-xl bg-slate-700 group-hover:bg-cyber-blue text-white group-hover:text-slate-900 font-bold font-orbitron text-sm transition-all duration-300 shadow-lg group-hover:shadow-[0_0_20px_rgba(102,252,241,0.4)] flex items-center justify-center space-x-2"
+                                                            >
                                                                 <span>RISOLVI ORA</span>
                                                                 <Zap className="w-4 h-4" />
                                                             </button>

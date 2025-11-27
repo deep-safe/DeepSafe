@@ -9,9 +9,7 @@ import {
     Edit2,
     Save,
     X,
-    Trophy,
-    Flame,
-    Zap,
+
     Users,
     Globe,
     Medal,
@@ -102,7 +100,7 @@ function SettingsToggle({ checked, onChange, color = 'blue' }: { checked: boolea
 
 export default function ProfilePage() {
     const router = useRouter();
-    const { earnedBadges, refreshProfile, settings, updateSettings, claimMission, inventory } = useUserStore();
+    const { earnedBadges, refreshProfile, settings, updateSettings, claimMission, inventory, ownedAvatars } = useUserStore();
 
     // Push Notifications
     const { isSupported, permission, subscribe, unsubscribe, loading: pushLoading } = usePushNotifications();
@@ -289,9 +287,7 @@ export default function ProfilePage() {
     if (loading) return <div className="flex items-center justify-center min-h-screen text-cyber-blue animate-pulse font-orbitron">INIZIALIZZAZIONE PROTOCOLLI IDENTITÀ...</div>;
 
     const currentLevel = Math.floor((profile?.xp || 0) / 100) + 1;
-    const nextLevelXp = currentLevel * 100;
-    const currentLevelXp = (profile?.xp || 0) - ((currentLevel - 1) * 100);
-    const progressPercent = Math.min(100, (currentLevelXp / 100) * 100);
+
 
     return (
         <div className="space-y-8 pb-32 relative">
@@ -338,7 +334,7 @@ export default function ProfilePage() {
                             {/* Avatar Container */}
                             <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-cyber-blue/50 shadow-[0_0_20px_rgba(102,252,241,0.3)] relative bg-black">
                                 <img
-                                    src={getAvatarById(profile?.avatar_url).src}
+                                    src={getAvatarById(profile?.avatar_url || null).src}
                                     alt="Avatar"
                                     className="w-full h-full object-cover"
                                 />
@@ -368,7 +364,7 @@ export default function ProfilePage() {
                                         <label className="text-[10px] text-cyber-blue font-mono uppercase tracking-widest">Seleziona Avatar</label>
                                         <AvatarSelector
                                             currentAvatarId={profile?.avatar_url || null}
-                                            userLevel={currentLevel}
+                                            ownedAvatars={ownedAvatars}
                                             onSelect={handleAvatarSelect}
                                             isUpdating={uploading}
                                         />
@@ -424,39 +420,7 @@ export default function ProfilePage() {
                                         </div>
                                     </div>
 
-                                    {/* XP Progress Bar */}
-                                    <div className="w-full max-w-xs mx-auto space-y-2 mt-4">
-                                        <div className="flex justify-between items-end px-1">
-                                            <div className="text-left">
-                                                <div className="text-[9px] font-bold tracking-widest text-cyber-gray uppercase">XP Correnti</div>
-                                                <div className="text-lg font-bold font-orbitron text-cyber-blue text-glow leading-none">{currentLevelXp}</div>
-                                            </div>
-                                            <div className="text-right">
-                                                <div className="text-[9px] font-bold tracking-widest text-cyber-gray uppercase">Prossimo Livello</div>
-                                                <div className="text-lg font-bold font-orbitron text-cyber-purple text-glow leading-none">{100}</div>
-                                            </div>
-                                        </div>
 
-                                        {/* Enhanced Progress Bar Container */}
-                                        <div className="h-3 bg-black/50 rounded-full overflow-hidden border border-white/10 relative">
-                                            {/* Background pattern */}
-                                            <div className="absolute inset-0 opacity-20 bg-[repeating-linear-gradient(45deg,transparent,transparent_5px,#000_5px,#000_10px)]" />
-
-                                            {/* Fill with gradient */}
-                                            <motion.div
-                                                className="absolute top-0 left-0 h-full bg-gradient-to-r from-cyber-blue via-cyber-purple to-cyber-blue shadow-[0_0_15px_rgba(69,162,158,0.6)]"
-                                                initial={{ width: 0 }}
-                                                animate={{ width: `${progressPercent}%` }}
-                                                transition={{ duration: 1, ease: "circOut" }}
-                                            >
-                                                {/* Leading Edge Shine */}
-                                                <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-white/80 shadow-[0_0_10px_white]" />
-
-                                                {/* Animated shimmer effect */}
-                                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
-                                            </motion.div>
-                                        </div>
-                                    </div>
 
                                     <p className="text-sm text-zinc-400 max-w-xs mx-auto italic font-mono leading-relaxed">
                                         "{editBio}"
@@ -475,35 +439,7 @@ export default function ProfilePage() {
                 </div>
             </div>
 
-            {/* Section B: Vitals Grid */}
-            <div className="grid grid-cols-3 gap-3">
-                <div className="bg-black/40 border border-cyber-gray/30 p-4 rounded-xl flex flex-col items-center justify-center gap-2 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-cyber-red/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Flame className="w-6 h-6 text-orange-500 animate-pulse" />
-                    <div className="text-center">
-                        <div className="text-2xl font-bold font-mono text-white">{profile?.highest_streak}</div>
-                        <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold">Serie Giorni</div>
-                    </div>
-                </div>
 
-                <div className="bg-black/40 border border-cyber-gray/30 p-4 rounded-xl flex flex-col items-center justify-center gap-2 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-cyber-purple/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Zap className="w-6 h-6 text-cyber-purple animate-pulse" />
-                    <div className="text-center">
-                        <div className="text-2xl font-bold font-mono text-white">{profile?.xp}</div>
-                        <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold">XP Totali</div>
-                    </div>
-                </div>
-
-                <div className="bg-black/40 border border-cyber-gray/30 p-4 rounded-xl flex flex-col items-center justify-center gap-2 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Trophy className="w-6 h-6 text-yellow-500 animate-pulse" />
-                    <div className="text-center">
-                        <div className="text-2xl font-bold font-mono text-white">#{profile?.rank || '-'}</div>
-                        <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold">Rango Globale</div>
-                    </div>
-                </div>
-            </div>
 
             {/* Section C: Settings */}
             <div className="bg-black/40 border border-cyber-gray/30 rounded-xl p-6 space-y-6 relative overflow-hidden">
@@ -646,7 +582,7 @@ export default function ProfilePage() {
 
                                 <div className="grid grid-cols-2 gap-4 w-full pt-4 border-t border-cyber-gray/20">
                                     <div className="text-center">
-                                        <div className="text-xs text-cyber-gray font-mono uppercase">BONUS XP</div>
+                                        <div className="text-xs text-cyber-gray font-mono uppercase">BONUS NC</div>
                                         <div className="text-xl font-bold text-cyber-green">+{selectedBadge.xp_bonus}</div>
                                     </div>
                                     <div className="text-center">

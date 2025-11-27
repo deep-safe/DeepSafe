@@ -4,7 +4,7 @@ export interface BadgeDefinition {
     description: string;
     icon: string;
     category: 'Region' | 'Streak' | 'XP' | 'Special';
-    xpReward: number;
+    xpReward: number; // NC Reward
     rarity: 'common' | 'rare' | 'legendary';
     condition: {
         type: 'region_master' | 'streak_milestone' | 'xp_milestone' | 'first_mission';
@@ -61,9 +61,9 @@ export const BADGES_DATA: BadgeDefinition[] = [
     {
         id: 'xp_1000',
         name: 'White Hat',
-        description: 'Guadagna 1.000 XP totali.',
+        description: 'Guadagna 1.000 NC totali.',
         icon: '🎩',
-        category: 'XP',
+        category: 'XP', // Keep category ID for now, but UI shows NC
         xpReward: 200,
         rarity: 'common',
         condition: { type: 'xp_milestone', value: 1000 }
@@ -71,7 +71,7 @@ export const BADGES_DATA: BadgeDefinition[] = [
     {
         id: 'xp_5000',
         name: 'Cyber Sentinel',
-        description: 'Guadagna 5.000 XP totali.',
+        description: 'Guadagna 5.000 NC totali.',
         icon: '🛡️',
         category: 'XP',
         xpReward: 500,

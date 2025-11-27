@@ -7,17 +7,18 @@ import { cn } from '@/lib/utils';
 
 interface AvatarSelectorProps {
     currentAvatarId: string | null;
-    userLevel: number;
+    ownedAvatars: string[];
     onSelect: (avatarId: string) => void;
     isUpdating: boolean;
 }
 
-export function AvatarSelector({ currentAvatarId, userLevel, onSelect, isUpdating }: AvatarSelectorProps) {
+export function AvatarSelector({ currentAvatarId, ownedAvatars, onSelect, isUpdating }: AvatarSelectorProps) {
     return (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {AVATARS.map((avatar) => {
-                const isLocked = userLevel < avatar.minLevel;
-                const isSelected = currentAvatarId === avatar.id || (!currentAvatarId && avatar.id === 'avatar_rookie');
+                const isOwned = ownedAvatars.includes(avatar.id) || avatar.isDefault;
+                const isLocked = !isOwned;
+                const isSelected = currentAvatarId === avatar.id || (!currentAvatarId && avatar.isDefault);
 
                 return (
                     <motion.button
@@ -74,7 +75,7 @@ export function AvatarSelector({ currentAvatarId, userLevel, onSelect, isUpdatin
 
                             {isLocked ? (
                                 <p className="text-[10px] text-red-400 font-mono mt-1">
-                                    Lvl {avatar.minLevel} Required
+                                    Locked
                                 </p>
                             ) : (
                                 <p className={cn(

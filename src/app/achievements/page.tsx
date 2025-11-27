@@ -59,7 +59,7 @@ export default function AchievementsPage() {
                 <section className="space-y-4">
                     <div className="flex items-center gap-2 text-cyber-blue mb-2">
                         <Shield className="w-5 h-5" />
-                        <h2 className="font-bold font-orbitron tracking-wide text-sm">MISSION CONTROL</h2>
+                        <h2 className="font-bold font-orbitron tracking-wide text-sm">MISSIONI GIORNALIERE</h2>
                     </div>
 
                     <div className="grid gap-3">

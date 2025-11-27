@@ -110,7 +110,7 @@ export default function TrainingPillPage() {
 
         if (isCorrect) {
             setScore(prev => prev + 1);
-            // XP is now awarded at the end via completeLevel
+            // NC is now awarded at the end via completeLevel
         } else {
             decrementLives(); // Penalty
         }
@@ -124,7 +124,7 @@ export default function TrainingPillPage() {
         } else {
             // Mission Complete
             if (provinceId) {
-                unlockProvince(provinceId); // This is still client-side but less critical than XP/Score. Ideally move to RPC too.
+                unlockProvince(provinceId); // This is still client-side but less critical than NC/Score. Ideally move to RPC too.
 
                 // Secure Server-Side Completion
                 completeLevel(lesson.id, score, lesson.xpReward);
@@ -336,7 +336,7 @@ export default function TrainingPillPage() {
                                     <span className="text-2xl font-bold text-cyan-400">{score}/{lesson.questions.length}</span>
                                 </div>
                                 <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800">
-                                    <span className="text-xs text-slate-500 uppercase block mb-1">XP Guadagnati</span>
+                                    <span className="text-xs text-slate-500 uppercase block mb-1">NC Guadagnati</span>
                                     <span className="text-2xl font-bold text-amber-400">+{lesson.xpReward}</span>
                                 </div>
                             </div>

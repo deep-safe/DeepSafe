@@ -152,7 +152,7 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                                     </div>
                                                     <div className="flex items-center gap-3 text-[10px] font-mono text-slate-500">
                                                         <span className="flex items-center gap-1">
-                                                            <span className="text-amber-500">★</span> {mission.xpReward} XP
+                                                            <span className="text-amber-500">★</span> {mission.xpReward} NC
                                                         </span>
                                                         <span className="flex items-center gap-1">
                                                             <span>⏱</span> {mission.estimatedTime}
@@ -182,7 +182,7 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                 >
                                     <div className="flex items-center justify-between relative z-10">
                                         <div className="flex flex-col items-start">
-                                            <span className="text-xs font-orbitron text-cyan-500 mb-1">MISSIONE PRINCIPALE</span>
+                                            <div className="text-xs text-cyber-gray font-mono uppercase">BONUS NC</div>
                                             <span className="text-lg font-bold text-white">AVVIA MISSIONE</span>
                                         </div>
                                         <div className="h-10 w-10 rounded-full bg-cyan-500/10 flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-black transition-all">

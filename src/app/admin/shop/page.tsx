@@ -153,65 +153,71 @@ export default function AdminShopPage() {
             label: formData.label || null
         } as ShopItem;
 
-        if (editingItem) {
-            // Update
-            const { error } = await supabase
-                .from('shop_items')
-                .update(itemData)
-                .eq('id', editingItem.id);
-
-            if (error) {
-                alert('Error updating item');
-                return;
+        try {
+            let response;
+            if (editingItem) {
+                // Update via API
+                response = await fetch('/api/admin/shop/update', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: editingItem.id,
+                        itemData,
+                        lootData: formData.effect_type === 'mystery_box' ? currentLoot : []
+                    })
+                });
+            } else {
+                // Create via API
+                response = await fetch('/api/admin/shop/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        itemData,
+                        lootData: formData.effect_type === 'mystery_box' ? currentLoot : []
+                    })
+                });
             }
-        } else {
-            // Create
-            const { error } = await supabase
-                .from('shop_items')
-                .insert(itemData);
 
-            if (error) {
-                alert('Error creating item: ' + error.message);
-                return;
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Operation failed');
             }
+
+            setIsModalOpen(false);
+            checkAdminAndFetchItems();
+        } catch (error: any) {
+            alert('Error saving item: ' + error.message);
         }
-
-        // Save Loot if Mystery Box
-        if (formData.effect_type === 'mystery_box') {
-            // 1. Delete existing loot for this box
-            await supabase.from('mystery_box_loot').delete().eq('box_id', formData.id);
-
-            // 2. Insert new loot
-            if (currentLoot.length > 0) {
-                const lootToInsert = currentLoot.map(l => ({
-                    box_id: formData.id!,
-                    reward_type: l.reward_type,
-                    reward_value: l.reward_value,
-                    weight: l.weight,
-                    description: l.description
-                }));
-
-                const { error: lootError } = await supabase.from('mystery_box_loot').insert(lootToInsert);
-                if (lootError) console.error('Error saving loot:', lootError);
-            }
-        }
-
-        setIsModalOpen(false);
-        checkAdminAndFetchItems();
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this item?')) return;
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<ShopItem | null>(null);
 
-        const { error } = await supabase
-            .from('shop_items')
-            .delete()
-            .eq('id', id);
+    const handleDelete = (item: ShopItem) => {
+        setItemToDelete(item);
+        setDeleteModalOpen(true);
+    };
 
-        if (!error) {
+    const confirmDelete = async () => {
+        if (!itemToDelete) return;
+
+        try {
+            const response = await fetch(`/api/admin/shop/delete?id=${encodeURIComponent(itemToDelete.id)}`, {
+                method: 'DELETE'
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Delete failed');
+            }
+
             checkAdminAndFetchItems();
-        } else {
-            alert('Error deleting item');
+            setDeleteModalOpen(false);
+            setItemToDelete(null);
+        } catch (error: any) {
+            alert('Error deleting item: ' + error.message);
         }
     };
 
@@ -256,7 +262,7 @@ export default function AdminShopPage() {
                                     <button onClick={() => handleOpenModal(item)} className="p-1.5 bg-slate-800 text-cyan-400 rounded hover:bg-slate-700">
                                         <Save className="w-4 h-4" />
                                     </button>
-                                    <button onClick={() => handleDelete(item.id)} className="p-1.5 bg-slate-800 text-red-400 rounded hover:bg-slate-700">
+                                    <button onClick={() => handleDelete(item)} className="p-1.5 bg-slate-800 text-red-400 rounded hover:bg-slate-700">
                                         <Trash2 className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -307,7 +313,7 @@ export default function AdminShopPage() {
                                 <button onClick={() => handleOpenModal(item)} className="p-1.5 bg-slate-800 text-cyan-400 rounded hover:bg-slate-700">
                                     <Save className="w-4 h-4" />
                                 </button>
-                                <button onClick={() => handleDelete(item.id)} className="p-1.5 bg-slate-800 text-red-400 rounded hover:bg-slate-700">
+                                <button onClick={() => handleDelete(item)} className="p-1.5 bg-slate-800 text-red-400 rounded hover:bg-slate-700">
                                     <Trash2 className="w-4 h-4" />
                                 </button>
                             </div>
@@ -571,7 +577,39 @@ export default function AdminShopPage() {
                 </div>
             )}
 
+            {/* Delete Confirmation Modal */}
+            {deleteModalOpen && itemToDelete && (
+                <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[100] p-4">
+                    <div className="bg-slate-900 border border-red-500/50 rounded-2xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(239,68,68,0.2)]">
+                        <div className="p-6 text-center">
+                            <div className="w-16 h-16 bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/30">
+                                <Trash2 className="w-8 h-8 text-red-500" />
+                            </div>
+                            <h3 className="text-xl font-bold text-white font-orbitron mb-2">DELETE ITEM?</h3>
+                            <p className="text-slate-400 text-sm mb-6">
+                                Are you sure you want to permanently delete <span className="text-white font-bold">{itemToDelete.name}</span>?
+                                <br />
+                                <span className="text-red-400 font-bold mt-2 block">This action cannot be undone.</span>
+                            </p>
 
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setDeleteModalOpen(false)}
+                                    className="flex-1 py-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors"
+                                >
+                                    CANCEL
+                                </button>
+                                <button
+                                    onClick={confirmDelete}
+                                    className="flex-1 py-3 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold transition-colors shadow-lg shadow-red-900/20"
+                                >
+                                    DELETE PERMANENTLY
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

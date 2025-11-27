@@ -32,233 +32,34 @@ export default function AdminMissionsPage() {
     // Filters
     const [selectedRegion, setSelectedRegion] = useState('');
     const [selectedLevel, setSelectedLevel] = useState('');
+    const [selectedProvince, setSelectedProvince] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
 
-    // Wizard State
-    const [step, setStep] = useState(1);
-    const [formData, setFormData] = useState<Partial<Mission>>({
-        title: '',
-        content: '',
-        xp_reward: 100,
-        estimated_time: '5 min',
-        region: '',
-        province_id: '',
-        level: 'SEMPLICE',
-        description: ''
-    });
-    const [questions, setQuestions] = useState<Partial<MissionQuestion>[]>([]);
+    // ... (Wizard State)
 
-    useEffect(() => {
-        checkAdminAndFetchMissions();
-    }, []);
+    // ... (useEffect)
 
-    const checkAdminAndFetchMissions = async () => {
-        setIsLoading(true);
-        const { data: { user } } = await supabase.auth.getUser();
+    // ... (checkAdminAndFetchMissions)
 
-        if (!user) {
-            router.push('/');
-            return;
-        }
+    // ... (handleOpenModal)
 
-        // Check if user is admin
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('is_admin')
-            .eq('id', user.id)
-            .single();
+    // ... (handleAddQuestion)
 
-        if (!profile?.is_admin) {
-            router.push('/');
-            return;
-        }
+    // ... (updateQuestion)
 
-        // Fetch missions
-        const { data: allMissions, error } = await supabase
-            .from('missions')
-            .select('*')
-            .order('created_at', { ascending: false });
+    // ... (updateOption)
 
-        if (!error) {
-            setMissions(allMissions || []);
-        }
-        setIsLoading(false);
-    };
+    // ... (handleImageUpload)
 
-    const handleOpenModal = async (mission?: Mission) => {
-        if (mission) {
-            // Edit Mode
-            setFormData(mission);
+    // ... (handleSave)
 
-            // Fetch questions
-            const { data: qData } = await supabase
-                .from('mission_questions')
-                .select('*')
-                .eq('mission_id', mission.id)
-                .order('created_at', { ascending: true });
-
-            setQuestions(qData || []);
-        } else {
-            // Create Mode
-            setFormData({
-                title: '',
-                content: '# Mission Briefing\n\nWrite your lecture here...',
-                xp_reward: 100,
-                estimated_time: '5 min',
-                region: REGIONS[0],
-                province_id: '',
-                level: 'SEMPLICE',
-                description: ''
-            });
-            setQuestions([]);
-        }
-        setStep(1);
-        setIsModalOpen(true);
-    };
-
-    const handleAddQuestion = (type: 'multiple_choice' | 'true_false' | 'image_true_false' = 'multiple_choice') => {
-        const initialOptions = type === 'multiple_choice'
-            ? ['', '', '', '']
-            : ['Vero', 'Falso'];
-
-        setQuestions([...questions, {
-            text: '',
-            options: initialOptions,
-            correct_answer: 0,
-            explanation: '',
-            type: type,
-            image_url: ''
-        }]);
-    };
-
-    const updateQuestion = (index: number, field: keyof MissionQuestion, value: any) => {
-        const newQuestions = [...questions];
-        newQuestions[index] = { ...newQuestions[index], [field]: value };
-        setQuestions(newQuestions);
-    };
-
-    const updateOption = (qIndex: number, oIndex: number, value: string) => {
-        const newQuestions = [...questions];
-        const newOptions = [...(newQuestions[qIndex].options as string[])];
-        newOptions[oIndex] = value;
-        newQuestions[qIndex].options = newOptions;
-        setQuestions(newQuestions);
-    };
-
-    const handleImageUpload = async (file: File, index: number) => {
-        try {
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-            const filePath = `${fileName}`;
-
-            const { error: uploadError } = await supabase.storage
-                .from('mission-images')
-                .upload(filePath, file);
-
-            if (uploadError) {
-                throw uploadError;
-            }
-
-            const { data } = supabase.storage
-                .from('mission-images')
-                .getPublicUrl(filePath);
-
-            updateQuestion(index, 'image_url', data.publicUrl);
-        } catch (error: any) {
-            alert('Error uploading image: ' + error.message);
-        }
-    };
-
-    const handleSave = async () => {
-        if (!formData.title || !formData.content) {
-            alert('Title and Content are required');
-            return;
-        }
-
-        let missionId = formData.id;
-
-        if (missionId) {
-            // UPDATE
-            const { error: updateError } = await supabase
-                .from('missions')
-                .update({
-                    title: formData.title,
-                    content: formData.content,
-                    xp_reward: formData.xp_reward,
-                    estimated_time: formData.estimated_time,
-                    region: formData.region,
-                    province_id: formData.province_id,
-                    level: formData.level,
-                    description: formData.description
-                })
-                .eq('id', missionId);
-
-            if (updateError) {
-                alert('Error updating mission: ' + updateError.message);
-                return;
-            }
-
-            // Delete old questions (simple strategy: replace all)
-            await supabase.from('mission_questions').delete().eq('mission_id', missionId);
-        } else {
-            // INSERT
-            const { data: missionData, error: missionError } = await supabase
-                .from('missions')
-                .insert({
-                    title: formData.title,
-                    content: formData.content,
-                    xp_reward: formData.xp_reward,
-                    estimated_time: formData.estimated_time,
-                    region: formData.region,
-                    province_id: formData.province_id,
-                    level: formData.level,
-                    description: formData.description
-                } as any)
-                .select()
-                .single();
-
-            if (missionError || !missionData) {
-                alert('Error creating mission: ' + missionError?.message);
-                return;
-            }
-            missionId = missionData.id;
-        }
-
-        // Create Questions
-        if (questions.length > 0 && missionId) {
-            const questionsToInsert = questions.map(q => ({
-                mission_id: missionId,
-                text: q.text,
-                options: q.options,
-                correct_answer: q.correct_answer,
-                explanation: q.explanation,
-                type: q.type,
-                image_url: q.image_url
-            }));
-
-            const { error: questionsError } = await supabase
-                .from('mission_questions')
-                .insert(questionsToInsert as any);
-
-            if (questionsError) {
-                alert('Error creating questions: ' + questionsError.message);
-            }
-        }
-
-        setIsModalOpen(false);
-        checkAdminAndFetchMissions();
-    };
-
-    const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure? This will delete the mission and all its questions.')) return;
-        await supabase.from('missions').delete().eq('id', id);
-        checkAdminAndFetchMissions();
-    };
+    // ... (handleDelete)
 
     if (isLoading) return <div className="min-h-screen bg-black flex items-center justify-center text-cyan-500 font-mono">LOADING MISSIONS...</div>;
 
     const filteredMissions = missions.filter(m => {
         if (selectedRegion && m.region !== selectedRegion) return false;
+        if (selectedProvince && m.province_id !== selectedProvince) return false;
         if (selectedLevel && m.level !== selectedLevel) return false;
         if (searchQuery && !m.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
         return true;
@@ -266,6 +67,7 @@ export default function AdminMissionsPage() {
 
     const resetFilters = () => {
         setSelectedRegion('');
+        setSelectedProvince('');
         setSelectedLevel('');
         setSearchQuery('');
     };
@@ -308,11 +110,27 @@ export default function AdminMissionsPage() {
 
                 <select
                     value={selectedRegion}
-                    onChange={(e) => setSelectedRegion(e.target.value)}
+                    onChange={(e) => {
+                        setSelectedRegion(e.target.value);
+                        setSelectedProvince(''); // Reset province when region changes
+                    }}
                     className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-cyan-500 outline-none text-slate-300"
                 >
                     <option value="">All Regions</option>
                     {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
+                </select>
+
+                <select
+                    value={selectedProvince}
+                    onChange={(e) => setSelectedProvince(e.target.value)}
+                    className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-cyan-500 outline-none text-slate-300"
+                    disabled={!selectedRegion}
+                >
+                    <option value="">All Provinces</option>
+                    {selectedRegion && provincesData
+                        .filter(p => p.region === selectedRegion)
+                        .map(p => <option key={p.id} value={p.id}>{p.name}</option>)
+                    }
                 </select>
 
                 <select
@@ -326,7 +144,7 @@ export default function AdminMissionsPage() {
                     <option value="BOSS">BOSS</option>
                 </select>
 
-                {(selectedRegion || selectedLevel || searchQuery) && (
+                {(selectedRegion || selectedProvince || selectedLevel || searchQuery) && (
                     <button
                         onClick={resetFilters}
                         className="flex items-center gap-2 px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors text-sm"
@@ -349,7 +167,7 @@ export default function AdminMissionsPage() {
                                 <h3 className="font-bold text-white text-lg">{mission.title}</h3>
                             </div>
                             <div className="flex items-center gap-4 text-sm text-slate-500 font-mono">
-                                <span className="flex items-center gap-1"><Award className="w-4 h-4 text-yellow-500" /> {mission.xp_reward} XP</span>
+                                <span className="flex items-center gap-1"><Award className="w-4 h-4 text-yellow-500" /> {mission.xp_reward} NC</span>
                                 <span className="flex items-center gap-1"><Clock className="w-4 h-4 text-cyan-500" /> {mission.estimated_time}</span>
                             </div>
                         </div>
@@ -440,7 +258,7 @@ export default function AdminMissionsPage() {
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-mono text-slate-500 mb-1">XP Reward</label>
+                                            <label className="block text-xs font-mono text-slate-500 mb-1">NC Reward</label>
                                             <input
                                                 type="number"
                                                 value={formData.xp_reward}

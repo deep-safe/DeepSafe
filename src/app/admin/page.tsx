@@ -126,6 +126,28 @@ export default function AdminPage() {
         }
     };
 
+    const handleDeleteUser = async (id: string) => {
+        if (!confirm('DANGER: Are you sure you want to PERMANENTLY DELETE this user? This action cannot be undone.')) return;
+
+        try {
+            const response = await fetch(`/api/admin/users/delete?userId=${id}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Delete failed');
+            }
+
+            // Remove from local state
+            setUsers(users.filter(u => u.id !== id));
+            alert('User deleted successfully.');
+        } catch (error: any) {
+            console.error('Delete error:', error);
+            alert(`Failed to delete user: ${error.message}`);
+        }
+    };
+
     const handleTogglePremium = async (user: Profile) => {
         const newStatus = !user.is_premium;
         const { error } = await supabase
@@ -408,7 +430,7 @@ export default function AdminPage() {
                             <tr className="bg-slate-950 text-slate-500 text-xs font-mono uppercase tracking-wider">
                                 <th className="p-4 border-b border-slate-800">User</th>
                                 <th className="p-4 border-b border-slate-800">Status</th>
-                                <th className="p-4 border-b border-slate-800">XP</th>
+                                <th className="p-4 border-b border-slate-800">Lifetime NC</th>
                                 <th className="p-4 border-b border-slate-800">Credits</th>
                                 <th className="p-4 border-b border-slate-800">Streak</th>
                                 <th className="p-4 border-b border-slate-800">Last Login</th>
@@ -495,8 +517,11 @@ export default function AdminPage() {
                                                 <button onClick={() => handleEdit(user)} className="p-1.5 hover:bg-slate-800 rounded text-cyan-400 transition-colors">
                                                     Edit
                                                 </button>
-                                                <button onClick={() => handleBan(user.id)} className="p-1.5 hover:bg-red-900/30 rounded text-red-500 transition-colors" title="Reset User">
+                                                <button onClick={() => handleBan(user.id)} className="p-1.5 hover:bg-orange-900/30 rounded text-orange-500 transition-colors" title="Reset User">
                                                     <Ban className="w-4 h-4" />
+                                                </button>
+                                                <button onClick={() => handleDeleteUser(user.id)} className="p-1.5 hover:bg-red-900/30 rounded text-red-500 transition-colors" title="Delete User Permanently">
+                                                    <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>
                                         )}

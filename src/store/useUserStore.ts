@@ -27,6 +27,7 @@ interface UserState {
     earnedBadges: { id: string; earned_at: string }[];
     streakFreezes: number;
     inventory: string[]; // List of item IDs
+    ownedAvatars: string[]; // List of owned avatar IDs
     hasSeenTutorial: boolean;
     settings: {
         notifications: boolean;
@@ -51,6 +52,7 @@ interface UserState {
     refillLives: () => Promise<void>;
     setInfiniteLives: (active: boolean) => void;
     unlockProvince: (id: string) => Promise<void>;
+    unlockAvatar: (id: string) => Promise<void>;
     updateProvinceScore: (id: string, score: number, maxScore: number, isCompleted: boolean) => Promise<void>;
     updateMissionScore: (provinceId: string, missionId: string, score: number, maxScore: number, isCompleted: boolean) => Promise<void>;
     refreshProfile: () => Promise<void>;
@@ -74,6 +76,7 @@ export const useUserStore = create<UserState>()(
             earnedBadges: [],
             streakFreezes: 0,
             inventory: [],
+            ownedAvatars: ['avatar_rookie'], // Default avatar
             hasSeenTutorial: false,
             lastBadgeCheck: null,
             settings: {
@@ -164,6 +167,8 @@ export const useUserStore = create<UserState>()(
                     }
 
                     await get().refreshProfile();
+                    // Dual Ledger: XP is now Lifetime NC, Credits are spendable wallet
+                    // The RPC updates both.
                     return true;
                 } catch (err) {
                     console.error('Unexpected error completing level:', err);
@@ -441,6 +446,25 @@ export const useUserStore = create<UserState>()(
                     console.error('Error syncing unlocked provinces:', err);
                 }
             },
+            unlockAvatar: async (id) => {
+                const state = get();
+                if (state.ownedAvatars.includes(id)) return;
+
+                const newOwned = [...state.ownedAvatars, id];
+                set({ ownedAvatars: newOwned });
+
+                try {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (user) {
+                        await supabase
+                            .from('profiles')
+                            .update({ owned_avatars: newOwned })
+                            .eq('id', user.id);
+                    }
+                } catch (err) {
+                    console.error('Error syncing owned avatars:', err);
+                }
+            },
             refreshProfile: async () => {
                 try {
                     const { data: { user } } = await supabase.auth.getUser();
@@ -448,7 +472,7 @@ export const useUserStore = create<UserState>()(
 
                     const { data: profile, error } = await supabase
                         .from('profiles')
-                        .select('xp, current_hearts, highest_streak, unlocked_provinces, province_scores, last_login, earned_badges, credits, streak_freezes, inventory, settings_notifications, settings_sound, settings_haptics, has_seen_tutorial')
+                        .select('xp, current_hearts, highest_streak, unlocked_provinces, province_scores, last_login, earned_badges, credits, streak_freezes, inventory, owned_avatars, settings_notifications, settings_sound, settings_haptics, has_seen_tutorial')
                         .eq('id', user.id)
                         .single();
 
@@ -469,6 +493,7 @@ export const useUserStore = create<UserState>()(
                             earnedBadges: (profile.earned_badges as any) ?? [],
                             streakFreezes: profile.streak_freezes ?? 0,
                             inventory: (profile.inventory as any) ?? [],
+                            ownedAvatars: (profile.owned_avatars as any) ?? ['avatar_rookie'],
                             settings: {
                                 notifications: profile.settings_notifications ?? true,
                                 sound: profile.settings_sound ?? true,

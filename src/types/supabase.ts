@@ -26,8 +26,9 @@ export interface Database {
                     inventory: Json
                     is_admin: boolean
                     last_login: string | null
+                    owned_avatars: string[] | null
                     earned_badges: Json
-                    province_scores: Json
+                    province_scores: Json | null
                     settings_notifications: boolean | null
                     settings_sound: boolean | null
                     settings_haptics: boolean | null

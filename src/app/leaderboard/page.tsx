@@ -213,7 +213,7 @@ export default function LeaderboardPage() {
                                 : "text-zinc-600 hover:text-zinc-400"
                         )}
                     >
-                        <Users className="w-4 h-4" /> Squadra
+                        <Users className="w-4 h-4" /> AMICI
                     </button>
                 </div>
 

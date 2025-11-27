@@ -17,7 +17,7 @@ export interface TrainingLesson {
     title: string;
     content: string; // Markdown or HTML content
     questions: QuizQuestion[];
-    xpReward: number;
+    xpReward: number; // Actually NC Reward
     estimatedTime: string; // e.g., "5 min"
     level?: 'TUTORIAL' | 'SEMPLICE' | 'DIFFICILE' | 'BOSS';
     description?: string;
