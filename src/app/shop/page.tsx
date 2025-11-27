@@ -185,8 +185,38 @@ function ShopContent() {
         setConfirmModalOpen(true);
     };
 
+    // Wrapper for the specific "Cassa Crittografata" section
+    const handleMysteryBoxSection = () => {
+        const mysteryBoxItem = shopItems.find(i => i.id === 'mystery_box') || {
+            id: 'mystery_box',
+            name: 'Cassa Crittografata',
+            description: 'Tenta la fortuna! Contiene premi casuali.',
+            cost: 50,
+            icon: '🎁',
+            effect_type: 'mystery_box'
+        } as ShopItem;
+
+        if (credits < mysteryBoxItem.cost) {
+            setFeedback({ type: 'error', message: 'Crediti insufficienti!' });
+            setTimeout(() => setFeedback(null), 3000);
+            return;
+        }
+
+        setItemToBuy(mysteryBoxItem);
+        setConfirmModalOpen(true);
+    };
+
+    // Modified confirmPurchase to handle Mystery Box specifically
     const confirmPurchase = async () => {
         if (!itemToBuy) return;
+
+        // If it's a mystery box, close confirm modal and open mystery box modal
+        if (itemToBuy.effect_type === 'mystery_box') {
+            setConfirmModalOpen(false);
+            buyMysteryItem(itemToBuy.id, itemToBuy.cost);
+            setItemToBuy(null);
+            return;
+        }
 
         setIsBuying(itemToBuy.id);
         const result = await buyItem(itemToBuy.id, itemToBuy.cost);
@@ -205,11 +235,6 @@ function ShopContent() {
     };
 
     const [mysteryReward, setMysteryReward] = useState<{ type: string; value: number } | null>(null);
-
-    // Wrapper for the specific "Cassa Crittografata" section
-    const handleMysteryBoxSection = () => {
-        buyMysteryItem('mystery_box', 50);
-    };
 
     // Filter items for display
     // Hide items that are limited AND have 0 or less stock
@@ -260,13 +285,13 @@ function ShopContent() {
                         {/* Credit Packs Section */}
                         <section className="grid grid-cols-3 gap-4 mb-8">
                             <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 flex flex-col items-center text-center hover:border-cyan-500 transition-colors group relative overflow-hidden">
-                                <div className="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                                 <Coins className="w-8 h-8 text-cyan-400 mb-2" />
                                 <h3 className="font-bold text-white text-sm">500 NC</h3>
                                 <p className="text-xs text-slate-400 mb-3">Pacchetto Base</p>
                                 <button
                                     onClick={() => handleBuyCredits('small')}
-                                    className="w-full py-1.5 bg-slate-800 hover:bg-cyan-600 text-white text-xs font-bold rounded transition-colors"
+                                    className="relative z-10 w-full py-1.5 bg-slate-800 hover:bg-cyan-600 text-white text-xs font-bold rounded transition-colors"
                                 >
                                     €4.99
                                 </button>
@@ -329,7 +354,7 @@ function ShopContent() {
 
                         {/* Mystery Box */}
                         <section className="relative overflow-hidden rounded-2xl border border-purple-500/30 bg-gradient-to-br from-purple-950/20 to-slate-900 p-6 text-center">
-                            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+                            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10 pointer-events-none" />
                             <Gift className={`w-12 h-12 text-purple-400 mx-auto mb-4 ${isBuying === 'mystery_box' ? 'animate-bounce' : ''}`} />
                             <h3 className="text-xl font-bold text-white font-orbitron mb-2">Cassa Crittografata</h3>
                             <p className="text-sm text-slate-400 mb-6">Tenta la fortuna! Contiene premi casuali.</p>
@@ -337,7 +362,7 @@ function ShopContent() {
                             <button
                                 onClick={handleMysteryBoxSection}
                                 disabled={isBuying === 'mystery_box'}
-                                className="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)] flex items-center justify-center gap-2"
+                                className="relative z-10 w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)] flex items-center justify-center gap-2 cursor-pointer active:scale-95"
                             >
                                 {isBuying === 'mystery_box' ? 'DECRITTAZIONE...' : (
                                     <>
