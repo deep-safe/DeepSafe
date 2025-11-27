@@ -276,6 +276,9 @@ export default function AdminAvatarsPage() {
                                     )}
                                 </div>
                             </div>
+                            <p className="text-center text-xs text-slate-500 font-mono mb-6">
+                                Recommended: 512x512px (Square)
+                            </p>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
