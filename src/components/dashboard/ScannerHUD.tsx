@@ -45,11 +45,7 @@ const ScannerHUD: React.FC<ScannerHUDProps> = ({ target, onAction, actionLabel, 
                     className="relative overflow-hidden rounded-xl border border-slate-700/50 bg-black/60 backdrop-blur-md shadow-lg"
                 >
                     {/* Scanner Line Animation */}
-                    <motion.div
-                        className="absolute top-0 left-0 w-full h-[1px] bg-cyan-500/50 shadow-[0_0_10px_#06b6d4]"
-                        animate={{ top: ['0%', '100%', '0%'] }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                    />
+                    <div className="absolute top-0 left-0 w-full h-[1px] bg-cyan-500/50 shadow-[0_0_10px_#06b6d4] animate-scan-line" />
 
                     <div className="px-4 py-3 flex items-center justify-between gap-4">
                         {/* Info Section */}
@@ -106,8 +102,8 @@ const ScannerHUD: React.FC<ScannerHUDProps> = ({ target, onAction, actionLabel, 
                                     whileTap={target.status !== 'locked' ? { scale: 0.95 } : {}}
                                     onClick={target.status !== 'locked' ? onAction : undefined}
                                     className={`flex items-center justify-center gap-1 px-3 h-10 rounded border transition-all group ${target.status === 'locked'
-                                            ? 'bg-slate-900/50 border-slate-800 text-slate-600 cursor-not-allowed'
-                                            : 'bg-cyan-500/10 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/20 hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]'
+                                        ? 'bg-slate-900/50 border-slate-800 text-slate-600 cursor-not-allowed'
+                                        : 'bg-cyan-500/10 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/20 hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]'
                                         }`}
                                 >
                                     {target.status === 'locked' ? (

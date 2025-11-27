@@ -10,7 +10,11 @@ interface TopBarProps {
 }
 
 const TopBar: React.FC<TopBarProps> = ({ progress, total, className = "" }) => {
-    const { xp, streak, lives, credits } = useUserStore();
+    const xp = useUserStore(state => state.xp);
+    const streak = useUserStore(state => state.streak);
+    const lives = useUserStore(state => state.lives);
+    const credits = useUserStore(state => state.credits);
+
     const percentage = Math.round((progress / total) * 100) || 0;
 
     return (

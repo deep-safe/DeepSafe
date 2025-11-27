@@ -31,6 +31,8 @@ export const MatrixRain: React.FC<MatrixRainProps> = ({ className = '', color = 
             rainDrops[x] = 1;
         }
 
+        let animationFrameId: number;
+
         const draw = () => {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -47,9 +49,10 @@ export const MatrixRain: React.FC<MatrixRainProps> = ({ className = '', color = 
                 }
                 rainDrops[i]++;
             }
+            animationFrameId = requestAnimationFrame(draw);
         };
 
-        const interval = setInterval(draw, 30);
+        draw();
 
         const handleResize = () => {
             canvas.width = canvas.offsetWidth;
@@ -59,7 +62,7 @@ export const MatrixRain: React.FC<MatrixRainProps> = ({ className = '', color = 
         window.addEventListener('resize', handleResize);
 
         return () => {
-            clearInterval(interval);
+            cancelAnimationFrame(animationFrameId);
             window.removeEventListener('resize', handleResize);
         };
     }, [color]);

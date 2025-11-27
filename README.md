@@ -12,19 +12,19 @@ To democratize AI safety knowledge through gamification. We believe that learnin
 
 ## ✨ Key Features
 
-- **🗺️ Saga Map**: A visual journey through "Modules" (Weeks) of content. Unlock levels progressively.
+- **🇮🇹 Italy Map Campaign**: A non-linear visual journey through 20 regions and 107 provinces.
 - **🎨 Cyber-Guardian UI**: A premium, glassmorphism-based aesthetic with neon accents and smooth animations.
 - **❤️ Lives & Streaks**: Classic retention mechanics. Lose a heart for wrong answers; keep your streak alive to earn bonuses.
-- **💰 Cyber Supply Depot**: A fully integrated Shop with Stripe payments (Subscriptions, Power-ups) and Ad-based rewards.
+- **🛒 Black Market**: A fully integrated Shop with NeuroCredits (NC), Mystery Boxes, and Stripe payments.
 - **📱 PWA Native Feel**: Installable on iOS and Android with offline capabilities and native-like navigation.
 
 ## 🚀 Recent Updates (Gamification & Persistence)
 
 - **Daily Streak System**: Tracks consecutive logins with a visual "Fire" reward modal. Syncs with Supabase to prevent data loss.
 - **Province Mastery**: Map provinces now glow Gold (Perfect) or Cyan (Passed) based on your quiz performance.
-- **Score Persistence**: Your best scores are saved to the database. Replaying a mission only updates the score if you improve.
-- **Regional View Persistence**: The map remembers which region you were viewing when you return from a mission.
+- **Dynamic Training**: Content is dynamically loaded based on the selected province (e.g., Milan = Financial Fraud).
 - **Tactical HUD**: A new "Scanner" interface for selecting and entering regions/provinces.
+- **Admin Panel**: "God Mode" for managing users, missions, and shop items.
 
 ## 🛠️ Tech Stack
 
@@ -73,8 +73,9 @@ To democratize AI safety knowledge through gamification. We believe that learnin
 Explore the detailed documentation to understand the system:
 
 - **[🧩 Architecture & Database](docs/ARCHITECTURE.md)**: Deep dive into the tech stack, folder structure, and Supabase schema.
-- **[🎮 Game Mechanics](docs/GAME_MECHANICS.md)**: How the game loop, XP, lives, and unlocking logic works.
+- **[🎮 Game Mechanics](docs/GAME_MECHANICS.md)**: How the core loop, Italy Map, and Shop economy work.
 - **[💰 Monetization & Shop](docs/MONETIZATION.md)**: Setting up Stripe products, webhooks, and ad rewards.
+- **[🚀 Deployment (VPS)](docs/VPS.md)**: Server requirements and deployment guide.
 - **[📝 Content Contribution](docs/CONTRIBUTING.md)**: Guide for adding new quizzes and levels to the game.
 
 ---

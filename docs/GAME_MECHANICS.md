@@ -5,67 +5,66 @@ Deepsafe uses a "Core Loop" designed to build habit-forming behavior around lear
 ## 🔄 The Core Loop
 
 1.  **Trigger**: User receives a notification or wants to maintain their streak.
-2.  **Action**: User plays a "Daily Level" (Quiz) on the Saga Map.
-3.  **Reward**: User earns XP, keeps their Streak, and unlocks the next level.
-4.  **Investment**: User spends XP/Money in the Shop to upgrade their avatar or buy safety nets.
+2.  **Action**: User selects a **Province** on the **Italy Map** and completes a "Training Mission".
+3.  **Reward**: User earns **XP**, **NeuroCredits (NC)**, and unlocks adjacent provinces.
+4.  **Investment**: User spends NC in the **Black Market** to buy upgrades, avatars, or safety nets.
 
-## ❤️ Lives System
+## ❤️ Lives System (Hearts)
 
 The "Hearts" system adds stakes to every quiz.
 - **Max Lives**: Default is **5**.
 - **Losing Lives**: Every incorrect answer in a quiz deducts **1 Heart**.
-- **Zero Lives**: If you hit 0, you cannot start new quizzes.
+- **Zero Lives**: If you hit 0, you cannot start new missions.
 - **Refilling**:
     - **Time**: +1 Heart every 4 hours (Passive).
-    - **Ad**: Watch a 15s ad for +1 Heart (Active).
+    - **Ad**: Watch a simulated ad for +1 Heart (Active).
     - **Shop**: Buy a "System Reboot" for full health.
     - **Premium**: "Deepsafe Elite" users have **Infinite Lives**.
 
 ## 📈 XP & Leveling
 
 Experience Points (XP) measure progress and determine Leaderboard rank.
-- **Base Reward**: +50 XP for completing a level.
-- **Perfect Bonus**: +10 XP for getting all questions right on the first try.
-- **Boss Levels**: Double XP (+100) for "Threat Detected" levels.
+- **Base Reward**: +100-250 XP per mission (varies by difficulty).
+- **Leveling**: XP contributes to your "Agent Level", unlocking new Avatars.
 
-## 🗺️ The Saga Map
+## 🇮🇹 The Italy Map (Campaign)
 
-The map is the central navigation hub.
-- **Structure**: Levels are grouped into "Modules" (e.g., "Week 1: Foundations").
-- **Unlocking Logic**:
-    - Levels must be played in order.
-    - Completing `Day N` unlocks `Day N+1`.
+The map is the central navigation hub, replacing the traditional linear saga map.
+- **Structure**: The map is divided into **20 Regions** and **107 Provinces**.
+- **Progression**:
+    - You start in **Molise**.
+    - Completing a province unlocks its neighbors.
+    - Completing all provinces in a region grants a **Regional Mastery** bonus.
 - **Fog of War**:
-    - You can see **ALL** levels in your current Module.
-    - You can see the **NEXT** Module as a "Teaser" (locked view).
-    - Future modules are hidden.
+    - **Locked**: Dark Grey. Cannot be accessed yet.
+    - **Unlocked**: Blue. Available to play.
+    - **Mastered**: Gold/Neon. Completed with a high score.
 
 ## 🔥 Streak Logic
 
 Streaks are the primary retention metric.
 - **Definition**: Logging in consecutively every day (24-hour period).
-- **Daily Reward**: Upon the first login of the day, a "Streak Reward" modal appears with a fire animation to celebrate progress.
+- **Daily Reward**: Upon the first login of the day, a "Streak Reward" modal appears.
 - **Missed Day**: If you miss a day, the streak resets to 1.
-- **Streak Freeze**: An item purchasable in the Shop. If equipped, it automatically consumes itself to save your streak if you miss a day.
+- **Streak Freeze**: An item purchasable in the Shop. Automatically consumes itself to save your streak if you miss a day.
 
-## 🏆 Province Mastery
+## 🏆 Province Mastery & Scoring
 
 The map reflects your skill level through a dynamic coloring system:
-- **Locked**: Dark Grey. Cannot be accessed yet.
-- **Unlocked**: Blue/Slate. Available to play.
-- **Passed (Cyan)**: You completed the mission but missed some questions.
-- **Perfect (Gold)**: You answered 100% of questions correctly. The province glows with a golden neon effect.
-- **High Score System**: The map always preserves your **best** performance. Replaying a mission and getting a lower score will NOT overwrite your Gold status.
+- **Standard Completion**: Completing a mission unlocks the next node.
+- **Mastery (Gold)**: Achieving 100% accuracy on a mission makes the province glow Gold.
+- **High Score**: The system always preserves your best score.
 
 ## 🏅 Badges
 
-Badges are permanent achievements displayed on the Profile.
+Badges are permanent achievements displayed on the Profile. They are earned by completing specific milestones (e.g., "First Blood", "Sniper", "Socialite").
 
-| Badge Name | Condition | Icon |
-| :--- | :--- | :--- |
-| **First Steps** | Complete Level 1 | 👣 |
-| **Quiz Master** | Score 100% on 5 Quizzes | 🎓 |
-| **Early Bird** | Complete a lesson before 8 AM | 🌅 |
-| **Socialite** | Add 3 Friends | 🤝 |
-| **Defender** | Win 5 PvP Challenges | 🛡️ |
-| **Scholar** | Read 10 "Deep Dive" articles | 📚 |
+## 🛒 The Black Market (Shop)
+
+The economy runs on **NeuroCredits (NC)**.
+- **Earning NC**: Complete missions, maintain streaks, or buy packs.
+- **Spending NC**:
+    - **Mystery Box**: Random rewards (XP, Credits, Freezes).
+    - **Streak Freeze**: Protect your streak.
+    - **System Reboot**: Refill lives.
+    - **Avatars**: Cosmetic upgrades for your profile.

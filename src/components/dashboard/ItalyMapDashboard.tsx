@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { provincesData, Province } from '@/data/provincesData';
 import ItalyMapSVG from './ItalyMapSVG';
 import TopBar from './TopBar';
-import ProvinceModal from './ProvinceModal';
 import ScannerHUD from './ScannerHUD';
 import { TutorialOverlay } from '@/components/tutorial/TutorialOverlay';
 import { Lock, ArrowLeft, Map } from 'lucide-react';
@@ -15,10 +14,13 @@ import { TransformWrapper, TransformComponent, ReactZoomPanPinchContentRef } fro
 import { useUserStore } from '@/store/useUserStore';
 import { cn } from '@/lib/utils';
 import { useDailyStreak } from '@/hooks/useDailyStreak';
-import StreakRewardModal from './StreakRewardModal';
-import { BadgeUnlockModal } from '../gamification/BadgeUnlockModal';
 import { useSound } from '@/context/SoundContext';
 import { useHaptic } from '@/hooks/useHaptic';
+import dynamic from 'next/dynamic';
+
+const ProvinceModal = dynamic(() => import('./ProvinceModal'), { ssr: false });
+const StreakRewardModal = dynamic(() => import('./StreakRewardModal'), { ssr: false });
+const BadgeUnlockModal = dynamic(() => import('../gamification/BadgeUnlockModal').then(mod => mod.BadgeUnlockModal), { ssr: false });
 
 const ITALY_VIEWBOX = "0 0 800 1000";
 
@@ -39,7 +41,12 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
     const initialRegionParam = searchParams.get('region');
 
     const [toastState, setToastState] = useState<{ message: string; type: 'info' | 'error' } | null>(null);
-    const { unlockedProvinces, provinceScores, refreshProfile, checkBadges } = useUserStore();
+
+    const unlockedProvinces = useUserStore(state => state.unlockedProvinces);
+    const provinceScores = useUserStore(state => state.provinceScores);
+    const refreshProfile = useUserStore(state => state.refreshProfile);
+    const checkBadges = useUserStore(state => state.checkBadges);
+
     const [isProfileLoaded, setIsProfileLoaded] = useState(false);
     const { streak: currentStreak, showModal: showStreakModal, closeModal: closeStreakModal } = useDailyStreak(isProfileLoaded);
     const { playSound } = useSound();

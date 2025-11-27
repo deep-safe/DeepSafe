@@ -115,13 +115,9 @@ const ProvincePath: React.FC<ProvincePathProps> = ({
                 className={cn(
                     "transition-all duration-300",
                     isLocked && "fill-slate-900/80",
-                    // Remove old fill classes as we use inline styles for dynamic control
+                    isUnlocked && !isMastered && "animate-map-pulse",
+                    isUnlocked && isMastered && "animate-map-pulse-mastered"
                 )}
-                animate={isUnlocked ? {
-                    fillOpacity: isMastered ? [0.2, 0.4, 0.2] : [0.2, 0.3, 0.2],
-                    strokeOpacity: [0.6, 1, 0.6],
-                } : {}}
-                transition={isUnlocked ? pulseTransition : {}}
             />
         </motion.g>
     );

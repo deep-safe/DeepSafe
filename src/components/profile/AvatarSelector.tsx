@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Lock, Check } from 'lucide-react';
 import { AVATARS, Avatar } from '@/data/avatars';
@@ -39,10 +40,12 @@ export function AvatarSelector({ currentAvatarId, userLevel, onSelect, isUpdatin
                             "relative w-20 h-20 rounded-full mb-3 overflow-hidden border-2",
                             isSelected ? "border-cyan-400" : isLocked ? "border-slate-700 grayscale" : "border-slate-600 group-hover:border-cyan-400/50"
                         )}>
-                            <img
+                            <Image
                                 src={avatar.src}
                                 alt={avatar.name}
-                                className="w-full h-full object-cover"
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             />
 
                             {/* Lock Overlay */}

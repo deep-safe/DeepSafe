@@ -11,8 +11,10 @@ import { createBrowserClient } from '@supabase/ssr';
 import { Database } from '@/types/supabase';
 // Stripe is handled via API redirect, no need to load it here
 // import { loadStripe } from '@stripe/stripe-js';
-import { MysteryBoxModal } from '@/components/shop/MysteryBoxModal';
-import { PurchaseConfirmationModal } from '@/components/shop/PurchaseConfirmationModal';
+import dynamic from 'next/dynamic';
+
+const MysteryBoxModal = dynamic(() => import('@/components/shop/MysteryBoxModal').then(mod => mod.MysteryBoxModal), { ssr: false });
+const PurchaseConfirmationModal = dynamic(() => import('@/components/shop/PurchaseConfirmationModal').then(mod => mod.PurchaseConfirmationModal), { ssr: false });
 
 // Initialize Supabase Client
 const supabase = createBrowserClient<Database>(
@@ -25,7 +27,12 @@ type ShopItem = Database['public']['Tables']['shop_items']['Row'];
 import { Suspense } from 'react';
 
 function ShopContent() {
-    const { credits, buyItem, unlockedProvinces, lives, maxLives, refreshProfile } = useUserStore();
+    const credits = useUserStore(state => state.credits);
+    const buyItem = useUserStore(state => state.buyItem);
+    const unlockedProvinces = useUserStore(state => state.unlockedProvinces);
+    const lives = useUserStore(state => state.lives);
+    const maxLives = useUserStore(state => state.maxLives);
+    const refreshProfile = useUserStore(state => state.refreshProfile);
     const [isBuying, setIsBuying] = useState<string | null>(null);
     const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
     const [mysteryBoxOpen, setMysteryBoxOpen] = useState(false);

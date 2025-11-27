@@ -16,16 +16,22 @@ This document provides a technical deep dive into the **Deepsafe** platform. It 
 ```
 src/
 ├── app/                    # Next.js App Router
+│   ├── admin/              # Admin Panel (Protected)
 │   ├── api/                # Backend API Routes (Checkout, Webhooks)
-│   ├── dashboard/          # Main Saga Map view
+│   ├── dashboard/          # Main Italy Map view
+│   ├── login/              # Auth Pages
 │   ├── profile/            # User Profile, Stats, and Badges
-│   ├── quiz/[id]/          # Dynamic Quiz Interface
-│   ├── shop/               # Cyber Supply Depot (Monetization)
+│   ├── shop/               # Black Market (Monetization)
+│   ├── training/           # Dynamic Training Interface
 │   └── page.tsx            # Landing Page
 ├── components/
-│   ├── gamification/       # Game-specific UI (SagaMap, QuizCard, Badges)
+│   ├── dashboard/          # Map Components (ItalyMapSVG, ProvincePath)
+│   ├── gamification/       # Game UI (Badges, StreakModal)
 │   ├── layout/             # Global layout (BottomNav, Header)
+│   ├── shop/               # Shop Components (MysteryBox)
 │   └── ui/                 # Reusable atoms (Buttons, Cards)
+├── data/                   # Static Data (Provinces, Quizzes)
+├── hooks/                  # Custom Hooks (useDailyStreak, useHaptic)
 ├── lib/                    # Utilities (cn, formatters)
 ├── store/                  # Zustand stores (useUserStore)
 └── types/                  # TypeScript definitions (Supabase generated)
@@ -42,33 +48,35 @@ The central user record, linked 1:1 with `auth.users`.
 - `xp` (Int): Total experience points.
 - `current_hearts` (Int): Current lives (Max 5).
 - `is_premium` (Bool): "Deepsafe Elite" status.
-- `streak_freeze_active` (Bool): Whether a freeze is equipped.
+- `streak_freezes` (Int): Number of freezes owned.
 - `highest_streak` (Int): Current daily streak count.
 - `last_login` (Text): ISO Date string (YYYY-MM-DD) of the last login.
 - `unlocked_provinces` (Array): List of unlocked province IDs.
-- `province_scores` (JSONB): Record of scores per province `{ "ID": { "score": 10, "maxScore": 10, "isCompleted": true } }`.
+- `province_scores` (JSONB): Record of scores per province.
+- `earned_badges` (JSONB): List of earned badges with timestamps.
+- `inventory` (JSONB): List of owned items.
 
-### `levels`
-Defines the content hierarchy.
+### `missions`
+Defines the dynamic content for each province.
 - `id` (UUID): Primary Key.
-- `module_id` (UUID): Link to a "Week" or "Chapter".
-- `day_number` (Int): Sequential order (e.g., Day 1, Day 2).
-- `title` (Text): Level name.
-- `is_boss_level` (Bool): If true, triggers special UI/difficulty.
+- `province_id` (Text): Link to Province ID (e.g., 'MI').
+- `title` (Text): Mission title.
+- `content` (Text): Markdown content for the lesson.
 - `xp_reward` (Int): XP gained on completion.
+- `level` (Enum): Difficulty level.
 
-### `user_progress`
-Tracks what the user has completed.
-- `user_id` (UUID): Link to `profiles`.
-- `quiz_id` (UUID): Link to `levels` (or specific quiz).
-- `status` (Text): 'locked', 'unlocked', 'completed'.
-- `score` (Int): Best score achieved.
-- `completed_at` (Timestamp): When it was finished.
+### `shop_items`
+Defines items available in the Black Market.
+- `id` (Text): Primary Key (e.g., 'streak_freeze').
+- `name` (Text): Display name.
+- `cost` (Int): Price in NeuroCredits.
+- `effect_type` (Text): Logic handler (e.g., 'refill_lives').
 
-### `friendships` & `challenges`
-Social features.
-- `friendships`: Adjacency list for friends (`user_id`, `friend_id`, `status`).
-- `challenges`: PvP records (`challenger_id`, `opponent_id`, `winner_id`).
+### `badges`
+Defines available achievements.
+- `id` (Text): Primary Key.
+- `name` (Text): Badge name.
+- `condition` (Text): Description of how to unlock.
 
 ## 🔐 Security
 

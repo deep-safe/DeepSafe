@@ -54,7 +54,8 @@ interface UserState {
     updateProvinceScore: (id: string, score: number, maxScore: number, isCompleted: boolean) => Promise<void>;
     updateMissionScore: (provinceId: string, missionId: string, score: number, maxScore: number, isCompleted: boolean) => Promise<void>;
     refreshProfile: () => Promise<void>;
-    checkBadges: () => Promise<{ newBadges: string[] }>;
+    checkBadges: (force?: boolean) => Promise<{ newBadges: string[] }>;
+    lastBadgeCheck: number | null;
 }
 
 export const useUserStore = create<UserState>()(
@@ -74,6 +75,7 @@ export const useUserStore = create<UserState>()(
             streakFreezes: 0,
             inventory: [],
             hasSeenTutorial: false,
+            lastBadgeCheck: null,
             settings: {
                 notifications: true,
                 sound: true,
@@ -480,9 +482,16 @@ export const useUserStore = create<UserState>()(
                     console.error('Unexpected error refreshing profile:', err);
                 }
             },
-            checkBadges: async () => {
+            checkBadges: async (force = false) => {
                 const state = get();
-                const { xp, streak, earnedBadges } = state;
+                const { xp, streak, earnedBadges, lastBadgeCheck } = state;
+
+                // Cooldown check: 5 minutes (300000 ms)
+                const nowTime = Date.now();
+                if (!force && lastBadgeCheck && (nowTime - lastBadgeCheck < 300000)) {
+                    return { newBadges: [] };
+                }
+
                 const newBadges: string[] = [];
 
                 // Fetch badges from DB
@@ -545,10 +554,10 @@ export const useUserStore = create<UserState>()(
                 if (newBadges.length > 0) {
                     const updatedBadges = [
                         ...earnedBadges,
-                        ...newBadges.map(id => ({ id, earned_at: now }))
+                        ...newBadges.map(id => ({ id, earned_at: new Date().toISOString() }))
                     ];
 
-                    set({ earnedBadges: updatedBadges });
+                    set({ earnedBadges: updatedBadges, lastBadgeCheck: nowTime });
 
                     try {
                         const { data: { user } } = await supabase.auth.getUser();
@@ -561,6 +570,8 @@ export const useUserStore = create<UserState>()(
                     } catch (err) {
                         console.error('Error syncing badges:', err);
                     }
+                } else {
+                    set({ lastBadgeCheck: nowTime });
                 }
 
                 return { newBadges };
