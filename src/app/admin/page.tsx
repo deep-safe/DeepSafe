@@ -216,6 +216,58 @@ export default function AdminPage() {
         alert('Simulation: Daily streaks would be reset here.');
     };
 
+    const handleBackup = async () => {
+        try {
+            const response = await fetch('/api/admin/backup');
+            if (!response.ok) throw new Error('Backup failed');
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `deepsafe-backup-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error('Backup error:', error);
+            alert('Backup failed. Check console for details.');
+        }
+    };
+
+    const handleRestore = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        if (!confirm('WARNING: This will OVERWRITE the entire database with the backup data. This action cannot be undone. Are you sure?')) {
+            event.target.value = ''; // Reset input
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const json = JSON.parse(e.target?.result as string);
+                const response = await fetch('/api/admin/restore', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: json.data || json }) // Handle wrapped or direct data
+                });
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Restore failed');
+
+                alert('Restore successful! The page will now reload.');
+                window.location.reload();
+            } catch (error: any) {
+                console.error('Restore error:', error);
+                alert(`Restore failed: ${error.message}`);
+            }
+        };
+        reader.readAsText(file);
+    };
+
     if (isLoading) {
         return <div className="min-h-screen bg-black flex items-center justify-center text-cyan-500 font-mono">INITIALIZING GOD MODE...</div>;
     }
@@ -301,7 +353,40 @@ export default function AdminPage() {
                 </div>
             </div>
 
-            {/* User Management */}
+            {/* System Maintenance */}
+            <div className="bg-slate-900/30 border border-slate-800 rounded-xl p-6 mb-8">
+                <h2 className="text-lg font-bold text-white font-orbitron mb-4 flex items-center gap-2">
+                    <Save className="w-5 h-5 text-cyan-500" />
+                    SYSTEM MAINTENANCE
+                </h2>
+                <div className="flex flex-wrap gap-4">
+                    <button
+                        onClick={handleBackup}
+                        className="px-6 py-3 bg-blue-900/30 border border-blue-700/50 rounded-lg hover:bg-blue-900/50 text-blue-400 font-mono text-sm transition-colors flex items-center gap-2"
+                    >
+                        <Save className="w-4 h-4" />
+                        DOWNLOAD BACKUP (.JSON)
+                    </button>
+
+                    <div className="relative">
+                        <input
+                            type="file"
+                            accept=".json"
+                            onChange={handleRestore}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                        <button
+                            className="px-6 py-3 bg-red-900/30 border border-red-700/50 rounded-lg hover:bg-red-900/50 text-red-400 font-mono text-sm transition-colors flex items-center gap-2 pointer-events-none"
+                        >
+                            <RefreshCw className="w-4 h-4" />
+                            RESTORE FROM BACKUP
+                        </button>
+                    </div>
+                </div>
+                <p className="text-xs text-slate-500 mt-2 font-mono">
+                    * Restore will overwrite all current data. Use with caution.
+                </p>
+            </div>
             <div className="bg-slate-900/30 border border-slate-800 rounded-xl overflow-hidden">
                 <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
                     <h2 className="text-lg font-bold text-white font-orbitron">USER DATABASE</h2>

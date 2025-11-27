@@ -20,7 +20,7 @@ export default function TrainingPillPage() {
     const missionId = searchParams.get('missionId');
     const problemId = params?.problemId as string;
 
-    const { unlockProvince, lives, decrementLives, addHeart, refillLives, unlockedProvinces, completeLevel } = useUserStore();
+    const { unlockProvince, lives, decrementLives, addHeart, refillLives, unlockedProvinces, completeLevel, updateMissionScore } = useUserStore();
 
     const [lesson, setLesson] = useState<TrainingLesson | null>(null);
     const [mode, setMode] = useState<'LESSON' | 'QUIZ' | 'COMPLETE'>('LESSON');
@@ -128,6 +128,10 @@ export default function TrainingPillPage() {
 
                 // Secure Server-Side Completion
                 completeLevel(lesson.id, score, lesson.xpReward);
+
+                // Update Province Score (Client-Side & Cache)
+                // This ensures the map updates immediately
+                updateMissionScore(provinceId, lesson.id, score, lesson.questions.length, true);
             }
             setMode('COMPLETE');
         }

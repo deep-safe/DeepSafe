@@ -669,6 +669,12 @@ export interface Database {
                 Args: Record<PropertyKey, never>
                 Returns: Json
             }
+            admin_restore_data: {
+                Args: {
+                    payload: Json
+                }
+                Returns: Json
+            }
         }
         Enums: {
             [_ in never]: never

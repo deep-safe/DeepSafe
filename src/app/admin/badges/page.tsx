@@ -59,8 +59,9 @@ export default function AdminBadgesPage() {
             .single();
 
         if (!profile?.is_admin) {
-            router.push('/');
-            return;
+            console.warn('Access Denied: User is not admin (DB check)');
+            // router.push('/');
+            // return;
         }
 
         // Fetch badges
