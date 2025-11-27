@@ -40,6 +40,15 @@ export default function AdminShopPage() {
         effect_value: null
     });
 
+    // Loot State
+    const [currentLoot, setCurrentLoot] = useState<any[]>([]);
+    const [newLootItem, setNewLootItem] = useState({
+        reward_type: 'xp',
+        reward_value: 50,
+        weight: 10,
+        description: ''
+    });
+
     useEffect(() => {
         checkAdminAndFetchItems();
     }, []);
@@ -77,10 +86,21 @@ export default function AdminShopPage() {
         setIsLoading(false);
     };
 
-    const handleOpenModal = (item?: ShopItem) => {
+    const handleOpenModal = async (item?: ShopItem) => {
         if (item) {
             setEditingItem(item);
             setFormData(item);
+
+            // Fetch loot if it's a mystery box
+            if (item.effect_type === 'mystery_box') {
+                const { data: lootData } = await supabase
+                    .from('mystery_box_loot')
+                    .select('*')
+                    .eq('box_id', item.id);
+                setCurrentLoot(lootData || []);
+            } else {
+                setCurrentLoot([]);
+            }
         } else {
             setEditingItem(null);
             setFormData({
@@ -96,8 +116,25 @@ export default function AdminShopPage() {
                 effect_type: 'none',
                 effect_value: null
             });
+            setCurrentLoot([]);
         }
         setIsModalOpen(true);
+    };
+
+    const handleAddLootItem = () => {
+        setCurrentLoot([...currentLoot, { ...newLootItem, id: `temp_${Date.now()}` }]);
+        setNewLootItem({
+            reward_type: 'xp',
+            reward_value: 50,
+            weight: 10,
+            description: ''
+        });
+    };
+
+    const handleRemoveLootItem = (index: number) => {
+        const updated = [...currentLoot];
+        updated.splice(index, 1);
+        setCurrentLoot(updated);
     };
 
     const handleSave = async () => {
@@ -120,14 +157,40 @@ export default function AdminShopPage() {
                 .update(itemData)
                 .eq('id', editingItem.id);
 
-            if (error) alert('Error updating item');
+            if (error) {
+                alert('Error updating item');
+                return;
+            }
         } else {
             // Create
             const { error } = await supabase
                 .from('shop_items')
                 .insert(itemData);
 
-            if (error) alert('Error creating item: ' + error.message);
+            if (error) {
+                alert('Error creating item: ' + error.message);
+                return;
+            }
+        }
+
+        // Save Loot if Mystery Box
+        if (formData.effect_type === 'mystery_box') {
+            // 1. Delete existing loot for this box
+            await supabase.from('mystery_box_loot').delete().eq('box_id', formData.id);
+
+            // 2. Insert new loot
+            if (currentLoot.length > 0) {
+                const lootToInsert = currentLoot.map(l => ({
+                    box_id: formData.id!,
+                    reward_type: l.reward_type,
+                    reward_value: l.reward_value,
+                    weight: l.weight,
+                    description: l.description
+                }));
+
+                const { error: lootError } = await supabase.from('mystery_box_loot').insert(lootToInsert);
+                if (lootError) console.error('Error saving loot:', lootError);
+            }
         }
 
         setIsModalOpen(false);
@@ -176,48 +239,101 @@ export default function AdminShopPage() {
                 </button>
             </header>
 
-            {/* Items Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {items.map(item => (
-                    <div key={item.id} className="bg-slate-900/50 border border-slate-800 p-6 rounded-xl hover:border-yellow-500/50 transition-colors group relative">
-                        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
-                            <button onClick={() => handleOpenModal(item)} className="p-1.5 bg-slate-800 text-cyan-400 rounded hover:bg-slate-700">
-                                <Save className="w-4 h-4" />
-                            </button>
-                            <button onClick={() => handleDelete(item.id)} className="p-1.5 bg-slate-800 text-red-400 rounded hover:bg-slate-700">
-                                <Trash2 className="w-4 h-4" />
-                            </button>
-                        </div>
-                        <div className="flex items-start gap-4">
-                            <div className="text-4xl bg-slate-950 p-3 rounded-lg border border-slate-800">
-                                {item.icon}
+            {/* Out of Stock Section */}
+            {items.filter(i => i.is_limited && (i.stock === null || i.stock <= 0)).length > 0 && (
+                <div className="mb-12">
+                    <h2 className="text-xl font-bold text-red-400 font-orbitron mb-4 flex items-center gap-2 border-b border-red-900/30 pb-2">
+                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                        OUT OF STOCK / CONSUMED
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-75 hover:opacity-100 transition-opacity">
+                        {items.filter(i => i.is_limited && (i.stock === null || i.stock <= 0)).map(item => (
+                            <div key={item.id} className="bg-red-950/10 border border-red-900/30 p-6 rounded-xl hover:border-red-500/50 transition-colors group relative">
+                                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                                    <button onClick={() => handleOpenModal(item)} className="p-1.5 bg-slate-800 text-cyan-400 rounded hover:bg-slate-700">
+                                        <Save className="w-4 h-4" />
+                                    </button>
+                                    <button onClick={() => handleDelete(item.id)} className="p-1.5 bg-slate-800 text-red-400 rounded hover:bg-slate-700">
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
+                                <div className="flex items-start gap-4">
+                                    <div className="text-4xl bg-slate-950 p-3 rounded-lg border border-red-900/30 grayscale">
+                                        {item.icon}
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-slate-300 text-lg line-through decoration-red-500/50">{item.name}</h3>
+                                        <p className="text-slate-500 text-sm mb-2 h-10 overflow-hidden">{item.description}</p>
+                                        <div className="flex flex-wrap gap-2 text-xs font-mono">
+                                            <span className="px-2 py-1 bg-red-500 text-black font-bold rounded">
+                                                SOLD OUT
+                                            </span>
+                                            <span className="px-2 py-1 bg-slate-800 text-slate-400 rounded">
+                                                {item.type}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => handleOpenModal(item)}
+                                    className="w-full mt-4 py-2 bg-red-900/20 hover:bg-red-900/40 text-red-400 border border-red-900/50 rounded-lg font-bold text-xs transition-colors flex items-center justify-center gap-2"
+                                >
+                                    RESTOCK ITEM
+                                </button>
                             </div>
-                            <div>
-                                <h3 className="font-bold text-white text-lg">{item.name}</h3>
-                                <p className="text-slate-400 text-sm mb-2 h-10 overflow-hidden">{item.description}</p>
-                                <div className="flex flex-wrap gap-2 text-xs font-mono">
-                                    <span className="px-2 py-1 bg-yellow-900/30 text-yellow-400 rounded border border-yellow-900/50">
-                                        {item.cost} NC
-                                    </span>
-                                    <span className="px-2 py-1 bg-slate-800 text-slate-400 rounded">
-                                        {item.type}
-                                    </span>
-                                    {item.is_limited && (
-                                        <span className="px-2 py-1 bg-red-900/30 text-red-400 rounded border border-red-900/50">
-                                            LIMITED: {item.stock ?? '∞'}
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Active Inventory Section */}
+            <div>
+                <h2 className="text-xl font-bold text-emerald-400 font-orbitron mb-4 flex items-center gap-2 border-b border-emerald-900/30 pb-2">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                    ACTIVE INVENTORY
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {items.filter(i => !i.is_limited || (i.stock !== null && i.stock > 0)).map(item => (
+                        <div key={item.id} className="bg-slate-900/50 border border-slate-800 p-6 rounded-xl hover:border-yellow-500/50 transition-colors group relative">
+                            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                                <button onClick={() => handleOpenModal(item)} className="p-1.5 bg-slate-800 text-cyan-400 rounded hover:bg-slate-700">
+                                    <Save className="w-4 h-4" />
+                                </button>
+                                <button onClick={() => handleDelete(item.id)} className="p-1.5 bg-slate-800 text-red-400 rounded hover:bg-slate-700">
+                                    <Trash2 className="w-4 h-4" />
+                                </button>
+                            </div>
+                            <div className="flex items-start gap-4">
+                                <div className="text-4xl bg-slate-950 p-3 rounded-lg border border-slate-800">
+                                    {item.icon}
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-white text-lg">{item.name}</h3>
+                                    <p className="text-slate-400 text-sm mb-2 h-10 overflow-hidden">{item.description}</p>
+                                    <div className="flex flex-wrap gap-2 text-xs font-mono">
+                                        <span className="px-2 py-1 bg-yellow-900/30 text-yellow-400 rounded border border-yellow-900/50">
+                                            {item.cost} NC
                                         </span>
-                                    )}
+                                        <span className="px-2 py-1 bg-slate-800 text-slate-400 rounded">
+                                            {item.type}
+                                        </span>
+                                        {item.is_limited && (
+                                            <span className="px-2 py-1 bg-red-900/30 text-red-400 rounded border border-red-900/50">
+                                                LIMITED: {item.stock ?? '∞'}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mt-4 pt-4 border-t border-slate-800/50 text-xs font-mono text-slate-500 flex justify-between items-center">
+                                <div>
+                                    ID: {item.id} <br />
+                                    EFFECT: {item.effect_type} {item.effect_value && `(${item.effect_value})`}
                                 </div>
                             </div>
                         </div>
-                        <div className="mt-4 pt-4 border-t border-slate-800/50 text-xs font-mono text-slate-500 flex justify-between items-center">
-                            <div>
-                                ID: {item.id} <br />
-                                EFFECT: {item.effect_type} {item.effect_value && `(${item.effect_value})`}
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
 
             {/* Modal */}
@@ -362,13 +478,16 @@ export default function AdminShopPage() {
                                 {/* Loot Table UI - Only if Mystery Box */}
                                 {formData.effect_type === 'mystery_box' && (
                                     <div className="p-4 bg-purple-900/10 rounded-lg border border-purple-500/30">
-                                        <h4 className="text-xs font-bold text-purple-400 mb-3 uppercase flex items-center gap-2">
-                                            <Zap className="w-3 h-3" /> Loot Configuration
+                                        <h4 className="text-xs font-bold text-purple-400 mb-1 uppercase flex items-center gap-2">
+                                            <Zap className="w-3 h-3" /> Mystery Box Rewards
                                         </h4>
+                                        <p className="text-[10px] text-slate-400 mb-3">
+                                            Define the items users can win when opening this box.
+                                        </p>
 
                                         <div className="mb-4 space-y-2 max-h-40 overflow-y-auto bg-slate-950/50 p-2 rounded border border-slate-800">
                                             {currentLoot.length === 0 && <p className="text-slate-500 italic text-xs text-center py-2">No loot defined.</p>}
-                                            {currentLoot.map((loot, idx) => (
+                                            {currentLoot.map((loot: any, idx: number) => (
                                                 <div key={idx} className="flex items-center justify-between bg-slate-800 p-2 rounded border border-slate-700">
                                                     <div>
                                                         <div className="font-bold text-white text-xs">{loot.description}</div>

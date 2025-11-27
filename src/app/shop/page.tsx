@@ -212,8 +212,11 @@ function ShopContent() {
     };
 
     // Filter items for display
-    const regularItems = shopItems.filter(i => i.id !== 'mystery_box' && i.id !== 'system_reboot'); // Exclude special display items if needed
-    const dailyDealItem = shopItems.find(i => i.id === 'system_reboot');
+    // Hide items that are limited AND have 0 or less stock
+    const availableItems = shopItems.filter(i => !i.is_limited || (i.stock !== null && i.stock > 0));
+
+    const regularItems = availableItems.filter(i => i.id !== 'mystery_box' && i.id !== 'system_reboot'); // Exclude special display items if needed
+    const dailyDealItem = availableItems.find(i => i.id === 'system_reboot');
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-cyan-500/30 pb-24">

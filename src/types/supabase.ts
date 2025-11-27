@@ -535,6 +535,44 @@ export interface Database {
                     }
                 ]
             }
+            mystery_box_loot: {
+                Row: {
+                    id: string
+                    box_id: string
+                    reward_type: string
+                    reward_value: number
+                    weight: number
+                    description: string
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    box_id: string
+                    reward_type: string
+                    reward_value: number
+                    weight: number
+                    description: string
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    box_id?: string
+                    reward_type?: string
+                    reward_value?: number
+                    weight?: number
+                    description?: string
+                    created_at?: string
+                }
+                Relationships: [
+                    {
+                        foreignKeyName: "mystery_box_loot_box_id_fkey"
+                        columns: ["box_id"]
+                        isOneToOne: false
+                        referencedRelation: "shop_items"
+                        referencedColumns: ["id"]
+                    }
+                ]
+            }
             push_subscriptions: {
                 Row: {
                     id: string
