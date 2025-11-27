@@ -41,7 +41,8 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }
     try {
-        const { priceId, userId, mode, actionType } = await req.json();
+        const body = await req.json();
+        const { priceId, userId, mode, actionType, metadata } = body;
 
         if (!priceId || !userId || !mode || !actionType) {
             return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
@@ -62,7 +63,8 @@ export async function POST(req: Request) {
             cancel_url: `${origin}/shop?canceled=true`,
             metadata: {
                 userId: userId,
-                actionType: actionType, // 'ACTIVATE_PREMIUM', 'REFILL_HEARTS', 'STREAK_FREEZE'
+                actionType: actionType,
+                ...(metadata || {}) // Merge extra metadata like 'amount'
             },
         });
 

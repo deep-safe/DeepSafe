@@ -8,13 +8,17 @@ import ItalyMapSVG from './ItalyMapSVG';
 import TopBar from './TopBar';
 import ProvinceModal from './ProvinceModal';
 import ScannerHUD from './ScannerHUD';
+import { TutorialOverlay } from '@/components/tutorial/TutorialOverlay';
 import { Lock, ArrowLeft, Map } from 'lucide-react';
 import { getRegionBoundingBox } from '@/utils/svgUtils';
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import { TransformWrapper, TransformComponent, ReactZoomPanPinchContentRef } from "react-zoom-pan-pinch";
 import { useUserStore } from '@/store/useUserStore';
+import { cn } from '@/lib/utils';
 import { useDailyStreak } from '@/hooks/useDailyStreak';
 import StreakRewardModal from './StreakRewardModal';
 import { BadgeUnlockModal } from '../gamification/BadgeUnlockModal';
+import { useSound } from '@/context/SoundContext';
+import { useHaptic } from '@/hooks/useHaptic';
 
 const ITALY_VIEWBOX = "0 0 800 1000";
 
@@ -26,17 +30,24 @@ interface MapTarget {
     details?: string;
 }
 
-const ItalyMapDashboard: React.FC = () => {
+interface ItalyMapDashboardProps {
+    className?: string;
+}
+
+const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
     const searchParams = useSearchParams();
     const initialRegionParam = searchParams.get('region');
 
-    const [toast, setToast] = useState<{ message: string; type: 'info' | 'error' } | null>(null);
+    const [toastState, setToastState] = useState<{ message: string; type: 'info' | 'error' } | null>(null);
     const { unlockedProvinces, provinceScores, refreshProfile, checkBadges } = useUserStore();
     const { streak: currentStreak, showModal: showStreakModal, closeModal: closeStreakModal } = useDailyStreak();
+    const { playSound } = useSound();
+    const { triggerHaptic } = useHaptic();
 
     const [mapScale, setMapScale] = useState(1);
     const [mapPosition, setMapPosition] = useState({ x: 0, y: 0 });
     const mapRef = useRef<HTMLDivElement>(null);
+    const transformComponentRef = useRef<ReactZoomPanPinchContentRef>(null);
 
     // Badge Unlock State
     const [unlockedBadgeId, setUnlockedBadgeId] = useState<string | null>(null);
@@ -156,14 +167,20 @@ const ItalyMapDashboard: React.FC = () => {
                     type: 'REGION',
                     details: `${regionProvinces.length} SECTORS`
                 });
+                playSound('click');
+                triggerHaptic('light');
             } else {
                 // Step 2: Enter (if already selected)
                 const regionProvinces = dynamicProvincesData.filter(p => p.region === regionName);
                 const isUnlocked = regionProvinces.some(p => p.status === 'unlocked' || p.status === 'safe');
                 if (isUnlocked) {
                     enterRegion(regionName);
+                    playSound('click');
+                    triggerHaptic('light');
                 } else {
                     showToast(`REGION LOCKED: Complete previous missions to unlock ${regionName}`, 'error');
+                    playSound('error');
+                    triggerHaptic('error');
                 }
             }
         } else {
@@ -179,13 +196,19 @@ const ItalyMapDashboard: React.FC = () => {
                     type: 'PROVINCE',
                     details: `PROGRESS: ${province.progress}%`
                 });
+                playSound('click');
+                triggerHaptic('light');
             } else {
                 // Step 2: Open Modal
                 if (province.status !== 'locked') {
                     setModalProvince(province);
                     setSelectedTarget(null);
+                    playSound('click');
+                    triggerHaptic('medium');
                 } else {
                     showToast(`SECTOR LOCKED: Complete previous missions to unlock ${province.name}`, 'error');
+                    playSound('error');
+                    triggerHaptic('error');
                 }
             }
         }
@@ -198,6 +221,8 @@ const ItalyMapDashboard: React.FC = () => {
         setViewMode('REGION');
         setSelectedTarget(null);
         setHoveredTarget(null);
+        playSound('click');
+        triggerHaptic('light');
     };
 
     const handleBackToItaly = () => {
@@ -205,6 +230,11 @@ const ItalyMapDashboard: React.FC = () => {
         setViewBox(initialItalyViewBox);
         setViewMode('ITALY');
         setSelectedTarget(null);
+        playSound('click');
+        triggerHaptic('light');
+        if (transformComponentRef.current) {
+            transformComponentRef.current.resetTransform(1000, "easeOutQuad");
+        }
     };
 
     const handleProvinceHover = (province: Province | null) => {
@@ -243,8 +273,12 @@ const ItalyMapDashboard: React.FC = () => {
         if (target.type === 'REGION') {
             if (target.status !== 'locked') {
                 enterRegion(target.name);
+                playSound('click');
+                triggerHaptic('light');
             } else {
                 showToast(`REGION LOCKED: Complete previous missions to unlock ${target.name}`, 'error');
+                playSound('error');
+                triggerHaptic('error');
             }
         } else {
             const province = dynamicProvincesData.find(p => p.id === target.id);
@@ -252,8 +286,12 @@ const ItalyMapDashboard: React.FC = () => {
                 if (province.status !== 'locked') {
                     setModalProvince(province);
                     setSelectedTarget(null);
+                    playSound('click');
+                    triggerHaptic('medium');
                 } else {
                     showToast(`SECTOR LOCKED: Complete previous missions to unlock ${province.name}`, 'error');
+                    playSound('error');
+                    triggerHaptic('error');
                 }
             }
         }
@@ -268,12 +306,12 @@ const ItalyMapDashboard: React.FC = () => {
     const totalProvinces = dynamicProvincesData.length;
 
     const showToast = (message: string, type: 'info' | 'error') => {
-        setToast({ message, type });
-        setTimeout(() => setToast(null), 3000);
+        setToastState({ message, type });
+        setTimeout(() => setToastState(null), 3000);
     };
 
     return (
-        <div className="relative w-full h-screen bg-slate-950 overflow-hidden font-sans text-slate-200 selection:bg-cyan-500/30">
+        <div className={cn("relative w-full h-screen bg-slate-950 overflow-hidden font-sans text-slate-200 selection:bg-cyan-500/30", className)}>
 
             {/* Background Ambient Glow */}
             <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-cyan-900/20 rounded-full blur-[120px] pointer-events-none" />
@@ -302,6 +340,7 @@ const ItalyMapDashboard: React.FC = () => {
             {/* Main Map Area */}
             <main className="w-full h-full flex items-center justify-center p-0">
                 <TransformWrapper
+                    ref={transformComponentRef}
                     initialScale={0.9}
                     minScale={0.5}
                     maxScale={4}
@@ -367,22 +406,24 @@ const ItalyMapDashboard: React.FC = () => {
 
             {/* Toast Notification */}
             <AnimatePresence>
-                {toast && (
+                {toastState && (
                     <motion.div
                         initial={{ opacity: 0, y: 50, x: '-50%' }}
                         animate={{ opacity: 1, y: 0, x: '-50%' }}
                         exit={{ opacity: 0, y: 20, x: '-50%' }}
-                        className={`absolute bottom-32 left-1/2 px-6 py-3 rounded-lg backdrop-blur-md border shadow-2xl flex items-center gap-3 z-50 ${toast.type === 'error'
+                        className={`absolute bottom-32 left-1/2 px-6 py-3 rounded-lg backdrop-blur-md border shadow-2xl flex items-center gap-3 z-50 ${toastState.type === 'error'
                             ? 'bg-red-950/80 border-red-500/50 text-red-200'
                             : 'bg-cyan-950/80 border-cyan-500/50 text-cyan-200'
                             }`}
                     >
-                        {toast.type === 'error' && <Lock className="w-4 h-4" />}
-                        <span className="text-sm font-medium">{toast.message}</span>
+                        {toastState.type === 'error' && <Lock className="w-4 h-4" />}
+                        <span className="text-sm font-medium">{toastState.message}</span>
                     </motion.div>
                 )}
             </AnimatePresence>
 
+            {/* Tutorial Overlay */}
+            <TutorialOverlay />
         </div>
     );
 };

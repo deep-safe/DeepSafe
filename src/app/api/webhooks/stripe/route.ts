@@ -69,8 +69,18 @@ export async function POST(req: Request) {
                     // Ensure the column exists via migration first!
                     await supabaseAdmin
                         .from('profiles')
-                        .update({ streak_freeze_active: true } as any) // Cast as any if types aren't updated yet
+                        .update({ streak_freezes: (await getCurrentStreakFreezes(supabaseAdmin, userId)) + 1 })
                         .eq('id', userId);
+                    break;
+
+                case 'BUY_CREDITS':
+                    const amount = parseInt(session.metadata?.amount || '0');
+                    if (amount > 0) {
+                        await supabaseAdmin.rpc('increment_credits', { p_user_id: userId, p_amount: amount });
+                        // Fallback if RPC doesn't exist (though RPC is safer for concurrency)
+                        // const current = await getCurrentCredits(supabaseAdmin, userId);
+                        // await supabaseAdmin.from('profiles').update({ credits: current + amount }).eq('id', userId);
+                    }
                     break;
 
                 default:
@@ -83,4 +93,9 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ received: true });
+}
+
+async function getCurrentStreakFreezes(supabase: any, userId: string): Promise<number> {
+    const { data } = await supabase.from('profiles').select('streak_freezes').eq('id', userId).single();
+    return data?.streak_freezes || 0;
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Zap, Shield, Gift, Clock, Lock, Coins, AlertTriangle } from 'lucide-react';
 import { useUserStore } from '@/store/useUserStore';
@@ -8,6 +9,9 @@ import TopBar from '@/components/dashboard/TopBar';
 import { provincesData } from '@/data/provincesData';
 import { createBrowserClient } from '@supabase/ssr';
 import { Database } from '@/types/supabase';
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 // Initialize Supabase Client
 const supabase = createBrowserClient<Database>(
@@ -17,8 +21,10 @@ const supabase = createBrowserClient<Database>(
 
 type ShopItem = Database['public']['Tables']['shop_items']['Row'];
 
-export default function ShopPage() {
-    const { credits, buyItem, unlockedProvinces, lives, maxLives } = useUserStore();
+import { Suspense } from 'react';
+
+function ShopContent() {
+    const { credits, buyItem, unlockedProvinces, lives, maxLives, refreshProfile } = useUserStore();
     const [isBuying, setIsBuying] = useState<string | null>(null);
     const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
     const [mysteryBoxOpen, setMysteryBoxOpen] = useState(false);
@@ -29,9 +35,22 @@ export default function ShopPage() {
     const totalProvinces = provincesData.length;
     const unlockedCount = unlockedProvinces.length;
 
+    const searchParams = useSearchParams();
+
     useEffect(() => {
         fetchShopItems();
-    }, []);
+
+        if (searchParams.get('success')) {
+            setFeedback({ type: 'success', message: 'Pagamento completato! I crediti sono in arrivo.' });
+            // Refresh profile to get updated credits (might take a moment for webhook)
+            setTimeout(() => refreshProfile(), 1000);
+            setTimeout(() => refreshProfile(), 3000);
+        }
+
+        if (searchParams.get('canceled')) {
+            setFeedback({ type: 'error', message: 'Pagamento annullato.' });
+        }
+    }, [searchParams, refreshProfile]);
 
     const fetchShopItems = async () => {
         setIsLoading(true);
@@ -46,6 +65,58 @@ export default function ShopPage() {
             setShopItems(data || []);
         }
         setIsLoading(false);
+    };
+
+    const handleBuyCredits = async (pack: 'small' | 'medium' | 'large') => {
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            let priceId = '';
+            let amount = 0;
+
+            switch (pack) {
+                case 'small':
+                    priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_SMALL || '';
+                    amount = 500;
+                    break;
+                case 'medium':
+                    priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_MEDIUM || '';
+                    amount = 1200;
+                    break;
+                case 'large':
+                    priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_LARGE || '';
+                    amount = 2500;
+                    break;
+            }
+
+            if (!priceId) {
+                setFeedback({ type: 'error', message: 'Configurazione prezzi mancante!' });
+                return;
+            }
+
+            const response = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    priceId,
+                    userId: user.id,
+                    mode: 'payment',
+                    actionType: 'BUY_CREDITS',
+                    metadata: { amount } // Pass amount to verify in webhook if needed
+                }),
+            });
+
+            const { url } = await response.json();
+            if (url) {
+                window.location.href = url;
+            } else {
+                throw new Error('Errore redirect checkout');
+            }
+        } catch (error) {
+            console.error('Checkout error:', error);
+            setFeedback({ type: 'error', message: 'Errore durante il checkout.' });
+        }
     };
 
     const handleBuy = async (item: ShopItem) => {
@@ -152,6 +223,48 @@ export default function ShopPage() {
                     <div className="text-center py-20 text-cyan-500 font-mono animate-pulse">LOADING BLACK MARKET...</div>
                 ) : (
                     <>
+                        {/* Credit Packs Section */}
+                        <section className="grid grid-cols-3 gap-4 mb-8">
+                            <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 flex flex-col items-center text-center hover:border-cyan-500 transition-colors group relative overflow-hidden">
+                                <div className="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <Coins className="w-8 h-8 text-cyan-400 mb-2" />
+                                <h3 className="font-bold text-white text-sm">500 NC</h3>
+                                <p className="text-xs text-slate-400 mb-3">Pacchetto Base</p>
+                                <button
+                                    onClick={() => handleBuyCredits('small')}
+                                    className="w-full py-1.5 bg-slate-800 hover:bg-cyan-600 text-white text-xs font-bold rounded transition-colors"
+                                >
+                                    €4.99
+                                </button>
+                            </div>
+                            <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 flex flex-col items-center text-center hover:border-cyan-500 transition-colors group relative overflow-hidden">
+                                <div className="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="absolute top-0 right-0 bg-cyan-500 text-black text-[9px] font-bold px-2 py-0.5 rounded-bl">POPOLARE</div>
+                                <Coins className="w-8 h-8 text-cyan-400 mb-2" />
+                                <h3 className="font-bold text-white text-sm">1200 NC</h3>
+                                <p className="text-xs text-slate-400 mb-3">Bonus +20%</p>
+                                <button
+                                    onClick={() => handleBuyCredits('medium')}
+                                    className="w-full py-1.5 bg-slate-800 hover:bg-cyan-600 text-white text-xs font-bold rounded transition-colors"
+                                >
+                                    €9.99
+                                </button>
+                            </div>
+                            <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 flex flex-col items-center text-center hover:border-cyan-500 transition-colors group relative overflow-hidden">
+                                <div className="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="absolute top-0 right-0 bg-yellow-500 text-black text-[9px] font-bold px-2 py-0.5 rounded-bl">BEST VALUE</div>
+                                <Coins className="w-8 h-8 text-yellow-400 mb-2" />
+                                <h3 className="font-bold text-white text-sm">2500 NC</h3>
+                                <p className="text-xs text-slate-400 mb-3">Bonus +25%</p>
+                                <button
+                                    onClick={() => handleBuyCredits('large')}
+                                    className="w-full py-1.5 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-black text-xs font-bold rounded transition-colors"
+                                >
+                                    €19.99
+                                </button>
+                            </div>
+                        </section>
+
                         {/* Daily Deal Section */}
                         {dailyDealItem && (
                             <section className="relative overflow-hidden rounded-2xl border border-yellow-500/30 bg-gradient-to-br from-yellow-950/20 to-slate-900 p-6">
@@ -246,5 +359,13 @@ export default function ShopPage() {
 
             </main>
         </div>
+    );
+}
+
+export default function ShopPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-cyan-500 font-mono">LOADING SHOP...</div>}>
+            <ShopContent />
+        </Suspense>
     );
 }

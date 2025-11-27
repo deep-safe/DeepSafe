@@ -27,8 +27,16 @@ interface UserState {
     earnedBadges: { id: string; earned_at: string }[];
     streakFreezes: number;
     inventory: string[]; // List of item IDs
+    hasSeenTutorial: boolean;
+    settings: {
+        notifications: boolean;
+        sound: boolean;
+        haptics: boolean;
+    };
 
     // Actions
+    completeTutorial: () => void;
+    updateSettings: (settings: Partial<{ notifications: boolean; sound: boolean; haptics: boolean }>) => Promise<void>;
     addXp: (amount: number) => void;
     addCredits: (amount: number) => Promise<void>;
     spendCredits: (amount: number) => Promise<boolean>;
@@ -64,6 +72,34 @@ export const useUserStore = create<UserState>()(
             earnedBadges: [],
             streakFreezes: 0,
             inventory: [],
+            hasSeenTutorial: false,
+            settings: {
+                notifications: true,
+                sound: true,
+                haptics: true
+            },
+            completeTutorial: () => set({ hasSeenTutorial: true }),
+            updateSettings: async (newSettings) => {
+                const state = get();
+                const updatedSettings = { ...state.settings, ...newSettings };
+                set({ settings: updatedSettings });
+
+                try {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (user) {
+                        const updates: any = {};
+                        if (newSettings.notifications !== undefined) updates.settings_notifications = newSettings.notifications;
+                        if (newSettings.sound !== undefined) updates.settings_sound = newSettings.sound;
+                        if (newSettings.haptics !== undefined) updates.settings_haptics = newSettings.haptics;
+
+                        if (Object.keys(updates).length > 0) {
+                            await supabase.from('profiles').update(updates).eq('id', user.id);
+                        }
+                    }
+                } catch (err) {
+                    console.error('Error syncing settings:', err);
+                }
+            },
 
             addXp: (amount) => set((state) => ({ xp: state.xp + amount })),
 
@@ -377,7 +413,7 @@ export const useUserStore = create<UserState>()(
 
                     const { data: profile, error } = await supabase
                         .from('profiles')
-                        .select('xp, current_hearts, highest_streak, unlocked_provinces, province_scores, last_login, earned_badges, credits, streak_freezes, inventory')
+                        .select('xp, current_hearts, highest_streak, unlocked_provinces, province_scores, last_login, earned_badges, credits, streak_freezes, inventory, settings_notifications, settings_sound, settings_haptics')
                         .eq('id', user.id)
                         .single();
 
@@ -398,6 +434,11 @@ export const useUserStore = create<UserState>()(
                             earnedBadges: (profile.earned_badges as any) ?? [],
                             streakFreezes: profile.streak_freezes ?? 0,
                             inventory: (profile.inventory as any) ?? [],
+                            settings: {
+                                notifications: profile.settings_notifications ?? true,
+                                sound: profile.settings_sound ?? true,
+                                haptics: profile.settings_haptics ?? true
+                            }
                         });
                         console.log('🔄 Profile refreshed from DB:', profile);
                     }

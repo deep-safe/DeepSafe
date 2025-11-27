@@ -52,10 +52,56 @@ const MOCK_MISSIONS: Mission[] = [
     { id: '3', title: 'Serie Perfetta', target_count: 1, current_count: 1, reward_xp: 200, is_completed: true, is_claimed: true, frequency: 'weekly' },
 ];
 
+import { usePushNotifications } from '@/hooks/usePushNotifications';
+import { Bell, BellOff, Volume2, Smartphone } from 'lucide-react';
+
+type ToggleColor = 'blue' | 'purple' | 'orange';
+
+function SettingsToggle({ checked, onChange, color = 'blue' }: { checked: boolean; onChange: (c: boolean) => void; color?: ToggleColor }) {
+    const colorStyles = {
+        blue: {
+            active: "bg-cyber-blue/20 border-cyber-blue shadow-[0_0_15px_rgba(102,252,241,0.3)]",
+            thumb: "bg-cyber-blue shadow-[0_0_10px_rgba(102,252,241,0.8)]",
+        },
+        purple: {
+            active: "bg-cyber-purple/20 border-cyber-purple shadow-[0_0_15px_rgba(168,85,247,0.3)]",
+            thumb: "bg-cyber-purple shadow-[0_0_10px_rgba(168,85,247,0.8)]",
+        },
+        orange: {
+            active: "bg-orange-500/20 border-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.3)]",
+            thumb: "bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.8)]",
+        }
+    };
+
+    const styles = colorStyles[color];
+
+    return (
+        <button
+            onClick={() => onChange(!checked)}
+            className={cn(
+                "w-14 h-7 rounded-full p-1 transition-all duration-300 ease-in-out relative border",
+                checked ? styles.active : "bg-zinc-900/50 border-zinc-700 hover:border-zinc-600"
+            )}
+        >
+            <motion.div
+                className={cn(
+                    "w-4 h-4 rounded-full shadow-md absolute top-1.5 left-1.5",
+                    checked ? styles.thumb : "bg-zinc-500"
+                )}
+                animate={{ x: checked ? 28 : 0 }}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            />
+        </button>
+    );
+}
+
 export default function ProfilePage() {
     const router = useRouter();
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const { earnedBadges, refreshProfile } = useUserStore();
+    const { earnedBadges, refreshProfile, settings, updateSettings } = useUserStore();
+
+    // Push Notifications
+    const { isSupported, permission, subscribe, unsubscribe, loading: pushLoading } = usePushNotifications();
 
     // -- State Management --
     const [user, setUser] = useState<any>(null);
@@ -252,6 +298,26 @@ export default function ProfilePage() {
                     {/* Scanner Line */}
                     <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyber-blue to-transparent opacity-50 animate-scan pointer-events-none" />
 
+                    {/* Notification Toggle */}
+                    {isSupported && (
+                        <button
+                            onClick={permission === 'granted' ? unsubscribe : subscribe}
+                            disabled={pushLoading}
+                            className={`absolute top-4 right-4 z-30 p-2 rounded-full border transition-all ${permission === 'granted'
+                                ? 'bg-cyber-blue/20 border-cyber-blue text-cyber-blue hover:bg-cyber-blue/30'
+                                : 'bg-slate-800/50 border-slate-600 text-slate-400 hover:bg-slate-800'
+                                }`}
+                        >
+                            {pushLoading ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : permission === 'granted' ? (
+                                <Bell className="w-5 h-5" />
+                            ) : (
+                                <BellOff className="w-5 h-5" />
+                            )}
+                        </button>
+                    )}
+
                     <div className="p-6 flex flex-col items-center relative z-10">
                         {/* Avatar Scanner */}
                         <div className="relative mb-20 group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
@@ -428,6 +494,69 @@ export default function ProfilePage() {
             </div>
 
 
+
+            {/* Section C: Settings */}
+            <div className="bg-black/40 border border-cyber-gray/30 rounded-xl p-6 space-y-6 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-cyber-blue/5 blur-[40px] rounded-full pointer-events-none" />
+
+                <h3 className="text-lg font-bold font-orbitron text-white flex items-center gap-2 relative z-10">
+                    <Cpu className="w-5 h-5 text-cyber-blue" />
+                    CONFIGURAZIONE SISTEMA
+                </h3>
+
+                <div className="space-y-6 relative z-10">
+                    <div className="flex items-center justify-between group">
+                        <div className="flex items-center gap-4">
+                            <div className="p-2 rounded-lg bg-cyber-blue/10 text-cyber-blue group-hover:bg-cyber-blue/20 transition-colors">
+                                <Bell className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <div className="text-sm font-bold text-white font-orbitron tracking-wide">NOTIFICHE PUSH</div>
+                                <div className="text-xs text-zinc-500 font-mono">Ricevi aggiornamenti sulle missioni</div>
+                            </div>
+                        </div>
+                        <SettingsToggle
+                            checked={settings.notifications}
+                            onChange={(checked) => updateSettings({ notifications: checked })}
+                            color="blue"
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-between group">
+                        <div className="flex items-center gap-4">
+                            <div className="p-2 rounded-lg bg-cyber-purple/10 text-cyber-purple group-hover:bg-cyber-purple/20 transition-colors">
+                                <Volume2 className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <div className="text-sm font-bold text-white font-orbitron tracking-wide">EFFETTI SONORI</div>
+                                <div className="text-xs text-zinc-500 font-mono">Suoni interfaccia e feedback</div>
+                            </div>
+                        </div>
+                        <SettingsToggle
+                            checked={settings.sound}
+                            onChange={(checked) => updateSettings({ sound: checked })}
+                            color="purple"
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-between group">
+                        <div className="flex items-center gap-4">
+                            <div className="p-2 rounded-lg bg-orange-500/10 text-orange-500 group-hover:bg-orange-500/20 transition-colors">
+                                <Smartphone className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <div className="text-sm font-bold text-white font-orbitron tracking-wide">FEEDBACK APTICO</div>
+                                <div className="text-xs text-zinc-500 font-mono">Vibrazione su interazioni</div>
+                            </div>
+                        </div>
+                        <SettingsToggle
+                            checked={settings.haptics}
+                            onChange={(checked) => updateSettings({ haptics: checked })}
+                            color="orange"
+                        />
+                    </div>
+                </div>
+            </div>
 
             {/* Divider: AGENT RECORD */}
             <div className="relative flex items-center gap-4 py-4">

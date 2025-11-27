@@ -44,12 +44,13 @@ export async function GET(request: Request) {
             process.env.VAPID_PRIVATE_KEY
         );
 
-        // 2. Fetch All Subscriptions
+        // 2. Fetch All Subscriptions for users with notifications enabled
         // We use the Service Role key (if available) or Anon key to fetch all users' subs.
         // NOTE: In a high-scale app, you would paginate this query.
         const { data: subscriptions, error } = await supabase
             .from('push_subscriptions')
-            .select('user_id, subscription');
+            .select('user_id, subscription, profiles!inner(settings_notifications)')
+            .eq('profiles.settings_notifications', true);
 
         if (error) throw error;
         if (!subscriptions || subscriptions.length === 0) {

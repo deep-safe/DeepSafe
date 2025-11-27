@@ -59,7 +59,27 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing userId or title' }, { status: 400 });
         }
 
-        // 1. Fetch User's Subscription
+        // 1. Check User's Notification Settings
+        const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('settings_notifications')
+            .eq('id', userId)
+            .single();
+
+        if (profileError) {
+            console.error('Error fetching profile settings:', profileError);
+            // Fallback: If we can't read profile, we assume TRUE or fail? 
+            // Let's assume TRUE to be safe, or fail if critical. 
+            // But better to log and proceed if it's just a settings check failure?
+            // Actually, if we can't read the profile, we probably can't read subscriptions either if RLS is the issue.
+        }
+
+        if (profile && profile.settings_notifications === false) {
+            console.log(`User ${userId} has disabled notifications.`);
+            return NextResponse.json({ message: 'User has disabled notifications' });
+        }
+
+        // 2. Fetch User's Subscription
         // We query the 'push_subscriptions' table to find the target user's endpoints.
         const { data: subscriptions, error } = await supabase
             .from('push_subscriptions')

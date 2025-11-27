@@ -97,3 +97,22 @@ CRON_SECRET=tua_stringa_segreta_super_lunga
     *   **IMPORTANTE**: Modifica `YOUR_APP_URL` con l'URL del tuo sito (es. `https://tuo-progetto.vercel.app`) e `YOUR_CRON_SECRET` con la chiave generata sopra.
     *   Esegui lo script per schedulare il job.
 
+Important: The sound files are currently pointing to placeholders (e.g., /sounds/click.mp3). You need to add the actual .mp3 files to the public/sounds/ folder for them to work.
+
+Stripe Integration Complete! 💳
+
+I have finished the implementation of the Stripe payment system.
+
+What's Done:
+
+Shop UI: Added a "Buy Credits" section with 3 tiers (Small, Medium, Large).
+Checkout Flow: Connected the buttons to the Stripe Checkout API.
+Webhook Logic: Implemented the BUY_CREDITS handler to safely increment user credits using the new RPC function.
+Redirect Handling: The Shop page now detects successful payments and refreshes the user's profile.
+Next Steps (Manual): Please follow the Stripe Setup instructions I added to TO_SIMO_DO.md to:
+
+Create your Stripe account.
+Get your API Keys.
+Create the 3 Credit Pack products.
+Configure the Webhook.
+Once configured, you can test purchasing credits in Stripe Test Mode! 🚀

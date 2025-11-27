@@ -1,5 +1,9 @@
 export const getToday = (): string => {
-    return new Date().toISOString().split('T')[0];
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 };
 
 export const isYesterday = (dateString: string): boolean => {
@@ -7,7 +11,10 @@ export const isYesterday = (dateString: string): boolean => {
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    const dateToCheck = new Date(dateString);
+    const yYear = yesterday.getFullYear();
+    const yMonth = String(yesterday.getMonth() + 1).padStart(2, '0');
+    const yDay = String(yesterday.getDate()).padStart(2, '0');
+    const yesterdayString = `${yYear}-${yMonth}-${yDay}`;
 
-    return dateToCheck.toISOString().split('T')[0] === yesterday.toISOString().split('T')[0];
+    return dateString === yesterdayString;
 };

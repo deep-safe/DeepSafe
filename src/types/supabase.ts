@@ -28,6 +28,9 @@ export interface Database {
                     last_login: string | null
                     earned_badges: Json
                     province_scores: Json
+                    settings_notifications: boolean | null
+                    settings_sound: boolean | null
+                    settings_haptics: boolean | null
                 }
                 Insert: {
                     avatar_url?: string | null
@@ -47,6 +50,9 @@ export interface Database {
                     last_login?: string | null
                     earned_badges?: Json
                     province_scores?: Json
+                    settings_notifications?: boolean | null
+                    settings_sound?: boolean | null
+                    settings_haptics?: boolean | null
                 }
                 Update: {
                     avatar_url?: string | null
@@ -66,6 +72,9 @@ export interface Database {
                     last_login?: string | null
                     earned_badges?: Json
                     province_scores?: Json
+                    settings_notifications?: boolean | null
+                    settings_sound?: boolean | null
+                    settings_haptics?: boolean | null
                 }
                 Relationships: [
                     {
@@ -581,6 +590,13 @@ export interface Database {
                     p_score: number
                 }
                 Returns: Json
+            }
+            increment_credits: {
+                Args: {
+                    p_user_id: string
+                    p_amount: number
+                }
+                Returns: void
             }
         }
         Enums: {

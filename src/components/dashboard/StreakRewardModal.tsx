@@ -1,8 +1,24 @@
 'use client';
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useSpring, useTransform } from 'framer-motion';
 import { Flame, CheckCircle } from 'lucide-react';
+
+function StreakCounter({ value }: { value: number }) {
+    const startValue = Math.max(0, value - 1);
+    const spring = useSpring(startValue, { mass: 0.8, stiffness: 75, damping: 15 });
+    const display = useTransform(spring, (current) => Math.round(current));
+
+    React.useEffect(() => {
+        spring.set(value);
+    }, [spring, value]);
+
+    return (
+        <motion.span className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-orange-400 to-red-600 font-orbitron drop-shadow-lg">
+            {display}
+        </motion.span>
+    );
+}
 
 interface StreakRewardModalProps {
     isOpen: boolean;
@@ -69,9 +85,7 @@ export default function StreakRewardModal({ isOpen, streak, onClose }: StreakRew
                                         Sistema Sincronizzato
                                     </h2>
                                     <div className="flex flex-col items-center justify-center py-2">
-                                        <span className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-orange-400 to-red-600 font-orbitron drop-shadow-lg">
-                                            {streak}
-                                        </span>
+                                        <StreakCounter value={streak} />
                                         <span className="text-sm text-orange-400 font-bold tracking-[0.2em] uppercase mt-1">
                                             Giorni consecutivi
                                         </span>
