@@ -38,7 +38,7 @@ To democratize AI safety knowledge through gamification. We believe that learnin
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/your-org/deepsafe.git
+    git clone https://github.com/simo-hue/DeepSafe.git
     cd deepsafe
     ```
 
