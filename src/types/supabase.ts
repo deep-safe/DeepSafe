@@ -32,6 +32,7 @@ export interface Database {
                     settings_sound: boolean | null
                     settings_haptics: boolean | null
                     has_seen_tutorial: boolean | null
+                    created_at: string | null
                 }
                 Insert: {
                     avatar_url?: string | null
@@ -654,6 +655,18 @@ export interface Database {
                     p_user_id: string
                     p_mission_id: string
                 }
+                Returns: Json
+            }
+            get_analytics_overview: {
+                Args: Record<PropertyKey, never>
+                Returns: Json
+            }
+            get_user_growth: {
+                Args: Record<PropertyKey, never>
+                Returns: Json
+            }
+            get_mission_stats: {
+                Args: Record<PropertyKey, never>
                 Returns: Json
             }
         }
