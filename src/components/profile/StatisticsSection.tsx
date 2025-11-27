@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Target, Zap, Trophy, Activity, Crosshair, Lock } from 'lucide-react';
 import { PremiumLockOverlay } from './PremiumLockOverlay';
@@ -97,6 +98,18 @@ export const StatisticsSection: React.FC<StatisticsSectionProps> = ({ isPremium 
                 {/* Lock Overlay for Free Users */}
                 {!isPremium && (
                     <PremiumLockOverlay onUnlock={() => setIsModalOpen(true)} />
+                )}
+
+                {/* View Full Report Button (Premium Only) */}
+                {isPremium && (
+                    <div className="pt-4 border-t border-white/5">
+                        <Link
+                            href="/profile/stats"
+                            className="w-full block text-center py-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg text-cyan-400 font-bold font-orbitron text-sm hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all"
+                        >
+                            VISUALIZZA RAPPORTO COMPLETO
+                        </Link>
+                    </div>
                 )}
             </div>
 
