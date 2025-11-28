@@ -40,6 +40,7 @@ export default function QuizPage() {
     const [showShopModal, setShowShopModal] = useState(false);
     const [showReward, setShowReward] = useState(false);
     const [earnedXp, setEarnedXp] = useState(0);
+    const [newBadgeId, setNewBadgeId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -130,8 +131,6 @@ export default function QuizPage() {
         );
     }
 
-    // ... inside component ...
-
     if (lives <= 0 && !showShopModal) {
         return (
             <SystemFailureModal
@@ -181,10 +180,6 @@ export default function QuizPage() {
         setIsCorrect(isCorrectAnswer);
         setIsAnswered(true);
 
-        // ... imports
-
-        // ... inside handleAnswer
-
         if (isCorrectAnswer) {
             setScore(score + 1);
         } else {
@@ -225,20 +220,14 @@ export default function QuizPage() {
 
                     if (user) {
                         // -- DUEL MODE LOGIC --
-                        // If this quiz was played as part of a challenge, submit the score to the challenges table.
                         if (mode === 'duel' && challengeId) {
-                            // We don't await this to prevent blocking the UI transition,
-                            // but we log success/failure.
                             submitDuelScore(challengeId, user.id, finalScore)
                                 .then(() => console.log('⚔️ Duel score submitted successfully.'))
                                 .catch(err => console.error('❌ Error submitting duel score:', err));
 
-                            // Track the duel completion event for analytics
                             posthog.capture('duel_completed', {
                                 challenge_id: challengeId,
                                 score: finalScore,
-                                // A simple heuristic for 'won'. The actual winner is determined by the DB logic
-                                // comparing scores from both participants.
                                 won: finalScore > (totalQuestions / 2),
                                 quiz_id: params.id,
                                 user_id: user.id
@@ -263,7 +252,7 @@ export default function QuizPage() {
                         });
 
                         // Type assertion for RPC response
-                        const rpcResult = data as { success?: boolean; error?: string } | null;
+                        const rpcResult = data as { success?: boolean; error?: string; new_badge_id?: string } | null;
 
                         if (error || (rpcResult && !rpcResult.success)) {
                             console.error('❌ Error completing level (RPC):', error || rpcResult?.error);
@@ -276,11 +265,13 @@ export default function QuizPage() {
                                 completed_at: new Date().toISOString()
                             }, { onConflict: 'user_id, quiz_id' });
 
-                            // Note: XP should be handled by complete_level RPC
-                            // If that fails, we rely on the profile refresh to show accurate XP
                             console.warn('complete_level RPC failed, XP may not be updated correctly');
                         } else {
                             console.log('✅ Level completed successfully:', data);
+                            if (rpcResult?.new_badge_id) {
+                                console.log('🏆 New Badge Earned:', rpcResult.new_badge_id);
+                                setNewBadgeId(rpcResult.new_badge_id);
+                            }
                         }
                     }
 
@@ -319,11 +310,20 @@ export default function QuizPage() {
                 <div className="space-y-2">
                     <h2 className="text-3xl font-bold text-cyber-purple font-orbitron text-glow">Missione Compiuta</h2>
                     <p className="text-xl font-medium text-cyber-blue">Dati Messi in Sicurezza: +{earnedXp} XP</p>
+                    {newBadgeId && (
+                        <div className="mt-4 p-3 bg-yellow-500/20 border border-yellow-500/50 rounded-xl animate-pulse">
+                            <p className="text-yellow-400 font-bold">NUOVO BADGE SBLOCCATO!</p>
+                        </div>
+                    )}
                 </div>
                 <button
                     onClick={() => {
                         // Force Hard Refresh to ensure Dashboard gets fresh data
-                        window.location.href = '/dashboard';
+                        // Pass newBadgeId param if present
+                        const redirectUrl = newBadgeId
+                            ? `/dashboard?newBadge=${newBadgeId}`
+                            : '/dashboard';
+                        window.location.href = redirectUrl;
                     }}
                     className="px-8 py-3 bg-cyber-blue text-cyber-dark rounded-full font-bold text-lg shadow-[0_0_15px_rgba(69,162,158,0.5)] hover:bg-cyber-green transition-all hover:scale-105"
                 >

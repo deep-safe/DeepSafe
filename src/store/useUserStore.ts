@@ -595,21 +595,13 @@ export const useUserStore = create<UserState>()(
                                 const regionName = badge.condition_value;
                                 const regionProvinces = provincesData.filter(p => p.region === regionName);
 
-                                // Debug Log
-                                console.log(`Checking Region Badge: ${badge.name} for region: ${regionName}`);
-                                console.log(`Found ${regionProvinces.length} provinces for ${regionName}`);
-
                                 const allCompleted = regionProvinces.every(p => {
                                     const scoreData = state.provinceScores[p.id];
                                     const isProvCompleted = scoreData && scoreData.isCompleted;
-                                    if (!isProvCompleted) {
-                                        console.log(`Province ${p.name} (${p.id}) is NOT completed. ScoreData:`, scoreData);
-                                    }
                                     return isProvCompleted;
                                 });
 
                                 if (regionProvinces.length > 0 && allCompleted) {
-                                    console.log(`Region ${regionName} COMPLETED! Unlocking badge.`);
                                     unlocked = true;
                                 }
                             }

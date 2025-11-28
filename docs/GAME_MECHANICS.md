@@ -57,7 +57,15 @@ The map reflects your skill level through a dynamic coloring system:
 
 ## 🏅 Badges
 
-Badges are permanent achievements displayed on the Profile. They are earned by completing specific milestones (e.g., "First Blood", "Sniper", "Socialite").
+Badges are permanent achievements displayed on the Profile, representing milestones in your journey.
+
+### Acquisition Methods
+1.  **Region Mastery**: Awarded for completing all missions in a specific region (e.g., "Conquistatore del Veneto").
+2.  **Level Milestones**: Specific levels grant unique badges upon completion (e.g., completing the "2FA Setup" level awards the "Shield Bearer" badge).
+3.  **Skill Achievements**: Earned by mastering specific topics (e.g., "Scam Slayer" for Phishing modules).
+
+### Display System
+The badge system uses a **Sequential Queue** to ensure you never miss a reward. If you unlock multiple badges simultaneously (e.g., finishing a region which also completes a level milestone), they will be presented one by one with a cinematic delay, ensuring each achievement gets its moment of glory.
 
 ## 🛒 The Black Market (Shop)
 

@@ -23,6 +23,8 @@ export const StatisticsSection: React.FC<StatisticsSectionProps> = ({ isPremium 
         return acc + (p.missions ? Object.values(p.missions).filter(m => m.isCompleted).length : 0);
     }, 0);
 
+    console.log('Stats Debug:', { totalMissions, completedMissions, provinceScores });
+
     const missionCompletionRate = totalMissions > 0 ? Math.round((completedMissions / totalMissions) * 100) : 0;
 
     // Calculate Accuracy

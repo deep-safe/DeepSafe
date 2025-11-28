@@ -143,13 +143,18 @@ export default function AdminPage() {
             'Salva Modifiche',
             'Sei sicuro di voler salvare le modifiche a questo utente?',
             async () => {
-                const { error } = await supabase
-                    .from('profiles')
-                    .update(editForm)
-                    .eq('id', id);
+                const { data, error } = await supabase.rpc('admin_update_user' as any, {
+                    target_user_id: id,
+                    new_xp: editForm.xp,
+                    new_credits: editForm.credits,
+                    new_streak: editForm.highest_streak
+                });
 
-                if (error) {
-                    alert('Error updating user');
+                const response = data as any;
+
+                if (error || (response && !response.success)) {
+                    console.error('Update error:', error || response?.message);
+                    alert(`Error updating user: ${error?.message || response?.message}`);
                 } else {
                     setUsers(users.map(u => u.id === id ? { ...u, ...editForm } : u));
                     setEditingId(null);
@@ -166,12 +171,20 @@ export default function AdminPage() {
             'Sei sicuro di voler resettare questo utente? Verranno azzerati XP, Crediti e Streak.',
             async () => {
                 // Soft ban / Reset
-                const { error } = await supabase
-                    .from('profiles')
-                    .update({ xp: 0, credits: 0, highest_streak: 0, unlocked_provinces: ['CB', 'IS', 'FG'] })
-                    .eq('id', id);
+                const { data, error } = await supabase.rpc('admin_update_user' as any, {
+                    target_user_id: id,
+                    new_xp: 0,
+                    new_credits: 0,
+                    new_streak: 0,
+                    new_unlocked_provinces: ['CB', 'IS', 'FG']
+                });
 
-                if (!error) {
+                const response = data as any;
+
+                if (error || (response && !response.success)) {
+                    console.error('Ban error:', error || response?.message);
+                    alert(`Error resetting user: ${error?.message || response?.message}`);
+                } else {
                     checkAdminAndFetchData();
                 }
             },
@@ -214,12 +227,17 @@ export default function AdminPage() {
             newStatus ? 'Attiva Premium' : 'Disattiva Premium',
             `Sei sicuro di voler ${newStatus ? 'attivare' : 'disattivare'} lo stato Premium per ${user.username}?`,
             async () => {
-                const { error } = await supabase
-                    .from('profiles')
-                    .update({ is_premium: newStatus })
-                    .eq('id', user.id);
+                const { data, error } = await supabase.rpc('admin_update_user' as any, {
+                    target_user_id: user.id,
+                    new_is_premium: newStatus
+                });
 
-                if (!error) {
+                const response = data as any;
+
+                if (error || (response && !response.success)) {
+                    console.error('Premium toggle error:', error || response?.message);
+                    alert(`Error updating premium status: ${error?.message || response?.message}`);
+                } else {
                     setUsers(users.map(u => u.id === user.id ? { ...u, is_premium: newStatus } : u));
                 }
             },
@@ -239,13 +257,18 @@ export default function AdminPage() {
         const currentInventory = (selectedUser.inventory as string[]) || [];
         const newInventory = [...currentInventory, itemId];
 
-        const { error } = await supabase
-            .from('profiles')
-            .update({ inventory: newInventory })
-            .eq('id', selectedUser.id);
+        const { data, error } = await supabase.rpc('admin_update_user' as any, {
+            target_user_id: selectedUser.id,
+            new_inventory: newInventory
+        });
 
-        if (!error) {
+        const response = data as any;
+
+        if (!error && (!response || response.success)) {
             updateLocalUser(selectedUser.id, { inventory: newInventory });
+        } else {
+            console.error('Add item error:', error || response?.message);
+            alert(`Error adding item: ${error?.message || response?.message}`);
         }
     };
 
@@ -255,13 +278,18 @@ export default function AdminPage() {
         const newInventory = [...currentInventory];
         newInventory.splice(index, 1);
 
-        const { error } = await supabase
-            .from('profiles')
-            .update({ inventory: newInventory })
-            .eq('id', selectedUser.id);
+        const { data, error } = await supabase.rpc('admin_update_user' as any, {
+            target_user_id: selectedUser.id,
+            new_inventory: newInventory
+        });
 
-        if (!error) {
+        const response = data as any;
+
+        if (!error && (!response || response.success)) {
             updateLocalUser(selectedUser.id, { inventory: newInventory });
+        } else {
+            console.error('Remove item error:', error || response?.message);
+            alert(`Error removing item: ${error?.message || response?.message}`);
         }
     };
 
@@ -283,13 +311,18 @@ export default function AdminPage() {
             newBadges = [...currentBadges, { id: badgeId, earned_at: new Date().toISOString() }];
         }
 
-        const { error } = await supabase
-            .from('profiles')
-            .update({ earned_badges: newBadges })
-            .eq('id', selectedUser.id);
+        const { data, error } = await supabase.rpc('admin_update_user' as any, {
+            target_user_id: selectedUser.id,
+            new_earned_badges: newBadges
+        });
 
-        if (!error) {
+        const response = data as any;
+
+        if (!error && (!response || response.success)) {
             updateLocalUser(selectedUser.id, { earned_badges: newBadges });
+        } else {
+            console.error('Toggle badge error:', error || response?.message);
+            alert(`Error toggling badge: ${error?.message || response?.message}`);
         }
     };
 

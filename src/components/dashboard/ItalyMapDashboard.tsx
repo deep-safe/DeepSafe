@@ -98,69 +98,120 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
         badge: null
     });
 
+    // Badge Queue State
+    const [badgeQueue, setBadgeQueue] = useState<any[]>([]);
+    const [isProcessingQueue, setIsProcessingQueue] = useState(false);
+
+    // Helper to add badges to queue
+    const queueBadges = async (newBadgeIds: string[]) => {
+        if (!newBadgeIds || newBadgeIds.length === 0) return;
+
+        try {
+            const { data: badgeDetails, error } = await supabase
+                .from('badges')
+                .select('*')
+                .in('id', newBadgeIds);
+
+            if (error) {
+                console.error('Error fetching badge details:', error);
+                return;
+            }
+
+            if (badgeDetails && badgeDetails.length > 0) {
+                // Prioritize Region Badges
+                const sortedBadges = badgeDetails.sort((a: any, b: any) => {
+                    if (a.condition_type === 'region_master' && b.condition_type !== 'region_master') return -1;
+                    if (a.condition_type !== 'region_master' && b.condition_type === 'region_master') return 1;
+                    return 0;
+                });
+
+                setBadgeQueue(prev => [...prev, ...sortedBadges]);
+            }
+        } catch (err) {
+            console.error('Error queuing badges:', err);
+        }
+    };
+
+    // Process Queue Effect
+    useEffect(() => {
+        if (badgeQueue.length > 0 && !isProcessingQueue && !isBadgeModalOpen && !regionCompletionData.isOpen) {
+            const nextBadge = badgeQueue[0];
+            setIsProcessingQueue(true);
+
+            if (nextBadge.condition_type === 'region_master') {
+                setRegionCompletionData({
+                    isOpen: true,
+                    regionName: nextBadge.condition_value || 'Unknown Region',
+                    badge: nextBadge
+                });
+            } else {
+                setUnlockedBadgeId(nextBadge.id);
+                setIsBadgeModalOpen(true);
+            }
+        }
+    }, [badgeQueue, isProcessingQueue, isBadgeModalOpen, regionCompletionData.isOpen]);
+
+    const handleBadgeModalClose = () => {
+        setIsBadgeModalOpen(false);
+        setUnlockedBadgeId(null);
+
+        // Remove processed badge and wait 2 seconds
+        setTimeout(() => {
+            setBadgeQueue(prev => prev.slice(1));
+            setIsProcessingQueue(false);
+        }, 2000);
+    };
+
+    const handleRegionModalClose = () => {
+        setRegionCompletionData(prev => ({ ...prev, isOpen: false }));
+
+        // Remove processed badge and wait 2 seconds
+        setTimeout(() => {
+            setBadgeQueue(prev => prev.slice(1));
+            setIsProcessingQueue(false);
+        }, 2000);
+    };
+
     // Initial Data Fetch & Badge Check
     useEffect(() => {
         const initProfile = async () => {
             await refreshProfile();
             await fetchRegionCosts(); // Fetch region costs
-            const { newBadges } = await checkBadges();
 
-            if (newBadges.length > 0) {
-                // Check if any new badge is a region_master badge
-                // We need to fetch the badge details to know its type
-                const { data: badgeDetails } = await supabase
-                    .from('badges')
-                    .select('*')
-                    .in('id', newBadges);
+            // Check for newBadge in URL
+            const newBadgeParam = searchParams.get('newBadge');
+            if (newBadgeParam) {
+                await queueBadges([newBadgeParam]);
+                // Clear URL param without reload
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, '', newUrl);
+            }
 
-                const regionBadge = badgeDetails?.find((b: any) => b.condition_type === 'region_master');
-
-                if (regionBadge) {
-                    setRegionCompletionData({
-                        isOpen: true,
-                        regionName: regionBadge.condition_value || 'Unknown Region',
-                        badge: regionBadge
-                    });
-                } else {
-                    setUnlockedBadgeId(newBadges[0]); // Show first new badge
-                    setIsBadgeModalOpen(true);
+            try {
+                const { newBadges } = await checkBadges();
+                if (newBadges && newBadges.length > 0) {
+                    await queueBadges(newBadges);
                 }
+            } catch (error) {
+                console.error('Error checking badges on init:', error);
             }
             setIsProfileLoaded(true);
         };
         initProfile();
-    }, [refreshProfile, fetchRegionCosts]);
+    }, [refreshProfile, fetchRegionCosts, searchParams]);
 
     // Listen for score updates (mission completion) to trigger immediate badge check
     const prevScoresRef = useRef(provinceScores);
     useEffect(() => {
         if (prevScoresRef.current !== provinceScores) {
-            console.log("Province scores updated, triggering badge check...");
             const checkForNewBadges = async () => {
-                const { newBadges } = await checkBadges(true); // Force check ignoring cooldown
-                console.log("Badge check result:", newBadges);
-
-                if (newBadges.length > 0) {
-                    const { data: badgeDetails } = await supabase
-                        .from('badges')
-                        .select('*')
-                        .in('id', newBadges);
-
-                    console.log("Fetched badge details:", badgeDetails);
-
-                    const regionBadge = badgeDetails?.find((b: any) => b.condition_type === 'region_master');
-
-                    if (regionBadge) {
-                        console.log("Region completion badge found:", regionBadge);
-                        setRegionCompletionData({
-                            isOpen: true,
-                            regionName: regionBadge.condition_value || 'Unknown Region',
-                            badge: regionBadge
-                        });
-                    } else {
-                        setUnlockedBadgeId(newBadges[0]);
-                        setIsBadgeModalOpen(true);
+                try {
+                    const { newBadges } = await checkBadges(true); // Force check ignoring cooldown
+                    if (newBadges && newBadges.length > 0) {
+                        await queueBadges(newBadges);
                     }
+                } catch (error) {
+                    console.error('Error checking for badges:', error);
                 }
             };
             checkForNewBadges();
@@ -600,13 +651,13 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
             {/* Badge Unlock Modal */}
             <BadgeUnlockModal
                 isOpen={isBadgeModalOpen}
-                onClose={() => setIsBadgeModalOpen(false)}
+                onClose={handleBadgeModalClose}
                 badgeId={unlockedBadgeId}
             />
 
             <RegionCompletionModal
                 isOpen={regionCompletionData.isOpen}
-                onClose={() => setRegionCompletionData(prev => ({ ...prev, isOpen: false }))}
+                onClose={handleRegionModalClose}
                 regionName={regionCompletionData.regionName}
                 badge={regionCompletionData.badge}
             />

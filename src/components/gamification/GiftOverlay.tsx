@@ -48,7 +48,7 @@ export function GiftOverlay() {
             .eq('is_claimed', false)
             .order('created_at', { ascending: true })
             .limit(1)
-            .single();
+            .maybeSingle();
 
         if (data) {
             setGift(data as unknown as GiftData);

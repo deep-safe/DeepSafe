@@ -65,21 +65,36 @@ Defines the dynamic content for each province.
 - `xp_reward` (Int): XP gained on completion.
 - `level` (Enum): Difficulty level.
 
-### `shop_items`
-Defines items available in the Black Market.
-- `id` (Text): Primary Key (e.g., 'streak_freeze').
-- `name` (Text): Display name.
-- `cost` (Int): Price in NeuroCredits.
-- `effect_type` (Text): Logic handler (e.g., 'refill_lives').
+### `levels`
+Defines the specific challenges within a module.
+- `id` (UUID): Primary Key.
+- `module_id` (Text): Link to Module.
+- `title` (Text): Level title.
+- `xp_reward` (Int): XP gained.
+- `badge_reward_id` (Text): Optional link to a Badge awarded on completion.
 
-### `badges`
-Defines available achievements.
-- `id` (Text): Primary Key.
-- `name` (Text): Badge name.
-- `condition` (Text): Description of how to unlock.
+### `gifts`
+Stores gifts sent by admins to users.
+- `id` (UUID): Primary Key.
+- `user_id` (UUID): Recipient.
+- `type` (Enum): 'credits', 'xp', 'item', 'hearts', 'avatar'.
+- `amount` (Int): Quantity.
+- `message` (Text): Admin message.
+- `is_claimed` (Bool): Claim status.
+- `icon_url` (Text): Custom icon for the gift.
+
+### `feedback`
+Stores user feedback.
+- `id` (UUID): Primary Key.
+- `user_id` (UUID): Submitter.
+- `type` (Enum): 'bug', 'feature', 'general'.
+- `message` (Text): Content.
+- `rating` (Int): 1-5 stars.
+- `status` (Enum): 'new', 'read', 'archived'.
 
 ## 🔐 Security
 
 - **RLS (Row Level Security)**: Enabled on all tables. Users can only read/write their own data. Public data (like Leaderboards) is exposed via specific policies.
 - **Middleware**: `middleware.ts` protects private routes (`/dashboard`, `/profile`) and redirects unauthenticated users to `/login`.
-- **Secure Webhooks**: Stripe webhooks use the `SUPABASE_SERVICE_ROLE_KEY` to bypass RLS for administrative updates (e.g., granting Premium status) but verify the Stripe signature to prevent spoofing.
+- **Secure Webhooks**: Stripe webhooks use the `SUPABASE_SERVICE_ROLE_KEY` to bypass RLS for administrative updates.
+- **Admin RPCs**: Critical administrative actions (updating user stats, banning, inventory management) are handled by `SECURITY DEFINER` functions like `admin_update_user`. These functions explicitly verify the caller's `is_admin` status before executing, providing a secure layer for privileged operations that bypasses standard RLS.
