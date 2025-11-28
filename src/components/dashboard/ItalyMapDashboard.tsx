@@ -17,12 +17,19 @@ import { useDailyStreak } from '@/hooks/useDailyStreak';
 import { useSound } from '@/context/SoundContext';
 import { useHaptic } from '@/hooks/useHaptic';
 import dynamic from 'next/dynamic';
+import { createBrowserClient } from '@supabase/ssr';
+
+const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 const ProvinceModal = dynamic(() => import('./ProvinceModal'), { ssr: false });
 const StreakRewardModal = dynamic(() => import('./StreakRewardModal'), { ssr: false });
 const BadgeUnlockModal = dynamic(() => import('../gamification/BadgeUnlockModal').then(mod => mod.BadgeUnlockModal), { ssr: false });
 const TierAscensionModal = dynamic(() => import('./TierAscensionModal').then(mod => mod.TierAscensionModal), { ssr: false });
 const UnlockProtocolModal = dynamic(() => import('./UnlockProtocolModal').then(mod => mod.UnlockProtocolModal), { ssr: false });
+const RegionCompletionModal = dynamic(() => import('./RegionCompletionModal').then(mod => mod.RegionCompletionModal), { ssr: false });
 
 const ITALY_VIEWBOX = "0 0 800 1000";
 
@@ -80,20 +87,86 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
         cost: number;
     } | null>(null);
 
+    // Region Completion State
+    const [regionCompletionData, setRegionCompletionData] = useState<{
+        isOpen: boolean;
+        regionName: string;
+        badge: any;
+    }>({
+        isOpen: false,
+        regionName: '',
+        badge: null
+    });
+
     // Initial Data Fetch & Badge Check
     useEffect(() => {
         const initProfile = async () => {
             await refreshProfile();
             await fetchRegionCosts(); // Fetch region costs
             const { newBadges } = await checkBadges();
+
             if (newBadges.length > 0) {
-                setUnlockedBadgeId(newBadges[0]); // Show first new badge
-                setIsBadgeModalOpen(true);
+                // Check if any new badge is a region_master badge
+                // We need to fetch the badge details to know its type
+                const { data: badgeDetails } = await supabase
+                    .from('badges')
+                    .select('*')
+                    .in('id', newBadges);
+
+                const regionBadge = badgeDetails?.find((b: any) => b.condition_type === 'region_master');
+
+                if (regionBadge) {
+                    setRegionCompletionData({
+                        isOpen: true,
+                        regionName: regionBadge.condition_value || 'Unknown Region',
+                        badge: regionBadge
+                    });
+                } else {
+                    setUnlockedBadgeId(newBadges[0]); // Show first new badge
+                    setIsBadgeModalOpen(true);
+                }
             }
             setIsProfileLoaded(true);
         };
         initProfile();
     }, [refreshProfile, fetchRegionCosts]);
+
+    // Listen for score updates (mission completion) to trigger immediate badge check
+    const prevScoresRef = useRef(provinceScores);
+    useEffect(() => {
+        if (prevScoresRef.current !== provinceScores) {
+            console.log("Province scores updated, triggering badge check...");
+            const checkForNewBadges = async () => {
+                const { newBadges } = await checkBadges(true); // Force check ignoring cooldown
+                console.log("Badge check result:", newBadges);
+
+                if (newBadges.length > 0) {
+                    const { data: badgeDetails } = await supabase
+                        .from('badges')
+                        .select('*')
+                        .in('id', newBadges);
+
+                    console.log("Fetched badge details:", badgeDetails);
+
+                    const regionBadge = badgeDetails?.find((b: any) => b.condition_type === 'region_master');
+
+                    if (regionBadge) {
+                        console.log("Region completion badge found:", regionBadge);
+                        setRegionCompletionData({
+                            isOpen: true,
+                            regionName: regionBadge.condition_value || 'Unknown Region',
+                            badge: regionBadge
+                        });
+                    } else {
+                        setUnlockedBadgeId(newBadges[0]);
+                        setIsBadgeModalOpen(true);
+                    }
+                }
+            };
+            checkForNewBadges();
+            prevScoresRef.current = provinceScores;
+        }
+    }, [provinceScores, checkBadges]);
 
     // Merge static data with persisted unlocked status and scores
     const dynamicProvincesData = useMemo(() => {
@@ -529,6 +602,13 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                 isOpen={isBadgeModalOpen}
                 onClose={() => setIsBadgeModalOpen(false)}
                 badgeId={unlockedBadgeId}
+            />
+
+            <RegionCompletionModal
+                isOpen={regionCompletionData.isOpen}
+                onClose={() => setRegionCompletionData(prev => ({ ...prev, isOpen: false }))}
+                regionName={regionCompletionData.regionName}
+                badge={regionCompletionData.badge}
             />
 
             {/* Tier Ascension Modal */}

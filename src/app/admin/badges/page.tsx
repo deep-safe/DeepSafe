@@ -308,16 +308,43 @@ export default function AdminBadgesPage() {
                                                 {CONDITION_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                                             </select>
                                         </div>
-                                        <div>
-                                            <label className="block text-xs font-mono text-slate-500 mb-1">Value (Optional)</label>
-                                            <input
-                                                type="text"
-                                                value={formData.condition_value || ''}
-                                                onChange={e => setFormData({ ...formData, condition_value: e.target.value })}
-                                                className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm focus:border-purple-500 outline-none"
-                                                placeholder="e.g. 1000 or Piemonte"
-                                            />
-                                        </div>
+
+                                        {/* Region Master Specific UI */}
+                                        {formData.condition_type === 'region_master' ? (
+                                            <div className="bg-purple-900/20 p-3 rounded border border-purple-500/30">
+                                                <label className="block text-xs font-bold text-purple-300 mb-2">
+                                                    Select Region to Conquer
+                                                </label>
+                                                <select
+                                                    value={formData.condition_value || ''}
+                                                    onChange={e => setFormData({ ...formData, condition_value: e.target.value })}
+                                                    className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm focus:border-purple-500 outline-none"
+                                                >
+                                                    <option value="">-- Select Region --</option>
+                                                    {/* We need to import REGIONS or hardcode them if not available in this file. 
+                                                        Since we don't have provincesData imported here, we'll use a hardcoded list or fetch it.
+                                                        For now, let's use a common list of Italian regions.
+                                                    */}
+                                                    {['Abruzzo', 'Basilicata', 'Calabria', 'Campania', 'Emilia-Romagna', 'Friuli-Venezia Giulia', 'Lazio', 'Liguria', 'Lombardia', 'Marche', 'Molise', 'Piemonte', 'Puglia', 'Sardegna', 'Sicilia', 'Toscana', 'Trentino-Alto Adige', 'Umbria', 'Valle d\'Aosta', 'Veneto'].map(r => (
+                                                        <option key={r} value={r}>{r}</option>
+                                                    ))}
+                                                </select>
+                                                <p className="text-[10px] text-slate-400 mt-2">
+                                                    This badge will be awarded automatically when the user completes ALL missions in this region.
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <label className="block text-xs font-mono text-slate-500 mb-1">Value (Optional)</label>
+                                                <input
+                                                    type="text"
+                                                    value={formData.condition_value || ''}
+                                                    onChange={e => setFormData({ ...formData, condition_value: e.target.value })}
+                                                    className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm focus:border-purple-500 outline-none"
+                                                    placeholder="e.g. 1000 (XP) or 7 (Streak)"
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>

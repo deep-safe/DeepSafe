@@ -55,7 +55,28 @@ export default function AdminMissionsPage() {
         checkAdminAndFetchMissions();
     }, []);
 
-    // ... (existing checkAdminAndFetchMissions)
+    const checkAdminAndFetchMissions = async () => {
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                router.push('/login');
+                return;
+            }
+
+            // Fetch missions
+            const { data, error } = await supabase
+                .from('missions')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            setMissions(data || []);
+        } catch (error) {
+            console.error('Error fetching missions:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleOpenModal = async (mission?: Mission) => {
         if (mission) {
@@ -86,7 +107,139 @@ export default function AdminMissionsPage() {
         setIsModalOpen(true);
     };
 
-    // ... (existing handlers)
+    const handleDelete = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this mission?')) return;
+
+        try {
+            const { error } = await supabase.from('missions').delete().eq('id', id);
+            if (error) throw error;
+            setMissions(missions.filter(m => m.id !== id));
+        } catch (error) {
+            console.error('Error deleting mission:', error);
+            alert('Error deleting mission');
+        }
+    };
+
+    const handleAddQuestion = (type: string) => {
+        const newQuestion: Partial<MissionQuestion> = {
+            text: '',
+            type: type as any,
+            options: type === 'true_false' || type === 'image_true_false' ? ['Vero', 'Falso'] : ['', '', '', ''],
+            correct_answer: 0,
+            explanation: '',
+            image_url: ''
+        };
+        setQuestions([...questions, newQuestion]);
+    };
+
+    const updateQuestion = (index: number, field: string, value: any) => {
+        const newQuestions = [...questions];
+        // @ts-ignore
+        newQuestions[index][field] = value;
+        setQuestions(newQuestions);
+    };
+
+    const updateOption = (qIndex: number, oIndex: number, value: string) => {
+        const newQuestions = [...questions];
+        if (newQuestions[qIndex].options) {
+            newQuestions[qIndex].options![oIndex] = value;
+            setQuestions(newQuestions);
+        }
+    };
+
+    const handleImageUpload = async (file: File, index: number) => {
+        try {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Math.random()}.${fileExt}`;
+            const filePath = `mission-images/${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('mission-assets')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('mission-assets')
+                .getPublicUrl(filePath);
+
+            updateQuestion(index, 'image_url', publicUrl);
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            alert('Error uploading image');
+        }
+    };
+
+    const handleSave = async () => {
+        try {
+            if (!formData.title || !formData.region) {
+                alert('Please fill in required fields');
+                return;
+            }
+
+            let missionId = formData.id;
+
+            if (missionId) {
+                const { error } = await supabase
+                    .from('missions')
+                    .update({
+                        title: formData.title,
+                        content: formData.content,
+                        xp_reward: formData.xp_reward,
+                        estimated_time: formData.estimated_time,
+                        level: formData.level,
+                        region: formData.region,
+                        province_id: formData.province_id || null,
+                        description: formData.description,
+                        tier: formData.tier
+                    })
+                    .eq('id', missionId);
+                if (error) throw error;
+            } else {
+                const { data, error } = await supabase
+                    .from('missions')
+                    .insert([{
+                        title: formData.title,
+                        content: formData.content,
+                        xp_reward: formData.xp_reward,
+                        estimated_time: formData.estimated_time,
+                        level: formData.level,
+                        region: formData.region,
+                        province_id: formData.province_id || null,
+                        description: formData.description,
+                        tier: formData.tier
+                    }])
+                    .select()
+                    .single();
+                if (error) throw error;
+                missionId = data.id;
+            }
+
+            if (formData.id) {
+                await supabase.from('mission_questions').delete().eq('mission_id', missionId);
+            }
+
+            if (questions.length > 0) {
+                const questionsToInsert = questions.map(q => ({
+                    mission_id: missionId,
+                    text: q.text || '',
+                    type: q.type || 'multiple_choice',
+                    options: q.options || [],
+                    correct_answer: q.correct_answer || 0,
+                    explanation: q.explanation || '',
+                    image_url: q.image_url || null
+                }));
+                const { error: qError } = await supabase.from('mission_questions').insert(questionsToInsert);
+                if (qError) throw qError;
+            }
+
+            setIsModalOpen(false);
+            checkAdminAndFetchMissions();
+        } catch (error) {
+            console.error('Error saving mission:', error);
+            alert('Error saving mission');
+        }
+    };
 
     // ... (existing render)
 
@@ -109,7 +262,29 @@ export default function AdminMissionsPage() {
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-cyan-500/30 p-8">
-            {/* ... (Header) */}
+            {/* Header */}
+            <header className="flex items-center justify-between mb-8 border-b border-slate-800 pb-4">
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => router.push('/admin')}
+                        className="p-2 hover:bg-slate-800 rounded-full transition-colors text-slate-400 hover:text-white"
+                    >
+                        <ArrowLeft className="w-6 h-6" />
+                    </button>
+                    <BookOpen className="w-10 h-10 text-cyan-500" />
+                    <div>
+                        <h1 className="text-3xl font-bold text-white font-orbitron tracking-wider">MISSION CONTROL</h1>
+                        <p className="text-slate-500 font-mono text-sm">MANAGE TRAINING MODULES</p>
+                    </div>
+                </div>
+                <button
+                    onClick={() => handleOpenModal()}
+                    className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg transition-colors font-bold"
+                >
+                    <Plus className="w-5 h-5" />
+                    NEW MISSION
+                </button>
+            </header>
 
             {/* Filters */}
             <div className="flex flex-wrap gap-4 mb-6 items-center bg-slate-900/50 p-4 rounded-xl border border-slate-800">
