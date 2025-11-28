@@ -20,7 +20,7 @@ export default function TrainingPillPage() {
     const missionId = searchParams.get('missionId');
     const problemId = params?.problemId as string;
 
-    const { unlockProvince, lives, decrementLives, addHeart, refillLives, unlockedProvinces, completeLevel, updateMissionScore } = useUserStore();
+    const { lives, decrementLives, addHeart, refillLives, unlockedProvinces, completeLevel, updateMissionScore } = useUserStore();
 
     const [lesson, setLesson] = useState<TrainingLesson | null>(null);
     const [mode, setMode] = useState<'LESSON' | 'QUIZ' | 'COMPLETE'>('LESSON');
@@ -124,7 +124,7 @@ export default function TrainingPillPage() {
         } else {
             // Mission Complete
             if (provinceId) {
-                unlockProvince(provinceId); // This is still client-side but less critical than NC/Score. Ideally move to RPC too.
+                // unlockProvince(provinceId); // REMOVED: Unlocking is now manual via Map UI
 
                 // Secure Server-Side Completion
                 completeLevel(lesson.id, score, lesson.xpReward);

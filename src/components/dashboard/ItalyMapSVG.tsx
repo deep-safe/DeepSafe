@@ -10,6 +10,7 @@ interface ItalyMapSVGProps {
     viewBox: string;
     activeRegion: string | null;
     highlightedId: string | null; // Can be Region Name (Level 1) or Province ID (Level 2)
+    mapTier: 'level_1' | 'level_2' | 'level_3';
 }
 
 const ItalyMapSVG: React.FC<ItalyMapSVGProps> = ({
@@ -18,7 +19,8 @@ const ItalyMapSVG: React.FC<ItalyMapSVGProps> = ({
     onProvinceHover,
     viewBox,
     activeRegion,
-    highlightedId
+    highlightedId,
+    mapTier
 }) => {
     // Group provinces by region for National View
     const regions = React.useMemo(() => {
@@ -65,6 +67,7 @@ const ItalyMapSVG: React.FC<ItalyMapSVGProps> = ({
                                 isRegionMode={false}
                                 isRegionHovered={highlightedId === regionName}
                                 isProvinceHighlighted={false} // No individual highlight in Level 1
+                                mapTier={mapTier}
                             />
                         ))}
                     </g>
@@ -82,6 +85,7 @@ const ItalyMapSVG: React.FC<ItalyMapSVGProps> = ({
                             isRegionMode={true}
                             isRegionHovered={false}
                             isProvinceHighlighted={highlightedId === province.id}
+                            mapTier={mapTier}
                         />
                     ))
                 }

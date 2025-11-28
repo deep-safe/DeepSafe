@@ -21,6 +21,8 @@ import dynamic from 'next/dynamic';
 const ProvinceModal = dynamic(() => import('./ProvinceModal'), { ssr: false });
 const StreakRewardModal = dynamic(() => import('./StreakRewardModal'), { ssr: false });
 const BadgeUnlockModal = dynamic(() => import('../gamification/BadgeUnlockModal').then(mod => mod.BadgeUnlockModal), { ssr: false });
+const TierAscensionModal = dynamic(() => import('./TierAscensionModal').then(mod => mod.TierAscensionModal), { ssr: false });
+const UnlockProtocolModal = dynamic(() => import('./UnlockProtocolModal').then(mod => mod.UnlockProtocolModal), { ssr: false });
 
 const ITALY_VIEWBOX = "0 0 800 1000";
 
@@ -46,6 +48,11 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
     const provinceScores = useUserStore(state => state.provinceScores);
     const refreshProfile = useUserStore(state => state.refreshProfile);
     const checkBadges = useUserStore(state => state.checkBadges);
+    const mapTier = useUserStore(state => state.mapTier);
+    const upgradeMapTier = useUserStore(state => state.upgradeMapTier);
+    const fetchRegionCosts = useUserStore(state => state.fetchRegionCosts);
+    const regionCosts = useUserStore(state => state.regionCosts);
+    const unlockRegion = useUserStore(state => state.unlockRegion);
 
     const [isProfileLoaded, setIsProfileLoaded] = useState(false);
     const { streak: currentStreak, showModal: showStreakModal, closeModal: closeStreakModal, previousStreak } = useDailyStreak(isProfileLoaded);
@@ -61,10 +68,23 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
     const [unlockedBadgeId, setUnlockedBadgeId] = useState<string | null>(null);
     const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false);
 
+    // Tier Ascension State
+    const [isAscensionModalOpen, setIsAscensionModalOpen] = useState(false);
+
+    // Region/Sector Unlock State
+    const [unlockModalState, setUnlockModalState] = useState<{
+        isOpen: boolean;
+        targetName: string;
+        targetId: string;
+        targetType: 'REGION' | 'SECTOR';
+        cost: number;
+    } | null>(null);
+
     // Initial Data Fetch & Badge Check
     useEffect(() => {
         const initProfile = async () => {
             await refreshProfile();
+            await fetchRegionCosts(); // Fetch region costs
             const { newBadges } = await checkBadges();
             if (newBadges.length > 0) {
                 setUnlockedBadgeId(newBadges[0]); // Show first new badge
@@ -73,7 +93,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
             setIsProfileLoaded(true);
         };
         initProfile();
-    }, [refreshProfile]);
+    }, [refreshProfile, fetchRegionCosts]);
 
     // Merge static data with persisted unlocked status and scores
     const dynamicProvincesData = useMemo(() => {
@@ -187,9 +207,17 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                     playSound('click');
                     triggerHaptic('light');
                 } else {
-                    showToast(`REGION LOCKED: Complete previous missions to unlock ${regionName}`, 'error');
-                    playSound('error');
-                    triggerHaptic('error');
+                    // Offer to Unlock Region
+                    const cost = regionCosts[regionName] || 1000; // Default to 1000 if not found
+                    setUnlockModalState({
+                        isOpen: true,
+                        targetName: regionName,
+                        targetId: regionName,
+                        targetType: 'REGION',
+                        cost: cost
+                    });
+                    playSound('click');
+                    triggerHaptic('medium');
                 }
             }
         } else {
@@ -208,16 +236,23 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                 playSound('click');
                 triggerHaptic('light');
             } else {
-                // Step 2: Open Modal
+                // Step 2: Open Modal or Unlock
                 if (province.status !== 'locked') {
                     setModalProvince(province);
                     setSelectedTarget(null);
                     playSound('click');
                     triggerHaptic('medium');
                 } else {
-                    showToast(`SECTOR LOCKED: Complete previous missions to unlock ${province.name}`, 'error');
-                    playSound('error');
-                    triggerHaptic('error');
+                    // Offer to Unlock Sector
+                    setUnlockModalState({
+                        isOpen: true,
+                        targetName: province.name,
+                        targetId: province.id,
+                        targetType: 'SECTOR',
+                        cost: 0 // Free for now
+                    });
+                    playSound('click');
+                    triggerHaptic('medium');
                 }
             }
         }
@@ -285,9 +320,17 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                 playSound('click');
                 triggerHaptic('light');
             } else {
-                showToast(`REGION LOCKED: Complete previous missions to unlock ${target.name}`, 'error');
-                playSound('error');
-                triggerHaptic('error');
+                // Open Unlock Modal for Region
+                const cost = regionCosts[target.name] || 1000;
+                setUnlockModalState({
+                    isOpen: true,
+                    targetName: target.name,
+                    targetId: target.name,
+                    targetType: 'REGION',
+                    cost: cost
+                });
+                playSound('click');
+                triggerHaptic('medium');
             }
         } else {
             const province = dynamicProvincesData.find(p => p.id === target.id);
@@ -298,9 +341,16 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                     playSound('click');
                     triggerHaptic('medium');
                 } else {
-                    showToast(`SECTOR LOCKED: Complete previous missions to unlock ${province.name}`, 'error');
-                    playSound('error');
-                    triggerHaptic('error');
+                    // Open Unlock Modal for Sector (Free for now)
+                    setUnlockModalState({
+                        isOpen: true,
+                        targetName: province.name,
+                        targetId: province.id,
+                        targetType: 'SECTOR',
+                        cost: 0
+                    });
+                    playSound('click');
+                    triggerHaptic('medium');
                 }
             }
         }
@@ -317,6 +367,66 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
     const showToast = (message: string, type: 'info' | 'error') => {
         setToastState({ message, type });
         setTimeout(() => setToastState(null), 3000);
+    };
+
+    // Check for Tier Completion
+    useEffect(() => {
+        if (!isProfileLoaded) return;
+        if (mapTier === 'level_3') return; // Max tier reached
+
+        const allCompleted = dynamicProvincesData.every(p => p.isCompleted);
+        if (allCompleted) {
+            // Check if we haven't already shown it this session or if user hasn't ascended yet
+            // For now, just show it if conditions met. Ideally, we'd check if they already saw it.
+            setIsAscensionModalOpen(true);
+        }
+    }, [dynamicProvincesData, mapTier, isProfileLoaded]);
+
+    const handleAscend = async () => {
+        const success = await upgradeMapTier();
+        if (success) {
+            setIsAscensionModalOpen(false);
+            playSound('levelup'); // Or a specific ascension sound
+            triggerHaptic('heavy');
+
+            const nextTierName = mapTier === 'level_1' ? 'ORANGE' : 'GOLD';
+            showToast(`WELCOME TO THE ${nextTierName} TIER`, 'info');
+
+            // Reset view to Italy
+            handleBackToItaly();
+            showToast('Ascension Failed. Try again.', 'error');
+        }
+    };
+
+    const handleUnlockTarget = async () => {
+        if (!unlockModalState) return;
+        const { targetId, targetType, targetName } = unlockModalState;
+
+        if (targetType === 'REGION') {
+            const result = await unlockRegion(targetId);
+            if (result.success) {
+                setUnlockModalState(null);
+                playSound('success');
+                triggerHaptic('success');
+                showToast(`${targetName} UNLOCKED`, 'info');
+            } else {
+                showToast(result.message || 'Unlock failed', 'error');
+                playSound('error');
+                triggerHaptic('error');
+            }
+        } else {
+            // Sector/Province Unlock (Logic remains similar or can be updated if sectors have costs too)
+            // For now, assuming sectors are free or handled differently. 
+            // If sectors have costs, we'd need a similar unlockProvinceWithCost action.
+            // But currently the requirement is for REGIONS.
+
+            // Fallback for sectors (using old logic for now, assuming 0 cost or handled elsewhere)
+            await useUserStore.getState().unlockProvince(targetId);
+            setUnlockModalState(null);
+            playSound('success');
+            triggerHaptic('success');
+            showToast(`${targetName} UNLOCKED`, 'info');
+        }
     };
 
     return (
@@ -375,6 +485,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                                 viewBox={viewBox}
                                 activeRegion={currentRegion}
                                 highlightedId={hoveredTarget?.type === 'REGION' ? hoveredTarget.id : (selectedTarget?.type === 'REGION' ? selectedTarget.id : (hoveredTarget?.id || selectedTarget?.id || null))}
+                                mapTier={mapTier}
                             />
                         </div>
                     </TransformComponent>
@@ -413,6 +524,26 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                 onClose={() => setIsBadgeModalOpen(false)}
                 badgeId={unlockedBadgeId}
             />
+
+            {/* Tier Ascension Modal */}
+            <TierAscensionModal
+                isOpen={isAscensionModalOpen}
+                currentTier={mapTier}
+                onAscend={handleAscend}
+                onClose={() => setIsAscensionModalOpen(false)}
+            />
+
+            {/* Region/Sector Unlock Modal */}
+            {unlockModalState && (
+                <UnlockProtocolModal
+                    isOpen={unlockModalState.isOpen}
+                    targetName={unlockModalState.targetName}
+                    targetType={unlockModalState.targetType}
+                    cost={unlockModalState.cost}
+                    onUnlock={handleUnlockTarget}
+                    onClose={() => setUnlockModalState(null)}
+                />
+            )}
 
             {/* Toast Notification */}
             <AnimatePresence>

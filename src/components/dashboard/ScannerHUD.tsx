@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Scan, ChevronRight, Lock, Unlock, ShieldCheck } from 'lucide-react';
+import { Scan, ChevronRight, Lock, Unlock, ShieldCheck, Info } from 'lucide-react';
 
 interface ScannerHUDProps {
     target: {
@@ -100,16 +100,16 @@ const ScannerHUD: React.FC<ScannerHUDProps> = ({ target, onAction, actionLabel, 
                                     animate={{ opacity: 1, scale: 1, x: 0 }}
                                     exit={{ opacity: 0, scale: 0.8, x: 10 }}
                                     whileTap={target.status !== 'locked' ? { scale: 0.95 } : {}}
-                                    onClick={target.status !== 'locked' ? onAction : undefined}
+                                    onClick={onAction}
                                     className={`flex items-center justify-center gap-1 px-3 h-10 rounded border transition-all group ${target.status === 'locked'
-                                        ? 'bg-slate-900/50 border-slate-800 text-slate-600 cursor-not-allowed'
+                                        ? 'bg-cyan-900/30 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 hover:shadow-[0_0_15px_rgba(6,182,212,0.2)]'
                                         : 'bg-cyan-500/10 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/20 hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]'
                                         }`}
                                 >
                                     {target.status === 'locked' ? (
                                         <>
-                                            <Lock className="w-3 h-3" />
-                                            <span className="text-[10px] font-bold tracking-wider uppercase">LOCKED</span>
+                                            <Info className="w-3 h-3" />
+                                            <span className="text-[10px] font-bold tracking-wider uppercase">INFO</span>
                                         </>
                                     ) : (
                                         <>

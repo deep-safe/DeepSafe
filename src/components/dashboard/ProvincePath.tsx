@@ -10,6 +10,7 @@ interface ProvincePathProps {
     isRegionMode: boolean;
     isRegionHovered: boolean;
     isProvinceHighlighted: boolean;
+    mapTier: 'level_1' | 'level_2' | 'level_3';
 }
 
 const ProvincePath: React.FC<ProvincePathProps> = ({
@@ -18,7 +19,8 @@ const ProvincePath: React.FC<ProvincePathProps> = ({
     onProvinceHover,
     isRegionMode,
     isRegionHovered,
-    isProvinceHighlighted
+    isProvinceHighlighted,
+    mapTier
 }) => {
     const { status, path, userScore = 0, maxScore = 10 } = province;
 
@@ -55,25 +57,44 @@ const ProvincePath: React.FC<ProvincePathProps> = ({
     };
 
     const getFillColor = () => {
-        if (isProvinceHighlighted) return isMastered ? 'rgba(251, 191, 36, 0.4)' : 'rgba(6, 182, 212, 0.3)'; // Gold or Cyan highlight
-        if (isRegionHovered) return isMastered ? 'rgba(251, 191, 36, 0.3)' : 'rgba(6, 182, 212, 0.2)'; // Region highlight
+        // Base Colors based on Tier
+        const colors = {
+            level_1: { highlight: 'rgba(6, 182, 212, 0.3)', region: 'rgba(6, 182, 212, 0.2)', mastered: 'rgba(16, 185, 129, 0.3)', passed: 'rgba(6, 182, 212, 0.2)', unlocked: 'rgba(59, 130, 246, 0.15)' },
+            level_2: { highlight: 'rgba(249, 115, 22, 0.4)', region: 'rgba(249, 115, 22, 0.3)', mastered: 'rgba(245, 158, 11, 0.3)', passed: 'rgba(249, 115, 22, 0.2)', unlocked: 'rgba(234, 88, 12, 0.15)' },
+            level_3: { highlight: 'rgba(234, 179, 8, 0.4)', region: 'rgba(234, 179, 8, 0.3)', mastered: 'rgba(250, 204, 21, 0.3)', passed: 'rgba(234, 179, 8, 0.2)', unlocked: 'rgba(202, 138, 4, 0.15)' }
+        };
+
+        // Fallback to level_1 if mapTier is invalid (e.g. cached 'green')
+        const theme = colors[mapTier] || colors['level_1'];
+
+        if (isProvinceHighlighted) return isMastered ? theme.mastered : theme.highlight;
+        if (isRegionHovered) return isMastered ? theme.mastered : theme.region;
         if (isRegionMode) return 'rgba(30, 41, 59, 0.8)'; // Dim others in region mode
 
         // Default State Colors
-        if (isMastered) return 'rgba(251, 191, 36, 0.2)'; // Gold
-        if (isPassed) return 'rgba(6, 182, 212, 0.2)'; // Cyan
-        if (isUnlocked) return 'rgba(59, 130, 246, 0.15)'; // Blue/Slate for unlocked but not passed
+        if (isMastered) return theme.mastered;
+        if (isPassed) return theme.passed;
+        if (isUnlocked) return theme.unlocked;
 
         return 'rgba(0, 0, 0, 0.95)'; // Locked - Pitch Black / Void
     };
 
     const getStrokeColor = () => {
-        if (isProvinceHighlighted) return isMastered ? '#fbbf24' : '#22d3ee';
-        if (isRegionHovered) return isMastered ? '#f59e0b' : '#06b6d4';
+        const colors = {
+            level_1: { highlight: '#22d3ee', region: '#06b6d4', mastered: '#10b981', passed: '#22d3ee', unlocked: '#3b82f6' },
+            level_2: { highlight: '#f97316', region: '#ea580c', mastered: '#f59e0b', passed: '#f97316', unlocked: '#ea580c' },
+            level_3: { highlight: '#eab308', region: '#ca8a04', mastered: '#facc15', passed: '#eab308', unlocked: '#ca8a04' }
+        };
 
-        if (isMastered) return '#fbbf24'; // Amber-400
-        if (isPassed) return '#22d3ee'; // Cyan-400
-        if (isUnlocked) return '#3b82f6'; // Blue-500
+        // Fallback to level_1 if mapTier is invalid
+        const theme = colors[mapTier] || colors['level_1'];
+
+        if (isProvinceHighlighted) return isMastered ? theme.mastered : theme.highlight;
+        if (isRegionHovered) return isMastered ? theme.mastered : theme.region;
+
+        if (isMastered) return theme.mastered;
+        if (isPassed) return theme.passed;
+        if (isUnlocked) return theme.unlocked;
 
         return '#334155'; // Slate-700
     };
@@ -88,7 +109,15 @@ const ProvincePath: React.FC<ProvincePathProps> = ({
     // Dynamic Filter for Neon Glow
     const getFilter = () => {
         if (isMastered) return 'url(#glow)';
-        if (isPassed && isProvinceHighlighted) return 'drop-shadow(0 0 2px #22d3ee)';
+        const glowColors = {
+            level_1: '#22d3ee',
+            level_2: '#f97316',
+            level_3: '#eab308'
+        };
+        // Fallback to level_1 color if invalid
+        const glowColor = glowColors[mapTier] || glowColors['level_1'];
+
+        if (isPassed && isProvinceHighlighted) return `drop-shadow(0 0 2px ${glowColor})`;
         return undefined;
     };
 

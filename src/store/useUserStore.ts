@@ -32,6 +32,9 @@ interface UserState {
     isPremium: boolean;
     globalRank: number | null;
     totalMissions: number;
+    mapTier: 'level_1' | 'level_2' | 'level_3';
+    completedTiers: string[];
+    regionCosts: Record<string, number>;
     settings: {
         notifications: boolean;
         sound: boolean;
@@ -63,6 +66,9 @@ interface UserState {
     lastBadgeCheck: number | null;
     setPremium: (isPremium: boolean) => Promise<void>;
     fetchAdvancedStats: () => Promise<any>;
+    upgradeMapTier: () => Promise<boolean>;
+    fetchRegionCosts: () => Promise<void>;
+    unlockRegion: (regionId: string) => Promise<{ success: boolean; message?: string }>;
 }
 
 export const useUserStore = create<UserState>()(
@@ -86,6 +92,9 @@ export const useUserStore = create<UserState>()(
             isPremium: false,
             globalRank: null,
             totalMissions: 0,
+            mapTier: 'level_1',
+            completedTiers: [],
+            regionCosts: {},
             lastBadgeCheck: null,
             settings: {
                 notifications: true,
@@ -480,7 +489,7 @@ export const useUserStore = create<UserState>()(
 
                     const { data: profile, error } = await supabase
                         .from('profiles')
-                        .select('xp, current_hearts, highest_streak, unlocked_provinces, province_scores, last_login, earned_badges, credits, streak_freezes, inventory, owned_avatars, settings_notifications, settings_sound, settings_haptics, has_seen_tutorial, is_premium')
+                        .select('xp, current_hearts, highest_streak, unlocked_provinces, province_scores, last_login, earned_badges, credits, streak_freezes, inventory, owned_avatars, settings_notifications, settings_sound, settings_haptics, has_seen_tutorial, is_premium, map_tier, completed_tiers')
                         .eq('id', user.id)
                         .single();
 
@@ -508,7 +517,9 @@ export const useUserStore = create<UserState>()(
                                 haptics: profile.settings_haptics ?? true
                             },
                             hasSeenTutorial: profile.has_seen_tutorial ?? false,
-                            isPremium: profile.is_premium ?? false
+                            isPremium: profile.is_premium ?? false,
+                            mapTier: (profile.map_tier as 'level_1' | 'level_2' | 'level_3') ?? 'level_1',
+                            completedTiers: profile.completed_tiers ?? []
                         });
                         console.log('🔄 Profile refreshed from DB:', profile);
 
@@ -651,6 +662,99 @@ export const useUserStore = create<UserState>()(
                     console.error('Unexpected error fetching stats:', err);
                     return { error: err.message || 'Errore imprevisto' };
                 }
+            },
+            upgradeMapTier: async () => {
+                const state = get();
+                const currentTier = state.mapTier;
+                let nextTier: 'level_1' | 'level_2' | 'level_3' | null = null;
+
+                if (currentTier === 'level_1') nextTier = 'level_2';
+                else if (currentTier === 'level_2') nextTier = 'level_3';
+
+                if (!nextTier) return false;
+
+                const newCompletedTiers = [...state.completedTiers, currentTier];
+                const newUnlockedProvinces = ['CB', 'IS', 'FG']; // Reset to starters
+                const newProvinceScores = {}; // Reset scores for new tier
+
+                set({
+                    mapTier: nextTier,
+                    completedTiers: newCompletedTiers,
+                    unlockedProvinces: newUnlockedProvinces,
+                    provinceScores: newProvinceScores
+                });
+
+                try {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (user) {
+                        await supabase
+                            .from('profiles')
+                            .update({
+                                map_tier: nextTier,
+                                completed_tiers: newCompletedTiers,
+                                unlocked_provinces: newUnlockedProvinces,
+                                province_scores: newProvinceScores
+                            })
+                            .eq('id', user.id);
+                    }
+                    return true;
+                } catch (err) {
+                    console.error('Error upgrading map tier:', err);
+                    return false;
+                }
+            },
+            fetchRegionCosts: async () => {
+                try {
+                    const { data, error } = await supabase
+                        .from('regions')
+                        .select('id, cost');
+
+                    if (error) {
+                        console.error('Error fetching region costs:', error);
+                        return;
+                    }
+
+                    if (data) {
+                        const costs: Record<string, number> = {};
+                        data.forEach(r => {
+                            costs[r.id] = r.cost;
+                        });
+                        set({ regionCosts: costs });
+                    }
+                } catch (err) {
+                    console.error('Unexpected error fetching region costs:', err);
+                }
+            },
+            unlockRegion: async (regionId) => {
+                const state = get();
+                const cost = state.regionCosts[regionId] || 1000; // Default fallback
+
+                // 1. Check Credits
+                if (state.credits < cost) {
+                    return { success: false, message: `Insufficient credits. Need ${cost} NC.` };
+                }
+
+                // 2. Find Starter Province
+                const { provincesData } = await import('@/data/provincesData');
+                const regionProvinces = provincesData.filter(p => p.region === regionId);
+
+                if (regionProvinces.length === 0) {
+                    return { success: false, message: 'Region data not found.' };
+                }
+
+                // Use the first province as the starter
+                const starterProvinceId = regionProvinces[0].id;
+
+                // 3. Deduct Credits
+                const spent = await state.spendCredits(cost);
+                if (!spent) {
+                    return { success: false, message: 'Transaction failed.' };
+                }
+
+                // 4. Unlock Province
+                await state.unlockProvince(starterProvinceId);
+
+                return { success: true };
             }
         }),
         {

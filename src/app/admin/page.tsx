@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { Database } from '@/types/supabase';
 import { useRouter } from 'next/navigation';
-import { Shield, Users, Coins, Search, Save, Ban, RefreshCw, Crown, Package, Medal, Zap, Trash2, Plus, X, ShoppingCart, BookOpen, Activity, MessageSquare } from 'lucide-react';
+import { Shield, Users, Coins, Search, Save, Ban, RefreshCw, Crown, Package, Medal, Zap, Trash2, Plus, X, ShoppingCart, BookOpen, Activity, MessageSquare, Map as MapIcon } from 'lucide-react';
 import { BADGES_DATA } from '@/data/badgesData';
 import { GiftModal } from '@/components/admin/GiftModal';
 import { ConfirmationModal } from '@/components/admin/ConfirmationModal';
@@ -403,6 +403,16 @@ export default function AdminPage() {
                         <MessageSquare className="w-6 h-6 text-blue-400" />
                     </div>
                     <span className="text-xs font-bold text-slate-400 group-hover:text-blue-300 font-mono">FEEDBACK</span>
+                </button>
+
+                <button
+                    onClick={() => router.push('/admin/regions')}
+                    className="p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:bg-teal-900/20 hover:border-teal-500/50 transition-all group flex flex-col items-center gap-3"
+                >
+                    <div className="p-3 bg-teal-900/20 rounded-full group-hover:scale-110 transition-transform">
+                        <MapIcon className="w-6 h-6 text-teal-400" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-400 group-hover:text-teal-300 font-mono">REGIONS</span>
                 </button>
 
                 <button

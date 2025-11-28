@@ -64,6 +64,8 @@ export interface Database {
                     settings_haptics: boolean | null
                     has_seen_tutorial: boolean | null
                     created_at: string | null
+                    map_tier: 'level_1' | 'level_2' | 'level_3'
+                    completed_tiers: string[]
                 }
                 Insert: {
                     avatar_url?: string | null
@@ -87,6 +89,8 @@ export interface Database {
                     settings_sound?: boolean | null
                     settings_haptics?: boolean | null
                     has_seen_tutorial?: boolean | null
+                    map_tier?: 'level_1' | 'level_2' | 'level_3'
+                    completed_tiers?: string[] // JSONB array
                 }
                 Update: {
                     avatar_url?: string | null
@@ -111,6 +115,8 @@ export interface Database {
                     settings_sound?: boolean | null
                     settings_haptics?: boolean | null
                     has_seen_tutorial?: boolean | null
+                    map_tier?: 'level_1' | 'level_2' | 'level_3'
+                    completed_tiers?: string[]
                 }
                 Relationships: [
                     {
@@ -173,11 +179,13 @@ export interface Database {
                     created_at: string
                     level: 'TUTORIAL' | 'SEMPLICE' | 'DIFFICILE' | 'BOSS'
                     description: string | null
+                    tier: 'level_1' | 'level_2' | 'level_3'
+                    credits_reward: number
                 }
                 Insert: {
                     id?: string
                     title: string
-                    content: string
+                    content?: string
                     xp_reward?: number
                     estimated_time?: string
                     region?: string | null
@@ -185,6 +193,8 @@ export interface Database {
                     created_at?: string
                     level?: 'TUTORIAL' | 'SEMPLICE' | 'DIFFICILE' | 'BOSS'
                     description?: string | null
+                    tier?: 'level_1' | 'level_2' | 'level_3'
+                    credits_reward?: number
                 }
                 Update: {
                     id?: string
@@ -197,6 +207,7 @@ export interface Database {
                     created_at?: string
                     level?: 'TUTORIAL' | 'SEMPLICE' | 'DIFFICILE' | 'BOSS'
                     description?: string | null
+                    tier?: 'level_1' | 'level_2' | 'level_3'
                 }
                 Relationships: []
             }
@@ -678,6 +689,27 @@ export interface Database {
                         referencedColumns: ["id"]
                     }
                 ]
+            }
+            regions: {
+                Row: {
+                    id: string
+                    cost: number
+                    tier: string
+                    created_at: string
+                }
+                Insert: {
+                    id: string
+                    cost?: number
+                    tier?: string
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    cost?: number
+                    tier?: string
+                    created_at?: string
+                }
+                Relationships: []
             }
         }
         Views: {
