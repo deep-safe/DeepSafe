@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { BottomNav } from "@/components/layout/BottomNav";
 import { Header } from "@/components/layout/Header";
 import { CyberToast } from "@/components/ui/CyberToast";
-import { CyberModal } from "@/components/ui/CyberModal";
+import { SystemModal } from "@/components/ui/SystemModal";
 
 export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
@@ -28,7 +28,7 @@ export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
             </main>
             {!isAdmin && <BottomNav />}
             <CyberToast />
-            <CyberModal />
+            <SystemModal />
         </div>
     );
 };

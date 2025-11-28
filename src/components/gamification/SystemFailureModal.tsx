@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Zap, Infinity, ArrowLeft, BatteryFull, ShieldAlert } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Infinity, BatteryFull, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
+import { CyberModal } from '@/components/ui/CyberModal';
 
 interface SystemFailureModalProps {
     onRefill: () => void;
@@ -26,29 +26,32 @@ export function SystemFailureModal({ onRefill, onPremium }: SystemFailureModalPr
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4">
-            {/* Red Vignette Alarm Effect */}
-            <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_100px_rgba(255,0,0,0.2)] animate-pulse-slow" />
-
-            <div className="relative w-full max-w-md space-y-6 text-center">
+        <CyberModal
+            isOpen={true}
+            onClose={() => { }} // Prevent closing by clicking outside
+            showCloseButton={false}
+            color="red"
+            className="max-w-md border-red-500/50 shadow-[0_0_50px_rgba(239,68,68,0.3)]"
+        >
+            <div className="space-y-6 text-center">
 
                 {/* Header Section */}
-                <div className="space-y-2">
+                <div className="space-y-4">
                     <div className="relative inline-block">
-                        <ShieldAlert className="w-16 h-16 text-cyber-red mx-auto animate-pulse" />
-                        <div className="absolute inset-0 bg-cyber-red/20 blur-xl rounded-full animate-pulse" />
+                        <ShieldAlert className="w-16 h-16 text-red-500 mx-auto animate-pulse" />
+                        <div className="absolute inset-0 bg-red-500/20 blur-xl rounded-full animate-pulse" />
                     </div>
 
-                    <h1 className="text-4xl font-bold font-orbitron text-cyber-red tracking-widest animate-glitch text-glow-danger">
+                    <h1 className="text-3xl font-bold font-orbitron text-red-500 tracking-widest animate-glitch text-glow-danger">
                         ERRORE DI SISTEMA
                     </h1>
 
                     <p className="text-zinc-400 font-mono text-sm">
-                        Protocolli di difesa offline. <span className="text-cyber-red font-bold">0/5 Vite rimanenti.</span>
+                        Protocolli di difesa offline. <span className="text-red-500 font-bold">0/5 Vite rimanenti.</span>
                     </p>
 
-                    <div className="inline-block px-4 py-1 bg-cyber-red/10 border border-cyber-red/30 rounded-full">
-                        <p className="text-xs font-mono text-cyber-red animate-pulse">
+                    <div className="inline-block px-4 py-1 bg-red-500/10 border border-red-500/30 rounded-full">
+                        <p className="text-xs font-mono text-red-500 animate-pulse">
                             Prossima ricarica in {formatTime(countdown)}
                         </p>
                     </div>
@@ -62,7 +65,7 @@ export function SystemFailureModal({ onRefill, onPremium }: SystemFailureModalPr
                         whileHover={{ scale: 1.02, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={onPremium}
-                        className="relative overflow-visible p-1 rounded-2xl bg-gradient-to-br from-cyber-dark to-purple-900 border border-yellow-500/50 shadow-[0_0_20px_rgba(234,179,8,0.2)] group mt-4"
+                        className="relative overflow-visible p-1 rounded-2xl bg-gradient-to-br from-slate-900 to-purple-900 border border-yellow-500/50 shadow-[0_0_20px_rgba(234,179,8,0.2)] group mt-4"
                     >
                         <div className="absolute -top-3 right-4 bg-yellow-500 text-black text-[10px] font-bold px-3 py-1 rounded-full font-orbitron shadow-lg z-10">
                             CONSIGLIATO
@@ -87,10 +90,10 @@ export function SystemFailureModal({ onRefill, onPremium }: SystemFailureModalPr
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={onRefill}
-                        className="p-4 rounded-2xl bg-cyber-gray border border-cyber-blue/30 hover:border-cyber-blue hover:bg-cyber-blue/5 transition-all flex items-center justify-between gap-4 group"
+                        className="p-4 rounded-2xl bg-slate-800/50 border border-cyan-500/30 hover:border-cyan-500 hover:bg-cyan-500/5 transition-all flex items-center justify-between gap-4 group"
                     >
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-full bg-cyber-blue/20 flex items-center justify-center border border-cyber-blue/50 text-cyber-blue shrink-0">
+                            <div className="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center border border-cyan-500/50 text-cyan-500 shrink-0">
                                 <BatteryFull className="w-6 h-6" />
                             </div>
                             <div className="text-left">
@@ -98,7 +101,7 @@ export function SystemFailureModal({ onRefill, onPremium }: SystemFailureModalPr
                                 <p className="text-xs text-zinc-400">Ricarica istantanea 5 Vite</p>
                             </div>
                         </div>
-                        <div className="px-4 py-2 border border-[#66FCF1] text-[#66FCF1] bg-transparent hover:bg-[#66FCF1] hover:text-black hover:shadow-[0_0_15px_rgba(102,252,241,0.5)] font-bold rounded-lg transition-all duration-300 whitespace-nowrap">
+                        <div className="px-4 py-2 border border-cyan-500 text-cyan-500 bg-transparent hover:bg-cyan-500 hover:text-black hover:shadow-[0_0_15px_rgba(102,252,241,0.5)] font-bold rounded-lg transition-all duration-300 whitespace-nowrap">
                             RICARICA €0.99
                         </div>
                     </motion.button>
@@ -113,6 +116,6 @@ export function SystemFailureModal({ onRefill, onPremium }: SystemFailureModalPr
                 </Link>
 
             </div>
-        </div>
+        </CyberModal>
     );
 }

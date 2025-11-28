@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Activity, TrendingUp, Zap, PieChart as PieIcon, List } from 'lucide-react';
 import { useUserStore } from '@/store/useUserStore';
 import { XPTrendChart, SkillsRadarChart, MissionPieChart } from '@/components/profile/StatsCharts';
+import { CyberModal } from '@/components/ui/CyberModal';
 
 export default function AdvancedStatsPage() {
     const router = useRouter();
@@ -47,19 +48,27 @@ export default function AdvancedStatsPage() {
     // Error Modal
     if (error) {
         return (
-            <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-                <div className="bg-black/90 border border-red-500/50 rounded-xl p-8 max-w-md w-full text-center relative overflow-hidden backdrop-blur-xl">
-                    <div className="absolute inset-0 bg-red-500/10 animate-pulse pointer-events-none" />
-                    <Activity className="w-12 h-12 text-red-500 mx-auto mb-4" />
-                    <h2 className="text-xl font-bold font-orbitron text-white mb-2">ERRORE SISTEMA</h2>
-                    <p className="text-slate-400 font-mono text-sm mb-6">{error}</p>
-                    <button
-                        onClick={() => router.back()}
-                        className="px-6 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded text-red-400 font-bold font-orbitron transition-all"
-                    >
-                        RITORNA AL PROFILO
-                    </button>
-                </div>
+            <div className="min-h-screen bg-slate-950">
+                <CyberModal
+                    isOpen={true}
+                    onClose={() => router.back()}
+                    title="ERRORE SISTEMA"
+                    icon={<Activity className="w-full h-full p-2" />}
+                    color="red"
+                    showCloseButton={false}
+                >
+                    <div className="text-center space-y-6">
+                        <p className="text-slate-400 font-mono text-sm leading-relaxed border-l-2 border-red-500/20 pl-4 text-left">
+                            {error}
+                        </p>
+                        <button
+                            onClick={() => router.back()}
+                            className="w-full py-3 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-lg text-red-400 font-bold font-orbitron transition-all shadow-[0_0_20px_rgba(239,68,68,0.2)] hover:shadow-[0_0_30px_rgba(239,68,68,0.4)]"
+                        >
+                            RITORNA AL PROFILO
+                        </button>
+                    </div>
+                </CyberModal>
             </div>
         );
     }

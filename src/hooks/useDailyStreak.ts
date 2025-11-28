@@ -13,6 +13,7 @@ export const useDailyStreak = (enabled: boolean = true) => {
         const checkStreak = () => {
             const today = getToday();
             const STREAK_MODAL_KEY = 'deepsafe_streak_modal_pending';
+            const STREAK_PREV_KEY = 'deepsafe_streak_prev';
 
             // Case 1: Same Day (Already logged in today)
             if (lastLoginDate === today) {
@@ -26,6 +27,7 @@ export const useDailyStreak = (enabled: boolean = true) => {
 
             // Case 2: Consecutive Day (Last login was yesterday)
             if (lastLoginDate && isYesterday(lastLoginDate)) {
+                sessionStorage.setItem(STREAK_PREV_KEY, String(streak));
                 incrementStreak();
                 setLastLoginDate(today);
                 sessionStorage.setItem(STREAK_MODAL_KEY, 'true');
@@ -36,6 +38,7 @@ export const useDailyStreak = (enabled: boolean = true) => {
 
             // Case 3: Broken Streak or First Time (Last login older than yesterday or null)
             // Reset to 1 (since user logged in today)
+            sessionStorage.setItem(STREAK_PREV_KEY, String(streak));
             resetStreak();
             setLastLoginDate(today);
             sessionStorage.setItem(STREAK_MODAL_KEY, 'true');
@@ -51,9 +54,14 @@ export const useDailyStreak = (enabled: boolean = true) => {
         setShowModal(false);
     };
 
+    const previousStreak = typeof window !== 'undefined'
+        ? parseInt(sessionStorage.getItem('deepsafe_streak_prev') || '0')
+        : 0;
+
     return {
         streak,
         showModal,
-        closeModal
+        closeModal,
+        previousStreak
     };
 };

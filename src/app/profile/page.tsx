@@ -48,6 +48,7 @@ import { ArtifactGrid } from '@/components/gamification/ArtifactGrid';
 import { Mission } from '@/components/gamification/MissionCard';
 import { Badge } from '@/components/gamification/BadgeCard';
 import { StatisticsSection } from '@/components/profile/StatisticsSection';
+import { CyberLoading } from '@/components/ui/CyberLoading';
 
 const MOCK_MISSIONS: Mission[] = [
     { id: '1', title: 'Accesso Giornaliero', target_count: 1, current_count: 1, reward_xp: 50, is_completed: true, is_claimed: false, frequency: 'daily' },
@@ -274,7 +275,7 @@ export default function ProfilePage() {
         return avatar?.src || '/avatars/rookie.png';
     };
 
-    if (loading || avatarsLoading) return <div className="flex items-center justify-center min-h-screen text-cyber-blue animate-pulse font-orbitron">INIZIALIZZAZIONE PROTOCOLLI IDENTITÀ...</div>;
+    if (loading || avatarsLoading) return <CyberLoading message="INIZIALIZZAZIONE PROTOCOLLI IDENTITÀ..." />;
 
 
 
