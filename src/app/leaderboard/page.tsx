@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Globe, Users, Medal, Cpu, UserPlus, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AddFriendModal } from '@/components/leaderboard/AddFriendModal';
+import { useAvatars } from '@/hooks/useAvatars';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
@@ -36,6 +37,7 @@ export default function LeaderboardPage() {
     const [pendingRequests, setPendingRequests] = useState<FriendRequest[]>([]);
     const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
     const [loading, setLoading] = useState(true);
+    const { avatars } = useAvatars();
 
     useEffect(() => {
         const getUser = async () => {
@@ -263,54 +265,64 @@ export default function LeaderboardPage() {
                             )}
                         </div>
                     ) : (
-                        leaderboardData.map((entry, index) => (
-                            <motion.div
-                                key={entry.id}
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.05 }}
-                                className={cn(
-                                    "flex items-center p-3 rounded-xl border transition-all relative overflow-hidden",
-                                    entry.id === user?.id
-                                        ? "border-cyber-blue bg-cyber-blue/5"
-                                        : "border-white/5 bg-black/20 hover:bg-white/5"
-                                )}
-                            >
-                                {entry.id === user?.id && (
-                                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-cyber-blue shadow-[0_0_10px_#66FCF1]" />
-                                )}
+                        leaderboardData.map((entry, index) => {
+                            // Resolve Avatar
+                            const avatarDef = avatars.find(a => a.id === entry.avatar_url);
+                            const avatarSrc = avatarDef?.src || '/avatars/rookie.png';
 
-                                <div className={cn(
-                                    "w-8 h-8 flex items-center justify-center font-bold font-mono rounded-full mr-3 text-sm",
-                                    index === 0 ? "text-yellow-500 drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]" :
-                                        index === 1 ? "text-zinc-300" :
-                                            index === 2 ? "text-amber-700" : "text-zinc-600"
-                                )}>
-                                    {index < 3 ? <Medal className="w-5 h-5" /> : `#${entry.rank}`}
-                                </div>
-
-                                <div className="w-8 h-8 bg-cyber-gray/30 rounded-full flex items-center justify-center mr-3 overflow-hidden border border-white/10">
-                                    {entry.avatar_url ? (
-                                        <img src={entry.avatar_url} alt={entry.username} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <Cpu className="w-4 h-4 text-cyber-gray" />
+                            return (
+                                <motion.div
+                                    key={entry.id}
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: index * 0.05 }}
+                                    className={cn(
+                                        "flex items-center p-3 rounded-xl border transition-all relative overflow-hidden",
+                                        entry.id === user?.id
+                                            ? "border-cyber-blue bg-cyber-blue/5"
+                                            : "border-white/5 bg-black/20 hover:bg-white/5"
                                     )}
-                                </div>
+                                >
+                                    {entry.id === user?.id && (
+                                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-cyber-blue shadow-[0_0_10px_#66FCF1]" />
+                                    )}
 
-                                <div className="flex-1">
-                                    <h3 className={cn(
-                                        "font-bold text-sm tracking-wide",
-                                        entry.id === user?.id ? "text-cyber-blue text-glow" : "text-zinc-300"
+                                    <div className={cn(
+                                        "w-8 h-8 flex items-center justify-center font-bold font-mono rounded-full mr-3 text-sm",
+                                        index === 0 ? "text-yellow-500 drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]" :
+                                            index === 1 ? "text-zinc-300" :
+                                                index === 2 ? "text-amber-700" : "text-zinc-600"
                                     )}>
-                                        {entry.username}
-                                    </h3>
-                                </div>
+                                        {index < 3 ? <Medal className="w-5 h-5" /> : `#${entry.rank}`}
+                                    </div>
 
-                                <div className="text-right">
-                                    <span className="font-mono text-cyber-purple font-bold text-xs tracking-wider">{entry.xp} XP</span>
-                                </div>
-                            </motion.div>
-                        ))
+                                    <div className="w-10 h-10 rounded-full overflow-hidden border border-white/10 bg-black relative">
+                                        <img
+                                            src={avatarSrc}
+                                            alt={entry.username}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                // Fallback if image fails to load
+                                                (e.target as HTMLImageElement).src = '/avatars/rookie.png';
+                                            }}
+                                        />
+                                    </div>
+
+                                    <div className="flex-1 ml-3">
+                                        <h3 className={cn(
+                                            "font-bold text-sm tracking-wide",
+                                            entry.id === user?.id ? "text-cyber-blue text-glow" : "text-zinc-300"
+                                        )}>
+                                            {entry.username}
+                                        </h3>
+                                    </div>
+
+                                    <div className="text-right">
+                                        <span className="font-mono text-cyber-purple font-bold text-xs tracking-wider">{entry.xp} XP</span>
+                                    </div>
+                                </motion.div>
+                            );
+                        })
                     )}
                 </div>
             </div>

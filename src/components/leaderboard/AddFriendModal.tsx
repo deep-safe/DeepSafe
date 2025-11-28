@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Search, UserPlus, Check, Loader2 } from 'lucide-react';
 import { createBrowserClient } from '@supabase/ssr';
 import { Database } from '@/types/supabase';
+import { useAvatars } from '@/hooks/useAvatars';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
@@ -21,6 +22,7 @@ export function AddFriendModal({ isOpen, onClose, currentUserId }: AddFriendModa
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [sentRequests, setSentRequests] = useState<Set<string>>(new Set());
+    const { avatars } = useAvatars();
 
     const handleSearch = async () => {
         if (!searchQuery.trim()) return;
@@ -105,26 +107,39 @@ export function AddFriendModal({ isOpen, onClose, currentUserId }: AddFriendModa
                         </div>
 
                         <div className="space-y-2 max-h-60 overflow-y-auto">
-                            {searchResults.map(user => (
-                                <div key={user.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/5">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-cyber-gray/30 flex items-center justify-center text-xs font-bold font-mono">
-                                            {user.username.substring(0, 2).toUpperCase()}
+                            {searchResults.map(user => {
+                                // Resolve Avatar
+                                const avatarDef = avatars.find(a => a.id === user.avatar_url);
+                                const avatarSrc = avatarDef?.src || '/avatars/rookie.png';
+
+                                return (
+                                    <div key={user.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/5">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-black border border-white/10 overflow-hidden">
+                                                <img
+                                                    src={avatarSrc}
+                                                    alt={user.username}
+                                                    className="w-full h-full object-cover"
+                                                    onError={(e) => {
+                                                        (e.target as HTMLImageElement).src = '/avatars/rookie.png';
+                                                    }}
+                                                />
+                                            </div>
+                                            <span className="text-sm font-bold text-zinc-200">{user.username}</span>
                                         </div>
-                                        <span className="text-sm font-bold text-zinc-200">{user.username}</span>
+                                        <button
+                                            onClick={() => sendRequest(user.id)}
+                                            disabled={sentRequests.has(user.id)}
+                                            className={`p-2 rounded-lg transition-colors ${sentRequests.has(user.id)
+                                                ? 'bg-green-500/20 text-green-500'
+                                                : 'bg-cyber-blue/10 text-cyber-blue hover:bg-cyber-blue/20'
+                                                }`}
+                                        >
+                                            {sentRequests.has(user.id) ? <Check className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
+                                        </button>
                                     </div>
-                                    <button
-                                        onClick={() => sendRequest(user.id)}
-                                        disabled={sentRequests.has(user.id)}
-                                        className={`p-2 rounded-lg transition-colors ${sentRequests.has(user.id)
-                                            ? 'bg-green-500/20 text-green-500'
-                                            : 'bg-cyber-blue/10 text-cyber-blue hover:bg-cyber-blue/20'
-                                            }`}
-                                    >
-                                        {sentRequests.has(user.id) ? <Check className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
-                                    </button>
-                                </div>
-                            ))}
+                                );
+                            })}
                             {searchResults.length === 0 && searchQuery && !loading && (
                                 <div className="text-center text-zinc-500 text-sm py-4">
                                     Nessun agente trovato.
