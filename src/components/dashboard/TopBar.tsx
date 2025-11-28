@@ -14,6 +14,7 @@ const TopBar: React.FC<TopBarProps> = ({ progress, total, className = "" }) => {
     const streak = useUserStore(state => state.streak);
     const lives = useUserStore(state => state.lives);
     const credits = useUserStore(state => state.credits);
+    const globalRank = useUserStore(state => state.globalRank);
 
     const percentage = Math.round((progress / total) * 100) || 0;
 
@@ -31,7 +32,9 @@ const TopBar: React.FC<TopBarProps> = ({ progress, total, className = "" }) => {
                     {/* Rank Widget */}
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50">
                         <Trophy className="w-3.5 h-3.5 text-amber-500" />
-                        <span className="text-xs font-bold font-orbitron text-slate-200">#{Math.floor(xp / 1000) + 1}</span>
+                        <span className="text-xs font-bold font-orbitron text-slate-200">
+                            {globalRank ? `#${globalRank}` : '-'}
+                        </span>
                     </div>
 
                     {/* Streak Widget */}
