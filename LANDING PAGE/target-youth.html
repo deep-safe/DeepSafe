@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSafe - Diventa un Eroe Digitale</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/shared.css">
+    <link rel="stylesheet" href="css/theme.css">
+</head>
+
+<body class="theme-youth">
+
+    <!-- Navbar -->
+    <nav style="padding: 20px 0; position: absolute; width: 100%; z-index: 10;">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <img src="assets/logo.png" alt="DeepSafe Logo" style="height: 40px;">
+            <a href="#waitlist" class="btn btn-primary">Unisciti alla Missione</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero section"
+        style="min-height: 90vh; display: flex; align-items: center; text-align: center; padding-top: 120px;">
+        <div class="container" style="position: relative; z-index: 2;">
+            <h1 style="font-size: 3.5rem; margin-bottom: 20px; line-height: 1.1;">
+                L'Italia del Futuro <br> <span style="color: var(--primary-color);">Ha Bisogno di Te</span>
+            </h1>
+            <p
+                style="font-size: 1.2rem; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; opacity: 0.9;">
+                Il mondo digitale è sotto attacco. Hacker, deepfake e blackout minacciano il nostro paese.
+                Hai le skills per salvarlo?
+            </p>
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <a href="#waitlist" class="btn btn-primary" style="font-size: 1.2rem; padding: 15px 40px;">INIZIA LA
+                    PARTITA</a>
+                <a href="#features" class="btn" style="border: 1px solid white; color: white;">SCOPRI DI PIÙ</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Gameplay Preview Section -->
+    <section id="features" class="section" style="background-color: var(--card-bg);">
+        <div class="container">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 40px;">
+                <div style="flex: 1; min-width: 300px;">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Level Up Your Skills</h2>
+                    <p style="margin-bottom: 20px;">
+                        Non è solo un corso, è una missione. Viaggia attraverso le regioni italiane in un futuro
+                        cyberpunk.
+                        Ogni territorio ha una minaccia diversa:
+                    </p>
+                    <ul style="margin-bottom: 30px;">
+                        <li style="margin-bottom: 10px; display: flex; align-items: center;">
+                            <span style="color: var(--primary-color); margin-right: 10px;">►</span> Sconfiggi i Malware
+                        </li>
+                        <li style="margin-bottom: 10px; display: flex; align-items: center;">
+                            <span style="color: var(--primary-color); margin-right: 10px;">►</span> Smaschera le Fake
+                            News
+                        </li>
+                        <li style="margin-bottom: 10px; display: flex; align-items: center;">
+                            <span style="color: var(--primary-color); margin-right: 10px;">►</span> Proteggi la tua
+                            Identità
+                        </li>
+                    </ul>
+                </div>
+                <div style="flex: 1; min-width: 300px;">
+                    <!-- Placeholder for gameplay video/image -->
+                    <div
+                        style="border-radius: 20px; overflow: hidden; border: 2px solid var(--primary-color); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);">
+                        <img src="assets/app-screenshot-1.jpg" alt="Gameplay Preview">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="section">
+        <div class="container text-center">
+            <h2 style="margin-bottom: 40px;">Conquista i Territori</h2>
+            <div style="position: relative; max-width: 800px; margin: 0 auto;">
+                <img src="assets/italy-map-full.jpg" alt="Mappa Italia Futura"
+                    style="border-radius: 20px; opacity: 0.8;">
+                <div
+                    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); padding: 20px; border-radius: 10px; border: 1px solid var(--primary-color);">
+                    <h3 style="color: var(--primary-color);">Missioni Attive</h3>
+                    <p>Sblocca nuove regioni completando le sfide di sicurezza.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Waitlist Section -->
+    <section id="waitlist" class="section" style="background: linear-gradient(to top, #000, var(--card-bg));">
+        <div class="container text-center">
+            <h2 style="margin-bottom: 20px;">Sei Pronto a Giocare?</h2>
+            <p style="margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                Iscriviti alla lista d'attesa per ottenere l'accesso anticipato e una skin esclusiva per il tuo avatar.
+            </p>
+
+            <form class="waitlist-form">
+                <input type="email" placeholder="Inserisci la tua email" required>
+                <button type="submit" class="btn btn-primary">JOIN THE BETA</button>
+            </form>
+        </div>
+    </section>
+
+    <footer style="padding: 40px 0; text-align: center; border-top: 1px solid #333; color: #666;">
+        <div class="container">
+            <p>&copy; 2025 DeepSafe. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>
