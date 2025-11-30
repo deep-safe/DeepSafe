@@ -37,11 +37,13 @@ export async function updateSession(request: NextRequest) {
 
     // Protected Routes
     // If user is NOT signed in and the current path is protected, redirect to /login
+    // Protected Routes
+    // If user is NOT signed in and the current path is protected, redirect to /login
     if (
         !user &&
         !request.nextUrl.pathname.startsWith('/login') &&
         !request.nextUrl.pathname.startsWith('/auth') &&
-        (//request.nextUrl.pathname.startsWith('/dashboard') ||
+        (request.nextUrl.pathname.startsWith('/dashboard') ||
             request.nextUrl.pathname.startsWith('/profile') ||
             request.nextUrl.pathname.startsWith('/missions') ||
             request.nextUrl.pathname.startsWith('/training') ||
@@ -57,6 +59,13 @@ export async function updateSession(request: NextRequest) {
         url.pathname = '/login'
         // Optional: Add returnTo param
         url.searchParams.set('returnTo', request.nextUrl.pathname)
+        return NextResponse.redirect(url)
+    }
+
+    // Redirect authenticated users to dashboard if they try to access login or root
+    if (user && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/')) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/dashboard'
         return NextResponse.redirect(url)
     }
 
