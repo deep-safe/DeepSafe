@@ -1,34 +1,51 @@
-'use client';
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+import { Capacitor } from '@capacitor/core';
 
-import { useCallback } from 'react';
+export const useHaptics = () => {
+    const isNative = Capacitor.isNativePlatform();
 
-type HapticType = 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error';
-
-export function useHaptics() {
-    const trigger = useCallback((type: HapticType = 'light') => {
-        if (typeof window === 'undefined' || !window.navigator?.vibrate) return;
-
-        switch (type) {
-            case 'light':
-                window.navigator.vibrate(10);
-                break;
-            case 'medium':
-                window.navigator.vibrate(20);
-                break;
-            case 'heavy':
-                window.navigator.vibrate(40);
-                break;
-            case 'success':
-                window.navigator.vibrate([10, 30, 10]);
-                break;
-            case 'warning':
-                window.navigator.vibrate([30, 50, 10]);
-                break;
-            case 'error':
-                window.navigator.vibrate([50, 30, 50, 30, 50]);
-                break;
+    const impact = async (style: ImpactStyle = ImpactStyle.Medium) => {
+        if (!isNative) return;
+        try {
+            await Haptics.impact({ style });
+        } catch (error) {
+            console.error('Haptics impact failed:', error);
         }
-    }, []);
+    };
 
-    return { trigger };
-}
+    const notification = async (type: NotificationType = NotificationType.Success) => {
+        if (!isNative) return;
+        try {
+            await Haptics.notification({ type });
+        } catch (error) {
+            console.error('Haptics notification failed:', error);
+        }
+    };
+
+    const vibrate = async (duration: number = 200) => {
+        if (!isNative) return;
+        try {
+            await Haptics.vibrate({ duration });
+        } catch (error) {
+            console.error('Haptics vibrate failed:', error);
+        }
+    };
+
+    const selection = async () => {
+        if (!isNative) return;
+        try {
+            await Haptics.selectionStart();
+            await Haptics.selectionChanged();
+            await Haptics.selectionEnd();
+        } catch (error) {
+            console.error('Haptics selection failed:', error);
+        }
+    };
+
+    return {
+        impact,
+        notification,
+        vibrate,
+        selection
+    };
+};

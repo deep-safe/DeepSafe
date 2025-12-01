@@ -59,7 +59,7 @@ export function FriendList({ friends, currentUserId, referralCode }: FriendListP
         if (result.success && result.challenge) {
             // Redirect to the quiz page with the challenge ID
             // The QuizPage will handle the logic for 'duel' mode
-            router.push(`/quiz/quiz-1?mode=duel&challengeId=${result.challenge.id}`);
+            router.push(`/quiz?id=quiz-1&mode=duel&challengeId=${result.challenge.id}`);
         } else {
             alert(result.message || 'Errore durante la sfida'); // Provide a fallback error message
         }

@@ -61,7 +61,7 @@ export function SagaPath({ levels }: SagaPathProps) {
                             return (
                                 <Link
                                     key={level.id}
-                                    href={isLocked ? '#' : `/quiz/${level.id}`}
+                                    href={isLocked ? '#' : `/quiz?id=${level.id}`}
                                     className={cn(
                                         "flex items-center gap-6 group relative",
                                         isLocked && "pointer-events-none opacity-50"

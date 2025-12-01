@@ -6,10 +6,11 @@ import { Map, Trophy, ShoppingBag, User, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { useHaptics } from '@/hooks/useHaptics';
+import { ImpactStyle } from '@capacitor/haptics';
 
 export function BottomNav() {
     const pathname = usePathname();
-    const { trigger } = useHaptics();
+    const { impact } = useHaptics();
 
     // Hide BottomNav on quiz pages for immersion and to prevent overlay issues
     if (pathname?.startsWith('/quiz')) return null;
@@ -32,7 +33,7 @@ export function BottomNav() {
                         <Link
                             key={item.path}
                             href={item.path}
-                            onClick={() => trigger('light')}
+                            onClick={() => impact(ImpactStyle.Light)}
                             className="relative group"
                         >
                             <div className={cn(

@@ -14,6 +14,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  viewportFit: "cover",
 };
 
 export const metadata: Metadata = {
@@ -31,6 +32,7 @@ import { SystemUIProvider } from "@/context/SystemUIContext";
 import { SoundProvider } from "@/context/SoundContext";
 
 import { PostHogProvider } from "./providers";
+import { MobileConfig } from "@/components/layout/MobileConfig";
 
 export default function RootLayout({
   children,
@@ -46,6 +48,7 @@ export default function RootLayout({
           <SystemUIProvider>
             <SoundProvider>
               <LayoutWrapper>
+                <MobileConfig />
                 {children}
               </LayoutWrapper>
             </SoundProvider>

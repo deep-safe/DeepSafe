@@ -7,6 +7,7 @@ import { createBrowserClient } from '@supabase/ssr';
 import { Database } from '@/types/supabase';
 import confetti from 'canvas-confetti';
 import { useUserStore } from '@/store/useUserStore';
+import { useLocalNotifications } from '@/hooks/useLocalNotifications';
 
 const supabase = createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,6 +29,7 @@ export function GiftOverlay() {
     const [isClaiming, setIsClaiming] = useState(false);
     const [showContent, setShowContent] = useState(false);
     const { refreshProfile } = useUserStore();
+    const { scheduleGiftNotification } = useLocalNotifications();
 
     useEffect(() => {
         checkForGifts();
@@ -92,6 +94,9 @@ export function GiftOverlay() {
 
             // Check for more gifts
             checkForGifts();
+
+            // Schedule notification for next gift (tomorrow)
+            scheduleGiftNotification();
         } catch (error) {
             console.error('Error claiming gift:', error);
             alert(`Errore durante il riscatto del regalo: ${(error as any).message || 'Errore sconosciuto'}`);

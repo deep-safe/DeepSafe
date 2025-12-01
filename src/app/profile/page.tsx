@@ -25,6 +25,8 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import posthog from 'posthog-js';
+import { Capacitor } from '@capacitor/core';
+import { useSystemUI } from '@/context/SystemUIContext';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
@@ -52,10 +54,13 @@ import { StatisticsSection } from '@/components/profile/StatisticsSection';
 
 import { CyberLoading } from '@/components/ui/CyberLoading';
 import { FeedbackModal } from '@/components/profile/FeedbackModal';
+import { DeleteAccountModal } from '@/components/profile/DeleteAccountModal';
 
 
 
 import { usePushNotifications } from '@/hooks/usePushNotifications';
+import { useLocalNotifications } from '@/hooks/useLocalNotifications';
+import { useBiometrics } from '@/hooks/useBiometrics';
 import { BellOff } from 'lucide-react';
 
 type ToggleColor = 'blue' | 'purple' | 'orange';
@@ -103,8 +108,26 @@ export default function ProfilePage() {
     const { earnedBadges, refreshProfile, settings, updateSettings, inventory, ownedAvatars, isPremium } = useUserStore();
     const { avatars, loading: avatarsLoading } = useAvatars();
 
-    // Push Notifications
+    // Push Notifications (Local)
+    const { isEnabled: notificationsEnabled, toggleNotifications } = useLocalNotifications();
+    // Legacy Push (Remote) - keeping for reference or future use
     const { isSupported, permission, subscribe, unsubscribe, loading: pushLoading } = usePushNotifications();
+
+    // Biometrics
+    const { isEnabled: biometricEnabled, toggleBiometrics } = useBiometrics();
+    const { openModal } = useSystemUI();
+
+    const handleHapticsToggle = (checked: boolean) => {
+        if (!Capacitor.isNativePlatform()) {
+            openModal({
+                title: "FUNZIONE MOBILE",
+                message: "Il feedback aptico è disponibile solo sull'app mobile ufficiale.",
+                type: 'info'
+            });
+            return;
+        }
+        updateSettings({ haptics: checked });
+    };
 
     // -- State Management --
     const [user, setUser] = useState<any>(null);
@@ -113,6 +136,30 @@ export default function ProfilePage() {
     const [isEditing, setIsEditing] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleDeleteAccount = async () => {
+        setIsDeleting(true);
+        try {
+            const { error } = await (supabase.rpc as any)('delete_account');
+            if (error) throw error;
+
+            await supabase.auth.signOut();
+            router.push('/login');
+        } catch (error: any) {
+            console.error('Error deleting account:', error);
+            // If RPC is missing, show a specific message (for the dev/user)
+            if (error.message?.includes('function delete_account() does not exist')) {
+                alert('ERRORE SISTEMA: Funzione di eliminazione non configurata. Contatta il supporto.');
+            } else {
+                alert('Errore durante l\'eliminazione dell\'account. Riprova più tardi.');
+            }
+        } finally {
+            setIsDeleting(false);
+            setIsDeleteModalOpen(false);
+        }
+    };
 
     // Edit Form State
     const [editName, setEditName] = useState('');
@@ -406,8 +453,8 @@ export default function ProfilePage() {
                             </div>
                         </div>
                         <SettingsToggle
-                            checked={settings.notifications}
-                            onChange={(checked) => updateSettings({ notifications: checked })}
+                            checked={notificationsEnabled}
+                            onChange={(checked) => toggleNotifications(checked)}
                             color="blue"
                         />
                     </div>
@@ -441,10 +488,28 @@ export default function ProfilePage() {
                         </div>
                         <SettingsToggle
                             checked={settings.haptics}
-                            onChange={(checked) => updateSettings({ haptics: checked })}
+                            onChange={(checked) => handleHapticsToggle(checked)}
                             color="orange"
                         />
 
+                    </div>
+
+                    {/* Biometric Toggle */}
+                    <div className="flex items-center justify-between group">
+                        <div className="flex items-center gap-4">
+                            <div className="p-2 rounded-lg bg-green-500/10 text-green-500 group-hover:bg-green-500/20 transition-colors">
+                                <Shield className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <div className="text-sm font-bold text-white font-orbitron tracking-wide">SICUREZZA BIOMETRICA</div>
+                                <div className="text-xs text-zinc-500 font-mono">Proteggi l'app con FaceID/TouchID</div>
+                            </div>
+                        </div>
+                        <SettingsToggle
+                            checked={biometricEnabled}
+                            onChange={(checked) => toggleBiometrics(checked)}
+                            color="orange" // Reusing orange or adding green if needed
+                        />
                     </div>
 
                     {/* Feedback Button */}
@@ -466,6 +531,22 @@ export default function ProfilePage() {
                         <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                         DISCONNETTI SISTEMA
                     </button>
+
+                    {/* Danger Zone */}
+                    <div className="pt-6 border-t border-white/5 space-y-4">
+                        <button
+                            onClick={() => setIsDeleteModalOpen(true)}
+                            className="w-full py-3 rounded-lg border border-red-900/30 bg-red-900/5 text-red-700 font-bold font-orbitron tracking-widest hover:bg-red-900/20 hover:text-red-500 transition-all flex items-center justify-center gap-2 text-xs"
+                        >
+                            <LogOut className="w-4 h-4" /> ELIMINA ACCOUNT
+                        </button>
+
+                        <div className="flex justify-center gap-4 text-[10px] text-zinc-600 font-mono">
+                            <a href="/privacy-policy" className="hover:text-cyber-blue transition-colors">Privacy Policy</a>
+                            <span>•</span>
+                            <a href="/terms" className="hover:text-cyber-blue transition-colors">Termini e Condizioni</a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -556,6 +637,13 @@ export default function ProfilePage() {
                     />
                 )
             }
+
+            <DeleteAccountModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDeleteAccount}
+                isDeleting={isDeleting}
+            />
         </div >
     );
 }

@@ -62,7 +62,7 @@ export default function AdminFeedbackPage() {
         try {
             const { error } = await supabase
                 .from('feedback')
-                .update({ status })
+                .update({ status } as any)
                 .eq('id', id);
 
             if (error) throw error;

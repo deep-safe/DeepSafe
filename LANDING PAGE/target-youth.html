@@ -17,8 +17,11 @@
     <!-- Navbar -->
     <nav style="padding: 20px 0; position: absolute; width: 100%; z-index: 10;">
         <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-            <img src="assets/logo.png" alt="DeepSafe Logo" style="height: 40px;">
-            <a href="#waitlist" class="btn btn-primary">Unisciti alla Missione</a>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="assets/icon.svg" alt="DeepSafe Logo" style="height: 45px; width: 45px;">
+                <span style="font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; background: linear-gradient(to right, #ffffff, #bfdbfe, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">DEEPSAFE</span>
+            </div>
+            <a href="#download" class="btn btn-primary">SCARICA L'APP</a>
         </div>
     </nav>
 
@@ -35,8 +38,7 @@
                 Hai le skills per salvarlo?
             </p>
             <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-                <a href="#waitlist" class="btn btn-primary" style="font-size: 1.2rem; padding: 15px 40px;">INIZIA LA
-                    PARTITA</a>
+                <a href="#download" class="btn btn-primary" style="font-size: 1.2rem; padding: 15px 40px;">SCARICA L'APP</a>
                 <a href="#features" class="btn" style="border: 1px solid white; color: white;">SCOPRI DI PIÙ</a>
             </div>
         </div>
@@ -106,6 +108,28 @@
                 <input type="email" placeholder="Inserisci la tua email" required>
                 <button type="submit" class="btn btn-primary">JOIN THE BETA</button>
             </form>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="section" style="background-color: var(--card-bg); text-align: center;">
+        <div class="container">
+            <h2 style="margin-bottom: 30px;">Scarica DeepSafe Ora</h2>
+            <p style="margin-bottom: 40px;">Disponibile per iOS e Android.</p>
+            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <a href="#" class="btn"
+                    style="background: #000; color: white; display: flex; align-items: center; gap: 10px; padding: 10px 20px; border-radius: 10px;">
+                    <span style="font-size: 1.5rem;"></span> App Store
+                </a>
+                <a href="assets/deepsafe.apk" class="btn"
+                    style="background: #000; color: white; display: flex; align-items: center; gap: 10px; padding: 10px 20px; border-radius: 10px;">
+                    <span style="font-size: 1.5rem;">🤖</span> Scarica APK
+                </a>
+                <a href="/dashboard" class="btn"
+                    style="background: #000; color: white; display: flex; align-items: center; gap: 10px; padding: 10px 20px; border-radius: 10px;">
+                    <span style="font-size: 1.5rem;">🌐</span> Web App
+                </a>
+            </div>
         </div>
     </section>
 

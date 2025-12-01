@@ -128,3 +128,33 @@ NEXT_PUBLIC_STRIPE_PRICE_LARGE=price_... (ID for 2500 NC)
 ```
     
 If these are missing or incorrect, payments will fail with an "Invalid Price ID" error.
+
+---
+
+### 📱 Mobile App Setup (Beta)
+
+Ecco i passaggi manuali per generare l'app e testarla:
+
+#### 1. Generare l'APK Android (per il download diretto)
+Poiché non siamo ancora sullo store, devi generare il file `.apk` manualmente:
+
+1.  Apri il terminale nella cartella del progetto.
+2.  Esegui: `cd android && ./gradlew assembleDebug`
+3.  Troverai il file in: `android/app/build/outputs/apk/debug/app-debug.apk`
+4.  **Azione**: Copia questo file, rinominalo in `deepsafe.apk` e incollalo nella cartella `LANDING PAGE/assets/`.
+    *   *Questo farà funzionare il bottone "Scarica APK" sul sito.*
+
+#### 2. Testare su iOS (iPhone)
+Apple non permette il download diretto di file. Devi usare Xcode:
+
+1.  Collega il tuo iPhone al Mac.
+2.  Esegui nel terminale: `npx cap open ios` (si aprirà Xcode).
+3.  In Xcode, seleziona il tuo iPhone in alto e premi "Play".
+4.  Vai su Impostazioni iPhone -> Generali -> VPN e Gestione Dispositivi -> Autorizza la tua email sviluppatore.
+
+#### 3. Testare Deep Linking
+Per verificare che i link aprano l'app:
+
+*   **Android**: Reinstalla l'app (`./gradlew assembleDebug`). Poi da terminale:
+    `adb shell am start -W -a android.intent.action.VIEW -d "deepsafe://dashboard" com.deepsafe.app`
+*   **iOS**: Apri Safari sul simulatore (o dispositivo) e scrivi nella barra indirizzi: `deepsafe://dashboard`. L'app dovrebbe aprirsi automaticamente.

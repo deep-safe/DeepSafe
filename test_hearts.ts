@@ -77,7 +77,7 @@ async function testHeartGift() {
 
     // Check value again
     const { data: updatedUser } = await supabase.from('profiles').select('current_hearts').eq('id', user.id).single();
-    console.log(`After direct update: User has ${updatedUser.current_hearts} hearts`);
+    console.log(`After direct update: User has ${updatedUser?.current_hearts} hearts`);
 
     // Reset
     await supabase.from('profiles').update({ current_hearts: user.current_hearts }).eq('id', user.id);

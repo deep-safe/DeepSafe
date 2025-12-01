@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gift, Zap, Coins, Clock, X, Lock, Unlock } from 'lucide-react';
+import { Gift, Zap, Coins, Clock, X, Lock, Unlock, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MatrixRain } from '@/components/ui/MatrixRain';
 

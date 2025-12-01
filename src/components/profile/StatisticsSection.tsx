@@ -25,7 +25,9 @@ export const StatisticsSection: React.FC<StatisticsSectionProps> = ({ isPremium 
 
     console.log('Stats Debug:', { totalMissions, completedMissions, provinceScores });
 
-    const missionCompletionRate = totalMissions > 0 ? Math.round((completedMissions / totalMissions) * 100) : 0;
+    // Ensure totalMissions is at least equal to completedMissions to avoid > 100%
+    const effectiveTotal = Math.max(totalMissions, completedMissions);
+    const missionCompletionRate = effectiveTotal > 0 ? Math.round((completedMissions / effectiveTotal) * 100) : 0;
 
     // Calculate Accuracy
     let totalScore = 0;
@@ -74,7 +76,7 @@ export const StatisticsSection: React.FC<StatisticsSectionProps> = ({ isPremium 
                         icon={<Target className="w-5 h-5" />}
                         label="COMPLETAMENTO MISSIONI"
                         value={`${missionCompletionRate}%`}
-                        subtext={`${completedMissions}/${totalMissions} Completate`}
+                        subtext={`${completedMissions}/${effectiveTotal} Completate`}
                         color="emerald"
                     />
 

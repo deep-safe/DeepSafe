@@ -100,7 +100,7 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                     return (
                                         <button
                                             key={mission.id}
-                                            onClick={() => router.push(`/training/mission-1?provinceId=${province.id}&missionId=${mission.id}`)}
+                                            onClick={() => router.push(`/training?problemId=mission-1&provinceId=${province.id}&missionId=${mission.id}`)}
                                             className={`group relative flex items-center justify-between p-4 rounded-xl border transition-all duration-300 w-full text-left ${isPassed
                                                 ? 'bg-slate-900/80 border-slate-700 hover:border-emerald-500/50'
                                                 : 'bg-slate-900/50 border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900'
@@ -149,7 +149,7 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                         ) : (
                             // Single Mission Action
                             <button
-                                onClick={() => router.push(`/training/mission-1?provinceId=${province.id}`)}
+                                onClick={() => router.push(`/training?problemId=mission-1&provinceId=${province.id}`)}
                                 className="w-full group relative overflow-hidden rounded-xl bg-cyan-950/30 border border-cyan-900/50 p-6 hover:bg-cyan-900/20 hover:border-cyan-500/50 transition-all duration-300"
                             >
                                 <div className="flex items-center justify-between relative z-10">
