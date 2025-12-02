@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">DeepSafe</string>
+    <string name="title_activity_main">DeepSafe</string>
+    <string name="package_name">com.deepsafe.app</string>
+    <string name="custom_url_scheme">com.deepsafe.app</string>
+</resources>
