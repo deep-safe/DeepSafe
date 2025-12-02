@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useUserStore } from '@/store/useUserStore';
 import { getToday, isYesterday } from '@/utils/dateUtils';
+import { createBrowserClient } from '@supabase/ssr';
 
 export const useDailyStreak = (enabled: boolean = true) => {
     const { streak, lastStreakDate, incrementStreak, resetStreak } = useUserStore();
@@ -10,7 +11,15 @@ export const useDailyStreak = (enabled: boolean = true) => {
     useEffect(() => {
         if (!enabled || hasChecked.current) return;
 
-        const checkStreak = () => {
+        const checkStreak = async () => {
+            // AUTH CHECK
+            const supabase = createBrowserClient(
+                process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+            );
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
             const today = getToday();
             const STREAK_MODAL_KEY = 'deepsafe_streak_modal_pending';
             const STREAK_PREV_KEY = 'deepsafe_streak_prev';

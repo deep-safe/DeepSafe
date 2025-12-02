@@ -30,6 +30,8 @@ interface FriendRequest {
     };
 }
 
+import { AuthGuardModal } from '@/components/auth/AuthGuardModal';
+
 export default function LeaderboardPage() {
     const [user, setUser] = useState<any>(null);
     const [leaderboardTab, setLeaderboardTab] = useState<'global' | 'friends'>('friends');
@@ -39,22 +41,41 @@ export default function LeaderboardPage() {
     const [loading, setLoading] = useState(true);
     const { avatars } = useAvatars();
 
+    // Auth Guard
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
     useEffect(() => {
         const getUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             setUser(user);
+            // If no user, we can still load global leaderboard, but friends tab is empty
+            if (!user) {
+                setLeaderboardTab('global');
+            }
         };
         getUser();
     }, []);
 
     useEffect(() => {
-        if (user) {
+        // If user is null, we can still fetch global leaderboard
+        if (user || leaderboardTab === 'global') {
             fetchLeaderboard();
-            if (leaderboardTab === 'friends') {
-                fetchPendingRequests();
-            }
+        }
+
+        if (user && leaderboardTab === 'friends') {
+            fetchPendingRequests();
+        } else if (!user) {
+            setLoading(false); // Stop loading if no user and not fetching global
         }
     }, [user, leaderboardTab]);
+
+    const checkAuth = () => {
+        if (!user) {
+            setIsAuthModalOpen(true);
+            return false;
+        }
+        return true;
+    };
 
     const fetchLeaderboard = async () => {
         setLoading(true);
@@ -70,8 +91,8 @@ export default function LeaderboardPage() {
 
                 if (error) throw error;
                 data = profiles || [];
-            } else {
-                // Friends Leaderboard
+            } else if (user) {
+                // Friends Leaderboard - Only if user exists
                 // 1. Get accepted friendships
                 const { data: friendships, error: friendsError } = await supabase
                     .from('friendships')
@@ -114,6 +135,7 @@ export default function LeaderboardPage() {
     };
 
     const fetchPendingRequests = async () => {
+        if (!user) return;
         try {
             // Fetch requests where current user is the friend_id (receiver) and status is pending
             const { data, error } = await supabase
@@ -174,6 +196,12 @@ export default function LeaderboardPage() {
         }
     };
 
+    const handleAddFriendClick = () => {
+        if (checkAuth()) {
+            setIsAddFriendOpen(true);
+        }
+    };
+
     return (
         <div className="space-y-8 pb-32 relative p-4 pt-8 min-h-screen">
             {/* Background Grid */}
@@ -186,7 +214,7 @@ export default function LeaderboardPage() {
                         <h1 className="text-2xl font-bold font-orbitron text-white tracking-wider text-glow">STATO RETE</h1>
                     </div>
                     <button
-                        onClick={() => setIsAddFriendOpen(true)}
+                        onClick={handleAddFriendClick}
                         className="p-2 bg-cyber-blue/10 border border-cyber-blue/30 rounded-lg text-cyber-blue hover:bg-cyber-blue/20 transition-colors"
                     >
                         <UserPlus className="w-5 h-5" />
@@ -207,7 +235,11 @@ export default function LeaderboardPage() {
                         <Globe className="w-4 h-4" /> Globale
                     </button>
                     <button
-                        onClick={() => setLeaderboardTab('friends')}
+                        onClick={() => {
+                            if (checkAuth()) {
+                                setLeaderboardTab('friends');
+                            }
+                        }}
                         className={cn(
                             "flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
                             leaderboardTab === 'friends'
@@ -254,7 +286,7 @@ export default function LeaderboardPage() {
                                 <>
                                     <p>La tua squadra è vuota. Inizia a costruire il tuo network!</p>
                                     <button
-                                        onClick={() => setIsAddFriendOpen(true)}
+                                        onClick={handleAddFriendClick}
                                         className="px-4 py-2 bg-cyber-blue/20 text-cyber-blue border border-cyber-blue/50 rounded-lg hover:bg-cyber-blue/30 transition-colors font-bold text-sm"
                                     >
                                         AGGIUNGI MEMBRI
@@ -326,6 +358,11 @@ export default function LeaderboardPage() {
                     )}
                 </div>
             </div>
+
+            <AuthGuardModal
+                isOpen={isAuthModalOpen}
+                onClose={() => setIsAuthModalOpen(false)}
+            />
 
             {user && (
                 <AddFriendModal

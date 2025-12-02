@@ -26,6 +26,8 @@ type ShopItem = Database['public']['Tables']['shop_items']['Row'];
 
 import { Suspense } from 'react';
 
+import { AuthGuardModal } from '@/components/auth/AuthGuardModal';
+
 function ShopContent() {
     const credits = useUserStore(state => state.credits);
     const buyItem = useUserStore(state => state.buyItem);
@@ -42,6 +44,9 @@ function ShopContent() {
     // Confirmation Modal State
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
     const [itemToBuy, setItemToBuy] = useState<ShopItem | null>(null);
+
+    // Auth Guard State
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
     // Calculate Map Progress for TopBar
     const totalProvinces = provincesData.length;
@@ -79,7 +84,18 @@ function ShopContent() {
         setIsLoading(false);
     };
 
+    const checkAuth = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            setIsAuthModalOpen(true);
+            return false;
+        }
+        return true;
+    };
+
     const handleBuyCredits = async (pack: 'small' | 'medium' | 'large') => {
+        if (!(await checkAuth())) return;
+
         try {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
@@ -174,7 +190,9 @@ function ShopContent() {
         }
     };
 
-    const handleBuyClick = (item: ShopItem) => {
+    const handleBuyClick = async (item: ShopItem) => {
+        if (!(await checkAuth())) return;
+
         // Check if it's a mystery box type - these have their own flow
         if (item.effect_type === 'mystery_box') {
             buyMysteryItem(item.id, item.cost);
@@ -193,7 +211,9 @@ function ShopContent() {
     };
 
     // Wrapper for the specific "Cassa Crittografata" section
-    const handleMysteryBoxSection = () => {
+    const handleMysteryBoxSection = async () => {
+        if (!(await checkAuth())) return;
+
         const mysteryBoxItem = shopItems.find(i => i.id === 'mystery_box') || {
             id: 'mystery_box',
             name: 'Cassa Crittografata',
@@ -396,6 +416,11 @@ function ShopContent() {
                             onConfirm={confirmPurchase}
                             item={itemToBuy}
                             isProcessing={!!isBuying}
+                        />
+
+                        <AuthGuardModal
+                            isOpen={isAuthModalOpen}
+                            onClose={() => setIsAuthModalOpen(false)}
                         />
 
                         {/* Regular Items Grid */}
