@@ -22,6 +22,12 @@ export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
         }
     }, []);
 
+    const isLandingPage = pathname === '/';
+
+    if (isLandingPage) {
+        return <main className="min-h-screen">{children}</main>;
+    }
+
     return (
         <BiometricGuard>
             <div className={`min-h-screen flex flex-col relative overflow-hidden ${isAdmin ? 'w-full' : 'max-w-md mx-auto pt-24 pb-24'}`}>

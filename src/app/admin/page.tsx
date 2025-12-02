@@ -176,7 +176,7 @@ export default function AdminPage() {
                     new_xp: 0,
                     new_credits: 0,
                     new_streak: 0,
-                    new_unlocked_provinces: ['CB', 'IS', 'FG']
+                    new_unlocked_provinces: ['CB', 'IS']
                 });
 
                 const response = data as any;

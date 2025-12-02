@@ -84,7 +84,7 @@ export const useUserStore = create<UserState>()(
             maxLives: 5,
             hasInfiniteLives: false,
             lastRefillTime: null,
-            unlockedProvinces: ['CB', 'IS', 'FG'], // Molise (CB, IS) + Foggia (FG) unlocked by default
+            unlockedProvinces: ['CB', 'IS'], // Molise (CB, IS) unlocked by default
             provinceScores: {},
             lastLoginDate: null,
             lastStreakDate: null,
