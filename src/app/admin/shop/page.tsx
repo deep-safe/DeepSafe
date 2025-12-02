@@ -154,34 +154,53 @@ export default function AdminShopPage() {
         } as ShopItem;
 
         try {
-            let response;
             if (editingItem) {
-                // Update via API
-                response = await fetch('/api/admin/shop/update', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        id: editingItem.id,
-                        itemData,
-                        lootData: formData.effect_type === 'mystery_box' ? currentLoot : []
-                    })
-                });
+                // Update via Supabase Client
+                const { error: itemError } = await supabase
+                    .from('shop_items')
+                    .update(itemData)
+                    .eq('id', editingItem.id);
+
+                if (itemError) throw itemError;
+
+                // Handle Loot
+                if (formData.effect_type === 'mystery_box') {
+                    // Delete existing loot
+                    await supabase.from('mystery_box_loot').delete().eq('box_id', editingItem.id);
+
+                    // Insert new loot
+                    if (currentLoot.length > 0) {
+                        const lootToInsert = currentLoot.map((l: any) => ({
+                            box_id: editingItem.id,
+                            reward_type: l.reward_type,
+                            reward_value: l.reward_value,
+                            weight: l.weight,
+                            description: l.description
+                        }));
+                        const { error: lootError } = await supabase.from('mystery_box_loot').insert(lootToInsert);
+                        if (lootError) throw lootError;
+                    }
+                }
             } else {
-                // Create via API
-                response = await fetch('/api/admin/shop/create', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        itemData,
-                        lootData: formData.effect_type === 'mystery_box' ? currentLoot : []
-                    })
-                });
-            }
+                // Create via Supabase Client
+                const { error: itemError } = await supabase
+                    .from('shop_items')
+                    .insert(itemData);
 
-            const result = await response.json();
+                if (itemError) throw itemError;
 
-            if (!response.ok) {
-                throw new Error(result.error || 'Operation failed');
+                // Handle Loot
+                if (formData.effect_type === 'mystery_box' && currentLoot.length > 0) {
+                    const lootToInsert = currentLoot.map((l: any) => ({
+                        box_id: itemData.id,
+                        reward_type: l.reward_type,
+                        reward_value: l.reward_value,
+                        weight: l.weight,
+                        description: l.description
+                    }));
+                    const { error: lootError } = await supabase.from('mystery_box_loot').insert(lootToInsert);
+                    if (lootError) throw lootError;
+                }
             }
 
             setIsModalOpen(false);
@@ -203,15 +222,13 @@ export default function AdminShopPage() {
         if (!itemToDelete) return;
 
         try {
-            const response = await fetch(`/api/admin/shop/delete?id=${encodeURIComponent(itemToDelete.id)}`, {
-                method: 'DELETE'
-            });
+            // Delete via Supabase Client
+            const { error } = await supabase
+                .from('shop_items')
+                .delete()
+                .eq('id', itemToDelete.id);
 
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.error || 'Delete failed');
-            }
+            if (error) throw error;
 
             checkAdminAndFetchItems();
             setDeleteModalOpen(false);

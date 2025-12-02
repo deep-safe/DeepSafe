@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Check, X, AlertTriangle } from 'lucide-react';
 import { Quiz } from '@/lib/mockData';
 import { useUserStore } from '@/store/useUserStore';
@@ -21,7 +21,7 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
 const supabase = createBrowserClient<Database>(supabaseUrl, supabaseKey);
 
 import { submitDuelScore } from '@/lib/challenges';
-import { useSearchParams } from 'next/navigation';
+
 
 export default function QuizPage() {
     const router = useRouter();
@@ -29,7 +29,11 @@ export default function QuizPage() {
     const id = searchParams.get('id');
     const mode = searchParams.get('mode');
     const challengeId = searchParams.get('challengeId');
-    const { lives, decrementLives, incrementStreak } = useUserStore();
+    const lives = useUserStore(state => state.lives);
+    const decrementLives = useUserStore(state => state.decrementLives);
+    const incrementStreak = useUserStore(state => state.incrementStreak);
+    const refillLives = useUserStore(state => state.refillLives);
+    const setInfiniteLives = useUserStore(state => state.setInfiniteLives);
 
     const [quiz, setQuiz] = useState<Quiz | null>(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -136,13 +140,11 @@ export default function QuizPage() {
             <SystemFailureModal
                 onRefill={() => {
                     // Demo: Refill lives immediately
-                    const { refillLives } = useUserStore.getState();
                     refillLives();
                     alert("RICARICA EMERGENZA RIUSCITA! -0.99€ (Demo)");
                 }}
                 onPremium={() => {
                     // Demo: Activate premium
-                    const { setInfiniteLives } = useUserStore.getState();
                     setInfiniteLives(true);
                     alert("POTERE ILLIMITATO ACQUISITO! -4.99€ (Demo)");
                 }}
