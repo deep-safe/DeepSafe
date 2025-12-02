@@ -76,6 +76,14 @@ To democratize AI safety knowledge through gamification. We believe that learnin
     ```
     Open [http://localhost:8000](http://localhost:8000) to view the landing page.
 
+6.  **Deployment (GitHub Pages)**
+    This project is configured for static export. To deploy to GitHub Pages:
+    ```bash
+    sh deploy_gh_pages.sh
+    ```
+    This will build the app and prepare the `out` folder for deployment.
+    *Note: Ensure you have set the `NEXT_PUBLIC_ADMIN_PASSWORD` and `NEXT_PUBLIC_DEV_PASSWORD` in your environment.*
+
 ## 📚 Documentation Index
 
 Explore the detailed documentation to understand the system:
