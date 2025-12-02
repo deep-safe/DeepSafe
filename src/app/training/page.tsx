@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { quizData, TrainingLesson, getLessonsForProvince, getMissionById } from '@/data/quizData';
@@ -12,15 +12,13 @@ import GameOverModal from '@/components/training/GameOverModal';
 import MockAdModal from '@/components/training/MockAdModal';
 import TopBar from '@/components/dashboard/TopBar';
 
-
-
-function TrainingPillContent() {
+export default function TrainingPillPage() {
     const params = useParams();
     const router = useRouter();
     const searchParams = useSearchParams();
     const provinceId = searchParams.get('provinceId');
     const missionId = searchParams.get('missionId');
-    const problemId = searchParams.get('problemId'); // Get ID from query param
+    const problemId = searchParams.get('problemId') as string;
 
     const { lives, decrementLives, addHeart, refillLives, unlockedProvinces, completeLevel, updateMissionScore } = useUserStore();
 
@@ -354,14 +352,6 @@ function TrainingPillContent() {
                 </AnimatePresence>
             </main>
         </div>
-    );
-}
-
-export default function TrainingPillPage() {
-    return (
-        <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-cyan-500">LOADING...</div>}>
-            <TrainingPillContent />
-        </Suspense>
     );
 }
 

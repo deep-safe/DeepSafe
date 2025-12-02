@@ -26,7 +26,14 @@ export default function DevPage() {
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === 'root') {
+        const devPassword = process.env.NEXT_PUBLIC_DEV_PASSWORD;
+
+        if (!devPassword) {
+            setError('SECURITY ERROR: Dev password not configured in .env');
+            return;
+        }
+
+        if (password === devPassword) {
             setIsAuthenticated(true);
             setError('');
         } else {

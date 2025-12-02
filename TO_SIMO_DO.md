@@ -25,27 +25,6 @@ Nome: Streak Freeze | Prezzo: 1.99€ (Una tantum). -> Copia il Price ID.
 
 Variabili d'Ambiente: Una volta che avrai i codici dall'AI, dovrai incollarli nel file .env.local insieme alle chiavi di Stripe (Secret Key e Publishable Key).
 
----
-
-### 📊 Analytics Setup (PostHog)
-
-Per attivare il tracciamento degli utenti (Analytics):
-
-1.  **Registrati**: Vai su [PostHog.com](https://posthog.com) e crea un account gratuito.
-2.  **Crea Progetto**: Crea un nuovo progetto (seleziona "Web" o "Next.js" se chiesto).
-3.  **Copia le Chiavi**: Nelle impostazioni del progetto, trova:
-    *   `Project API Key`
-    *   `Instance Address` (es. `https://us.i.posthog.com` o `https://eu.i.posthog.com`)
-4.  **Aggiorna .env.local**: Aggiungi queste righe al tuo file `.env.local`:
-
-```bash
-NEXT_PUBLIC_POSTHOG_KEY=phc_INCOLLA_QUI_LA_TUA_CHIAVE
-NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
-```
-*(Sostituisci `phc_...` con la tua chiave reale e l'host corretto se diverso)*
-
----
-
 ### 🔔 Push Notifications Setup
 
 Per attivare le notifiche push:
@@ -141,8 +120,10 @@ Poiché non siamo ancora sullo store, devi generare il file `.apk` manualmente:
 1.  Apri il terminale nella cartella del progetto.
 2.  Esegui: `cd android && ./gradlew assembleDebug`
 3.  Troverai il file in: `android/app/build/outputs/apk/debug/app-debug.apk`
-4.  **Azione**: Copia questo file, rinominalo in `deepsafe.apk` e incollalo nella cartella `LANDING PAGE/assets/`.
-    *   *Questo farà funzionare il bottone "Scarica APK" sul sito.*
+4.  **Azione**: Copia questo file, rinominalo in `deepsafe.apk`
+    *   **De-commenta** il blocco `useEffect` e l'inizializzazione di `posthog.init`.
+    *   Questo attiverà il tracciamento automatico su tutte le pagine dell'app e del sito.
+
 
 #### 2. Testare su iOS (iPhone)
 Apple non permette il download diretto di file. Devi usare Xcode:
@@ -158,3 +139,4 @@ Per verificare che i link aprano l'app:
 *   **Android**: Reinstalla l'app (`./gradlew assembleDebug`). Poi da terminale:
     `adb shell am start -W -a android.intent.action.VIEW -d "deepsafe://dashboard" com.deepsafe.app`
 *   **iOS**: Apri Safari sul simulatore (o dispositivo) e scrivi nella barra indirizzi: `deepsafe://dashboard`. L'app dovrebbe aprirsi automaticamente.
+

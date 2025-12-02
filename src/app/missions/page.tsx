@@ -14,13 +14,10 @@ import { useSystemUI } from '@/context/SystemUIContext';
 
 import { useUserStore } from '@/store/useUserStore';
 
-import { Suspense } from 'react';
-
-function MissionSelectionContent() {
-    const params = useParams();
+export default function MissionSelectionPage() {
     const router = useRouter();
-    const searchParams = useSearchParams(); // Add useSearchParams
-    const provinceId = searchParams.get('provinceId') as string; // Get ID from query param
+    const searchParams = useSearchParams();
+    const provinceId = searchParams.get('provinceId') as string;
     const [selectedMissionId, setSelectedMissionId] = useState<string | null>(null);
     const { unlockedProvinces } = useUserStore();
     const { openModal } = useSystemUI();
@@ -227,13 +224,5 @@ function MissionSelectionContent() {
 
             <BottomNav />
         </div>
-    );
-}
-
-export default function MissionSelectionPage() {
-    return (
-        <Suspense fallback={<div className="text-white p-8">Caricamento Missioni...</div>}>
-            <MissionSelectionContent />
-        </Suspense>
     );
 }

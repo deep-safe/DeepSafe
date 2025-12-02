@@ -72,7 +72,14 @@ export default function AdminLayout({
 
     const handleUnlock = (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === 'admin123') {
+        const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
+
+        if (!adminPassword) {
+            alert('ERRORE SICUREZZA: Password Admin non configurata nel sistema (.env).');
+            return;
+        }
+
+        if (password === adminPassword) {
             sessionStorage.setItem('admin_unlocked', 'true');
             setIsUnlocked(true);
             setError(false);

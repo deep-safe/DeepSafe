@@ -11,7 +11,6 @@ import Link from 'next/link';
 import { createBrowserClient } from '@supabase/ssr';
 import { Database } from '@/types/supabase';
 import { VisualQuizCard } from '@/components/gamification/VisualQuizCard';
-import { SwipeableQuestionCard } from '@/components/gamification/SwipeableQuestionCard';
 import { QuizActionPanel } from '@/components/gamification/QuizActionPanel';
 import { SystemFailureModal } from '@/components/gamification/SystemFailureModal';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -23,20 +22,14 @@ const supabase = createBrowserClient<Database>(supabaseUrl, supabaseKey);
 
 import { submitDuelScore } from '@/lib/challenges';
 import { useSearchParams } from 'next/navigation';
-import { useHaptics } from '@/hooks/useHaptics';
-import { NotificationType } from '@capacitor/haptics';
 
-import { Suspense } from 'react';
-
-function QuizContent() {
-    const params = useParams();
+export default function QuizPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const id = searchParams.get('id');
     const mode = searchParams.get('mode');
     const challengeId = searchParams.get('challengeId');
-    const quizId = searchParams.get('id'); // Get ID from query param
     const { lives, decrementLives, incrementStreak } = useUserStore();
-    const { impact, notification, selection } = useHaptics();
 
     const [quiz, setQuiz] = useState<Quiz | null>(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -52,8 +45,6 @@ function QuizContent() {
 
     useEffect(() => {
         const checkAuthAndFetch = async () => {
-            if (!quizId) return; // Guard clause
-
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
                 router.push('/login');
@@ -66,7 +57,7 @@ function QuizContent() {
                 const { data: levelData, error: levelError } = await supabase
                     .from('levels')
                     .select('*')
-                    .eq('id', quizId)
+                    .eq('id', id as string)
                     .single();
 
                 if (levelError) throw levelError;
@@ -75,7 +66,7 @@ function QuizContent() {
                 const { data: questionsData, error: questionsError } = await supabase
                     .from('questions')
                     .select('*')
-                    .eq('level_id', quizId);
+                    .eq('level_id', id as string);
 
                 if (questionsError) throw questionsError;
 
@@ -107,10 +98,10 @@ function QuizContent() {
             }
         };
 
-        if (quizId) {
+        if (id) {
             checkAuthAndFetch();
         }
-    }, [quizId, router]);
+    }, [id, router]);
 
     if (!quiz) return <div className="p-4 text-cyber-blue animate-pulse">Inizializzazione Sistema...</div>;
 
@@ -181,7 +172,6 @@ function QuizContent() {
 
     const handleAnswer = async (optionIndex: number) => {
         if (selectedOption !== null) return; // Prevent multiple clicks
-        await selection();
         setSelectedOption(optionIndex);
 
         const currentQ = quiz.questions[currentQuestionIndex];
@@ -191,10 +181,8 @@ function QuizContent() {
         setIsAnswered(true);
 
         if (isCorrectAnswer) {
-            await notification(NotificationType.Success);
             setScore(score + 1);
         } else {
-            await notification(NotificationType.Error);
             decrementLives();
 
             // Sync with backend if logged in
@@ -206,7 +194,7 @@ function QuizContent() {
 
             if (lives <= 1) {
                 posthog.capture('quiz_failed', {
-                    quiz_id: quizId,
+                    quiz_id: id,
                     question_index: currentQuestionIndex
                 });
                 setShowShopModal(true);
@@ -249,14 +237,14 @@ function QuizContent() {
                                 challenge_id: challengeId,
                                 score: finalScore,
                                 won: finalScore > (totalQuestions / 2),
-                                quiz_id: quizId,
+                                quiz_id: id,
                                 user_id: user.id
                             });
                         }
 
                         // Track Quiz Completion
                         posthog.capture('quiz_completed', {
-                            quiz_id: quizId,
+                            quiz_id: id,
                             score: finalScore,
                             xp_earned: calculatedXp,
                             perfect_score: finalScore === totalQuestions,
@@ -266,7 +254,7 @@ function QuizContent() {
                         // Call the robust RPC
                         const { data, error } = await supabase.rpc('complete_level', {
                             p_user_id: user.id,
-                            p_level_id: quizId as string,
+                            p_level_id: id as string,
                             p_score: finalScore,
                             p_earned_xp: calculatedXp // Pass proportional XP
                         });
@@ -279,7 +267,7 @@ function QuizContent() {
                             // Fallback: Insert directly into user_progress (Partial fix if RPC fails)
                             await supabase.from('user_progress').upsert({
                                 user_id: user.id,
-                                quiz_id: quizId as string,
+                                quiz_id: id as string,
                                 score: finalScore,
                                 status: 'completed',
                                 completed_at: new Date().toISOString()
@@ -423,16 +411,7 @@ function QuizContent() {
                                 disabled={isAnswered}
                             />
                         </div>
-                    ) : currentQuestion.options.length === 2 && !isAnswered ? (
-                        // Swipeable Card for Binary Questions (Only if not answered yet)
-                        <SwipeableQuestionCard
-                            questionText={currentQuestion.text}
-                            options={currentQuestion.options}
-                            onAnswer={handleAnswer}
-                            disabled={isAnswered}
-                        />
                     ) : (
-                        // Standard Multiple Choice (or Binary after answer)
                         <div className="space-y-3">
                             {currentQuestion.options.map((option, index) => {
                                 let stateStyles = "border-cyber-gray/50 bg-cyber-dark/40 hover:border-cyber-blue/50 hover:bg-cyber-blue/10";
@@ -451,11 +430,8 @@ function QuizContent() {
                                 }
 
                                 return (
-                                    <motion.button
+                                    <button
                                         key={index}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: index * 0.1 }}
                                         onClick={() => handleAnswer(index)}
                                         disabled={isAnswered}
                                         className={cn(
@@ -469,7 +445,7 @@ function QuizContent() {
                                         {!isAnswered && (
                                             <div className="absolute inset-0 bg-cyber-blue/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                                         )}
-                                    </motion.button>
+                                    </button>
                                 );
                             })}
                         </div>
@@ -490,13 +466,5 @@ function QuizContent() {
                 )}
             </AnimatePresence>
         </div>
-    );
-}
-
-export default function QuizPage() {
-    return (
-        <Suspense fallback={<div className="p-4 text-cyber-blue animate-pulse">Caricamento Quiz...</div>}>
-            <QuizContent />
-        </Suspense>
     );
 }
