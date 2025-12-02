@@ -1,7 +1,8 @@
 /* Theme CSS */
 
 /* Target 1: Youth (15-24) - Cyberpunk/Neon */
-body.theme-youth {
+/* Target 1: Youth (15-24) - Cyberpunk/Neon */
+.theme-youth {
     --primary-color: #00f3ff;
     /* Neon Cyan */
     --secondary-color: #bc13fe;
@@ -12,6 +13,11 @@ body.theme-youth {
     --card-bg: #161622;
     font-family: 'Outfit', sans-serif;
     /* Modern, geometric */
+
+    background-color: var(--background-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    width: 100%;
 }
 
 .theme-youth h1,
