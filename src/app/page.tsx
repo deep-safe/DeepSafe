@@ -32,8 +32,8 @@ export default function LandingPage() {
     return (
         <>
             {/* External Stylesheets for Landing Page */}
-            <link rel="stylesheet" href="/landing/css/shared.css" />
-            <link rel="stylesheet" href="/landing/css/theme.css" />
+            <link rel="stylesheet" href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/css/shared.css`} />
+            <link rel="stylesheet" href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/css/theme.css`} />
             <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet" />
 
             <div className="theme-youth">
@@ -41,7 +41,7 @@ export default function LandingPage() {
                 <nav style={{ padding: '20px 0', position: 'absolute', width: '100%', zIndex: 10 }}>
                     <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <img src="/landing/assets/icon.svg" alt="DeepSafe Logo" style={{ height: '45px', width: '45px' }} />
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/icon.svg`} alt="DeepSafe Logo" style={{ height: '45px', width: '45px' }} />
                             <span style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: '1.5rem', letterSpacing: '2px', background: 'linear-gradient(to right, #ffffff, #bfdbfe, #3b82f6)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>DEEPSAFE</span>
                         </div>
                         <a href="#download" className="btn btn-primary">SCARICA L'APP</a>
@@ -96,7 +96,7 @@ export default function LandingPage() {
                                 {/* Placeholder for gameplay video/image */}
                                 <div
                                     style={{ borderRadius: '20px', overflow: 'hidden', border: '2px solid var(--primary-color)', boxShadow: '0 0 20px rgba(0, 243, 255, 0.2)' }}>
-                                    <img src="/landing/assets/app-screenshot-1.jpg" alt="Gameplay Preview" style={{ width: '100%', height: 'auto', display: 'block' }} />
+                                    <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/app-screenshot-1.jpg`} alt="Gameplay Preview" style={{ width: '100%', height: 'auto', display: 'block' }} />
                                 </div>
                             </div>
                         </div>
@@ -108,7 +108,7 @@ export default function LandingPage() {
                     <div className="container text-center">
                         <h2 style={{ marginBottom: '40px' }}>Conquista i Territori</h2>
                         <div style={{ position: 'relative', maxWidth: '800px', margin: '0 auto' }}>
-                            <img src="/landing/assets/italy-map-full.jpg" alt="Mappa Italia Futura"
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/italy-map-full.jpg`} alt="Mappa Italia Futura"
                                 style={{ borderRadius: '20px', opacity: 0.8, width: '100%', height: 'auto' }} />
                             <div
                                 style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(0,0,0,0.8)', padding: '20px', borderRadius: '10px', border: '1px solid var(--primary-color)' }}>
@@ -152,7 +152,7 @@ export default function LandingPage() {
                                 style={{ background: '#000', color: 'white', display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 20px', borderRadius: '10px' }}>
                                 <span style={{ fontSize: '1.5rem' }}></span> App Store
                             </a>
-                            <a href="/landing/assets/deepsafe.apk" className="btn"
+                            <a href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/deepsafe.apk`} className="btn"
                                 style={{ background: '#000', color: 'white', display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 20px', borderRadius: '10px' }}>
                                 <span style={{ fontSize: '1.5rem' }}>🤖</span> Scarica APK
                             </a>
