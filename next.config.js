@@ -9,6 +9,7 @@ const withPWA = require('next-pwa')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     output: 'export',
+    basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
     reactCompiler: true,
     // Silence Turbopack error when using webpack plugins (like next-pwa)
     turbopack: {},
