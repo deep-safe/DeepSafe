@@ -40,7 +40,7 @@ export default function AdultLandingPage() {
                             <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/icon.svg`} alt="DeepSafe Logo" className="h-10 w-10 md:h-[45px] md:w-[45px]" />
                             <span className="font-['Inter'] font-extrabold text-xl md:text-2xl tracking-wide text-gray-900">DEEPSAFE</span>
                         </div>
-                        <a href="#download" className="btn-primary px-5 py-2.5 text-sm md:text-base rounded-lg font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors">SCARICA L'APP</a>
+                        <a href="#waitlist" className="btn-primary px-5 py-2.5 text-sm md:text-base rounded-lg font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors">UNISCITI ALLA LISTA D'ATTESA</a>
                     </div>
                 </nav>
 
@@ -56,7 +56,7 @@ export default function AdultLandingPage() {
                                     Impara a proteggere i tuoi dati, la tua carriera e la tua privacy con un percorso formativo
                                     avanzato e coinvolgente.
                                 </p>
-                                <a href="#download" className="btn-primary inline-block px-8 py-4 text-lg font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20">SCARICA L'APP</a>
+                                <a href="#waitlist" className="btn-primary inline-block px-8 py-4 text-lg font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20">UNISCITI ALLA LISTA D'ATTESA</a>
                             </div>
                             <div className="flex-1 w-full min-w-[300px]">
                                 <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/app-screenshot-2.jpg`} alt="App Dashboard"
@@ -156,7 +156,7 @@ export default function AdultLandingPage() {
                 </section>
 
                 {/* Download Section */}
-                <section id="download" className="section py-20 bg-slate-50 text-center">
+                {/* <section id="download" className="section py-20 bg-slate-50 text-center">
                     <div className="container mx-auto px-4">
                         <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">Scarica DeepSafe Ora</h2>
                         <p className="mb-10 text-gray-600 text-lg">Disponibile per iOS e Android.</p>
@@ -172,7 +172,7 @@ export default function AdultLandingPage() {
                             </Link>
                         </div>
                     </div>
-                </section>
+                </section> */}
 
                 <footer className="py-10 text-center bg-white border-t border-gray-100 text-gray-500">
                     <div className="container mx-auto px-4">

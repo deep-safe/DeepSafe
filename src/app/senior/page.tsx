@@ -40,7 +40,7 @@ export default function SeniorLandingPage() {
                             <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/icon.svg`} alt="DeepSafe Logo" className="h-10 w-10 md:h-[45px] md:w-[45px]" />
                             <span className="font-['Roboto'] font-bold text-xl md:text-2xl tracking-wide text-emerald-800">DEEPSAFE</span>
                         </div>
-                        <a href="#download" className="btn-primary px-6 py-3 text-base md:text-lg rounded-lg font-medium bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">SCARICA L'APP</a>
+                        <a href="#waitlist" className="btn-primary px-6 py-3 text-base md:text-lg rounded-lg font-medium bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">UNISCITI ALLA LISTA D'ATTESA</a>
                     </div>
                 </nav>
 
@@ -57,7 +57,7 @@ export default function SeniorLandingPage() {
                                     Impara a riconoscere le truffe, proteggere i tuoi risparmi e navigare serenamente con la nostra
                                     app semplice e intuitiva.
                                 </p>
-                                <a href="#download" className="btn-primary inline-block px-8 py-4 text-xl font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20">SCARICA L'APP</a>
+                                <a href="#waitlist" className="btn-primary inline-block px-8 py-4 text-xl font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20">UNISCITI ALLA LISTA D'ATTESA</a>
                                 <p className="mt-4 text-base text-gray-500">* Nessuna carta di credito richiesta</p>
                             </div>
                             <div className="flex-1 w-full min-w-[300px] text-center">
@@ -165,7 +165,7 @@ export default function SeniorLandingPage() {
                 </section>
 
                 {/* Download Section */}
-                <section id="download" className="section py-20 bg-gray-50 text-center">
+                {/* <section id="download" className="section py-20 bg-gray-50 text-center">
                     <div className="container mx-auto px-4">
                         <h2 className="text-3xl md:text-4xl font-bold mb-8 text-emerald-900">Scarica DeepSafe Ora</h2>
                         <p className="mb-10 text-xl text-gray-600">Disponibile per iOS e Android.</p>
@@ -181,7 +181,7 @@ export default function SeniorLandingPage() {
                             </Link>
                         </div>
                     </div>
-                </section>
+                </section> */}
 
                 <footer className="py-10 text-center text-gray-500 text-sm md:text-base border-t border-gray-200 bg-white">
                     <div className="container mx-auto px-4">
