@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, AlertCircle, CheckCircle, Shield, Mail, Lock, LogIn, UserPlus, ArrowRight, User } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
@@ -27,11 +27,6 @@ function LoginContent() {
     const router = useRouter();
     const error = searchParams.get('error');
     const errorMessage = searchParams.get('message');
-
-    const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
 
     useEffect(() => {
         setMounted(true);

@@ -7,7 +7,7 @@ import { ShoppingCart, Zap, Shield, Gift, Clock, Lock, Coins, AlertTriangle } fr
 import { useUserStore } from '@/store/useUserStore';
 import TopBar from '@/components/dashboard/TopBar';
 import { provincesData } from '@/data/provincesData';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 // Stripe is handled via API redirect, no need to load it here
 // import { loadStripe } from '@stripe/stripe-js';
@@ -17,10 +17,7 @@ const MysteryBoxModal = dynamic(() => import('@/components/shop/MysteryBoxModal'
 const PurchaseConfirmationModal = dynamic(() => import('@/components/shop/PurchaseConfirmationModal').then(mod => mod.PurchaseConfirmationModal), { ssr: false });
 
 // Initialize Supabase Client
-const supabase = createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Client is already initialized
 
 type ShopItem = Database['public']['Tables']['shop_items']['Row'];
 

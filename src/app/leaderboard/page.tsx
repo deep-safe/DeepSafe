@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Globe, Users, Medal, Cpu, UserPlus, Check, X } from 'lucide-react';
@@ -11,7 +11,7 @@ import { useAvatars } from '@/hooks/useAvatars';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
-const supabase = createBrowserClient<Database>(supabaseUrl, supabaseKey);
+// Client is already initialized
 
 interface LeaderboardEntry {
     id: string;

@@ -1,5 +1,5 @@
 import { provincesData } from './provincesData';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 
 export interface QuizQuestion {
@@ -147,10 +147,7 @@ const REGION_CONTENT_MAP: Record<string, string> = {
 const DEFAULT_CONTENT_ID = 'cyber-basics';
 
 // --- Helper to get lesson for a province ---
-const supabase = createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Client is already initialized
 
 export const getLessonsForProvince = async (provinceId: string, region: string): Promise<TrainingLesson[]> => {
     // 1. Try to fetch specific missions for this province from Supabase

@@ -8,7 +8,7 @@ import { useUserStore } from '@/store/useUserStore';
 import { calculateRewards } from '@/lib/gamification';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 import { VisualQuizCard } from '@/components/gamification/VisualQuizCard';
 import { QuizActionPanel } from '@/components/gamification/QuizActionPanel';
@@ -18,7 +18,7 @@ import posthog from 'posthog-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
-const supabase = createBrowserClient<Database>(supabaseUrl, supabaseKey);
+// Client is already initialized
 
 import { submitDuelScore } from '@/lib/challenges';
 

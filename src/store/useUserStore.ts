@@ -1,12 +1,9 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-
-import { createBrowserClient } from '@supabase/ssr';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
-const supabase = createBrowserClient<Database>(supabaseUrl, supabaseKey);
+type Profile = Database['public']['Tables']['profiles']['Row'];
 
 interface UserState {
     xp: number;
@@ -782,7 +779,7 @@ export const useUserStore = create<UserState>()(
 
                 // 1. Check Credits
                 if (state.credits < cost) {
-                    return { success: false, message: `Insufficient credits. Need ${cost} NC.` };
+                    return { success: false, message: `Insufficient credits.Need ${cost} NC.` };
                 }
 
                 // 2. Find All Provinces in Region

@@ -2,7 +2,7 @@
 
 import { useEffect, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 
 function AuthCallbackContent() {
@@ -18,10 +18,7 @@ function AuthCallbackContent() {
             if (code && !called.current) {
                 called.current = true;
 
-                const supabase = createBrowserClient<Database>(
-                    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-                    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-                );
+                // Client is already initialized
 
                 const { error } = await supabase.auth.exchangeCodeForSession(code);
 

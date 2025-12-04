@@ -17,12 +17,9 @@ import { useDailyStreak } from '@/hooks/useDailyStreak';
 import { useSound } from '@/context/SoundContext';
 import { useHaptic } from '@/hooks/useHaptic';
 import dynamic from 'next/dynamic';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 
-const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Client is already initialized
 
 const ProvinceModal = dynamic(() => import('./ProvinceModal'), { ssr: false });
 const StreakRewardModal = dynamic(() => import('./StreakRewardModal'), { ssr: false });

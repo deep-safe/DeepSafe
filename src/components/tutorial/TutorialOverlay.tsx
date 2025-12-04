@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useUserStore } from '@/store/useUserStore';
 import { Map, Target, Trophy, ChevronRight, X, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 
 const TUTORIAL_STEPS = [
     {
@@ -51,10 +51,7 @@ export function TutorialOverlay() {
         // Delay slightly to allow map to load first
         if (!hasSeenTutorial) {
             const checkAuth = async () => {
-                const supabase = createBrowserClient(
-                    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-                    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-                );
+                // Client is already initialized
                 const { data: { user } } = await supabase.auth.getUser();
                 if (user) {
                     const timer = setTimeout(() => setIsVisible(true), 1000);

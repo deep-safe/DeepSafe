@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useUserStore } from '@/store/useUserStore';
 import { getToday, isYesterday } from '@/utils/dateUtils';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 
 export const useDailyStreak = (enabled: boolean = true) => {
     const { streak, lastStreakDate, incrementStreak, resetStreak } = useUserStore();
@@ -13,10 +13,7 @@ export const useDailyStreak = (enabled: boolean = true) => {
 
         const checkStreak = async () => {
             // AUTH CHECK
-            const supabase = createBrowserClient(
-                process.env.NEXT_PUBLIC_SUPABASE_URL!,
-                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-            );
+            // Client is already initialized
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
 
