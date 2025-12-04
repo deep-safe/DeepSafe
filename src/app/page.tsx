@@ -44,7 +44,7 @@ export default function LandingPage() {
                             <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/icon.svg`} alt="DeepSafe Logo" className="h-10 w-10 md:h-[45px] md:w-[45px]" />
                             <span className="font-['Orbitron'] font-black text-xl md:text-2xl tracking-widest bg-gradient-to-r from-white via-blue-200 to-blue-500 bg-clip-text text-transparent">DEEPSAFE</span>
                         </div>
-                        <a href="#waitlist" className="btn-primary px-4 py-2 text-sm md:text-base rounded font-bold uppercase text-black bg-gradient-to-r from-[#00f3ff] to-[#bc13fe] border border-white/20">UNISCITI ALLA LISTA D'ATTESA</a>
+                        <a href="#waitlist" className="btn-primary px-12 py-4 text-sm md:text-base rounded-xl font-bold uppercase text-black bg-gradient-to-r from-[#00f3ff] to-[#bc13fe] border border-white/20 shadow-[0_0_15px_rgba(0,243,255,0.3)] hover:shadow-[0_0_25px_rgba(188,19,254,0.5)] hover:scale-105 transition-all duration-300">UNISCITI ALLA LISTA D'ATTESA</a>
                     </div>
                 </nav>
 
@@ -61,9 +61,9 @@ export default function LandingPage() {
                             Il mondo digitale è sotto attacco. Hacker, deepfake e blackout minacciano il nostro paese.
                             Hai le skills per salvarlo?
                         </p>
-                        <div className="flex flex-col md:flex-row gap-5 justify-center items-center">
-                            <a href="#waitlist" className="btn-primary px-10 py-4 text-lg font-bold uppercase text-black bg-gradient-to-r from-[#00f3ff] to-[#bc13fe] border border-white/20 rounded w-full md:w-auto">UNISCITI ALLA LISTA D'ATTESA</a>
-                            <a href="#features" className="btn px-10 py-4 text-lg border border-white text-white rounded hover:bg-white/10 transition-colors w-full md:w-auto">SCOPRI DI PIÙ</a>
+                        <div className="flex flex-col md:flex-row gap-6 justify-center items-center w-full max-w-lg mx-auto md:max-w-none">
+                            <a href="#waitlist" className="btn-primary w-full md:w-auto px-12 py-5 text-lg md:text-xl font-bold uppercase text-black bg-gradient-to-r from-[#00f3ff] to-[#bc13fe] border border-white/20 rounded-xl shadow-[0_0_20px_rgba(0,243,255,0.4)] hover:shadow-[0_0_30px_rgba(188,19,254,0.6)] hover:-translate-y-1 transition-all duration-300">UNISCITI ALLA LISTA D'ATTESA</a>
+                            <a href="#features" className="btn w-full md:w-auto px-12 py-5 text-lg md:text-xl font-bold border border-white text-white rounded-xl hover:bg-white/10 hover:border-[#00f3ff] hover:text-[#00f3ff] hover:shadow-[0_0_15px_rgba(0,243,255,0.2)] transition-all duration-300">SCOPRI DI PIÙ</a>
                         </div>
                     </div>
                 </header>
@@ -132,7 +132,7 @@ export default function LandingPage() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full p-4 rounded bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-[#00f3ff] transition-colors"
                             />
-                            <button type="submit" className="btn-primary w-full py-4 text-lg font-bold uppercase text-black bg-gradient-to-r from-[#00f3ff] to-[#bc13fe] border border-white/20 rounded hover:opacity-90 transition-opacity" disabled={isSubmitting}>
+                            <button type="submit" className="btn-primary w-full py-5 text-xl font-bold uppercase text-black bg-gradient-to-r from-[#00f3ff] to-[#bc13fe] border border-white/20 rounded-xl shadow-[0_0_20px_rgba(0,243,255,0.4)] hover:shadow-[0_0_30px_rgba(188,19,254,0.6)] hover:scale-[1.02] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed" disabled={isSubmitting}>
                                 {isSubmitting ? 'INVIO...' : 'UNISCITI ALLA LISTA D\'ATTESA'}
                             </button>
                         </form>
