@@ -8,6 +8,7 @@ import { CyberToast } from "@/components/ui/CyberToast";
 import { SystemModal } from "@/components/ui/SystemModal";
 import { GiftOverlay } from '@/components/gamification/GiftOverlay';
 import { BiometricGuard } from '@/components/auth/BiometricGuard';
+import { CookieConsent } from '@/components/ui/CookieConsent';
 
 export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
@@ -22,10 +23,15 @@ export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
         }
     }, []);
 
-    const isLandingPage = pathname === '/' || pathname === '/a' || pathname === '/s';
+    const isLandingPage = pathname === '/' || pathname === '/a' || pathname === '/s' || pathname === '/privacy-policy' || pathname === '/terms' || pathname === '/cookie-policy';
 
     if (isLandingPage) {
-        return <main className="min-h-screen">{children}</main>;
+        return (
+            <main className="min-h-screen">
+                {children}
+                <CookieConsent />
+            </main>
+        );
     }
 
     return (
@@ -39,6 +45,7 @@ export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
                 <CyberToast />
                 <SystemModal />
                 <GiftOverlay />
+                <CookieConsent />
             </div>
         </BiometricGuard>
     );
