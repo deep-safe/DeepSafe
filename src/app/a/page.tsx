@@ -37,10 +37,10 @@ export default function AdultLandingPage() {
                 <nav className="w-full py-5 border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
                     <div className="container mx-auto px-4 flex justify-between items-center">
                         <div className="flex items-center gap-3">
-                            <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/icon.svg`} alt="DeepSafe Logo" className="h-10 w-10 md:h-[45px] md:w-[45px]" />
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/logo.png`} alt="DeepSafe Logo" className="h-10 w-10 md:h-[45px] md:w-[45px]" />
                             <span className="font-['Inter'] font-extrabold text-xl md:text-2xl tracking-wide text-gray-900">DEEPSAFE</span>
                         </div>
-                        <a href="#waitlist" className="btn-primary px-12 py-4 text-sm md:text-base rounded-xl font-bold bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40 hover:-translate-y-0.5 transition-all duration-300">UNISCITI ALLA LISTA D'ATTESA</a>
+                        <a href="#waitlist" className="btn-primary px-10 py-5 text-base md:text-lg rounded-2xl font-bold bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40 hover:-translate-y-0.5 transition-all duration-300">UNISCITI ALLA LISTA D'ATTESA</a>
                     </div>
                 </nav>
 
@@ -56,8 +56,8 @@ export default function AdultLandingPage() {
                                     Impara a proteggere i tuoi dati, la tua carriera e la tua privacy con un percorso formativo
                                     avanzato e coinvolgente.
                                 </p>
-                                <div className="flex flex-col sm:flex-row gap-4">
-                                    <a href="#waitlist" className="btn-primary inline-block w-full sm:w-auto px-12 py-5 text-lg font-bold bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-xl shadow-blue-600/30 hover:shadow-blue-600/50 hover:-translate-y-1 transition-all duration-300 text-center">UNISCITI ALLA LISTA D'ATTESA</a>
+                                <div className="flex flex-col sm:flex-row gap-6">
+                                    <a href="#waitlist" className="btn-primary inline-block w-full sm:w-auto px-10 py-5 text-base md:text-lg font-bold bg-blue-600 text-white rounded-2xl hover:bg-blue-700 shadow-xl shadow-blue-600/30 hover:shadow-blue-600/50 hover:-translate-y-1 transition-all duration-300 text-center">UNISCITI ALLA LISTA D'ATTESA</a>
                                 </div>
                             </div>
                             <div className="flex-1 w-full min-w-[300px]">
@@ -149,7 +149,7 @@ export default function AdultLandingPage() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
-                                <button type="submit" className="btn w-full sm:w-auto px-12 py-5 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed" disabled={isSubmitting}>
+                                <button type="submit" className="btn w-full sm:w-auto px-10 py-5 bg-blue-600 text-white font-bold text-base md:text-lg rounded-2xl hover:bg-blue-700 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed" disabled={isSubmitting}>
                                     {isSubmitting ? '...' : 'Iscriviti'}
                                 </button>
                             </form>

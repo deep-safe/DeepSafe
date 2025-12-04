@@ -37,10 +37,10 @@ export default function SeniorLandingPage() {
                 <nav className="w-full py-4 bg-white shadow-sm sticky top-0 z-50">
                     <div className="container mx-auto px-4 flex justify-between items-center">
                         <div className="flex items-center gap-3">
-                            <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/icon.svg`} alt="DeepSafe Logo" className="h-10 w-10 md:h-[45px] md:w-[45px]" />
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/logo.png`} alt="DeepSafe Logo" className="h-10 w-10 md:h-[45px] md:w-[45px]" />
                             <span className="font-['Roboto'] font-bold text-xl md:text-2xl tracking-wide text-emerald-800">DEEPSAFE</span>
                         </div>
-                        <a href="#waitlist" className="btn-primary px-12 py-4 text-base md:text-lg rounded-xl font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/40 hover:-translate-y-0.5 transition-all duration-300">UNISCITI ALLA LISTA D'ATTESA</a>
+                        <a href="#waitlist" className="btn-primary px-10 py-5 text-base md:text-lg rounded-2xl font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/40 hover:-translate-y-0.5 transition-all duration-300">UNISCITI ALLA LISTA D'ATTESA</a>
                     </div>
                 </nav>
 
@@ -57,8 +57,8 @@ export default function SeniorLandingPage() {
                                     Impara a riconoscere le truffe, proteggere i tuoi risparmi e navigare serenamente con la nostra
                                     app semplice e intuitiva.
                                 </p>
-                                <div className="flex flex-col sm:flex-row gap-4">
-                                    <a href="#waitlist" className="btn-primary inline-block w-full sm:w-auto px-12 py-5 text-xl font-bold bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 shadow-xl shadow-emerald-600/30 hover:shadow-emerald-600/50 hover:-translate-y-1 transition-all duration-300 text-center">UNISCITI ALLA LISTA D'ATTESA</a>
+                                <div className="flex flex-col sm:flex-row gap-6">
+                                    <a href="#waitlist" className="btn-primary inline-block w-full sm:w-auto px-16 py-8 text-xl md:text-2xl font-black bg-emerald-600 text-white rounded-2xl hover:bg-emerald-700 shadow-xl shadow-emerald-600/30 hover:shadow-emerald-600/50 hover:-translate-y-1 transition-all duration-300 text-center tracking-wide">UNISCITI ALLA LISTA D'ATTESA</a>
                                 </div>
                                 <p className="mt-4 text-base text-gray-500">* Nessuna carta di credito richiesta</p>
                             </div>
@@ -159,7 +159,7 @@ export default function SeniorLandingPage() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
-                            <button type="submit" className="btn-primary w-full py-5 text-xl font-bold bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70" disabled={isSubmitting}>
+                            <button type="submit" className="btn-primary w-full py-8 text-xl md:text-2xl font-black bg-emerald-600 text-white rounded-2xl hover:bg-emerald-700 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 tracking-wide" disabled={isSubmitting}>
                                 {isSubmitting ? '...' : 'Tienimi Informato'}
                             </button>
                         </form>
