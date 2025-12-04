@@ -20,7 +20,7 @@ export const PolicyLayout = ({ children, title, lastUpdated }: PolicyLayoutProps
             <nav className="fixed top-0 left-0 right-0 z-50 py-6 bg-[#050505]/95 backdrop-blur-sm border-b border-white/5">
                 <div className="container mx-auto px-6 flex justify-between items-center max-w-4xl">
                     <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                        <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/icon.svg`} alt="DeepSafe Logo" className="h-8 w-8" />
+                        <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/logo.png`} alt="DeepSafe Logo" className="h-8 w-8" />
                         <span className="font-['Orbitron'] font-bold text-lg tracking-wider text-white">DEEPSAFE</span>
                     </Link>
                     <Link href="/" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
