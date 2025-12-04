@@ -44,7 +44,7 @@ export default function LandingPage() {
                             <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/logo.png`} alt="DeepSafe Logo" className="h-10 w-10 md:h-[45px] md:w-[45px]" />
                             <span className="font-['Orbitron'] font-black text-xl md:text-2xl tracking-widest bg-gradient-to-r from-white via-blue-200 to-blue-500 bg-clip-text text-transparent">DEEPSAFE</span>
                         </div>
-                        <a href="#waitlist" className="btn-primary px-10 py-5 text-base md:text-lg rounded-2xl font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:-translate-y-0.5 transition-all duration-300">UNISCITI ALLA LISTA D'ATTESA</a>
+                        <a href="#waitlist" className="btn-primary px-10 py-5 text-base md:text-lg rounded-2xl font-bold text-white bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-cyan-300 hover:via-blue-400 hover:to-purple-500 shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/60 hover:-translate-y-0.5 transition-all duration-300 bg-[length:200%_auto] hover:bg-right">UNISCITI ALLA LISTA D'ATTESA</a>
                     </div>
                 </nav>
 
@@ -62,7 +62,7 @@ export default function LandingPage() {
                             Hai le skills per salvarlo?
                         </p>
                         <div className="flex flex-col md:flex-row gap-6 justify-center items-center w-full max-w-2xl mx-auto md:max-w-none">
-                            <a href="#waitlist" className="btn-primary w-full md:w-auto px-10 py-5 text-base md:text-lg font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl hover:from-cyan-400 hover:to-blue-500 shadow-xl shadow-cyan-500/40 hover:shadow-cyan-500/60 hover:-translate-y-1 transition-all duration-300 text-center">UNISCITI ALLA LISTA D'ATTESA</a>
+                            <a href="#waitlist" className="btn-primary w-full md:w-auto px-10 py-5 text-base md:text-lg font-bold text-white bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-2xl hover:from-cyan-300 hover:via-blue-400 hover:to-purple-500 shadow-xl shadow-cyan-500/50 hover:shadow-cyan-500/70 hover:-translate-y-1 transition-all duration-300 text-center bg-[length:200%_auto] hover:bg-right">UNISCITI ALLA LISTA D'ATTESA</a>
                             <a href="#features" className="btn w-full md:w-auto px-10 py-5 text-base md:text-lg font-bold border-2 border-white text-white rounded-2xl hover:bg-white/10 hover:border-cyan-400 hover:text-cyan-400 hover:shadow-[0_0_25px_rgba(0,243,255,0.3)] transition-all duration-300 text-center">SCOPRI DI PIÙ</a>
                         </div>
                     </div>
@@ -132,7 +132,7 @@ export default function LandingPage() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full p-4 rounded bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-[#00f3ff] transition-colors"
                             />
-                            <button type="submit" className="btn-primary w-full py-5 text-base md:text-lg font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl shadow-lg hover:shadow-xl hover:from-cyan-400 hover:to-blue-500 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed" disabled={isSubmitting}>
+                            <button type="submit" className="btn-primary w-full py-5 text-base md:text-lg font-bold text-white bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-2xl shadow-lg hover:shadow-xl hover:from-cyan-300 hover:via-blue-400 hover:to-purple-500 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed bg-[length:200%_auto] hover:bg-right" disabled={isSubmitting}>
                                 {isSubmitting ? 'INVIO...' : 'UNISCITI ALLA LISTA D\'ATTESA'}
                             </button>
                         </form>
