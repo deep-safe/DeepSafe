@@ -21,10 +21,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         btn.innerText = 'Invio in corso...';
                         btn.disabled = true;
 
+                        const data = new FormData(form);
+                        const object = {};
+                        data.forEach((value, key) => object[key] = value);
+
                         const response = await fetch(action, {
                             method: form.method || 'POST',
-                            body: new FormData(form),
+                            body: JSON.stringify(object),
                             headers: {
+                                'Content-Type': 'application/json',
                                 'Accept': 'application/json'
                             }
                         });
