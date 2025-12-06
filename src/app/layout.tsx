@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://deepsafe.app'), // Replace with actual domain
   title: {
-    default: "DeepSafe - Cyber Security Gamified for Youth",
+    default: "DeepSafe - La Cybersicurezza Gamificata per Giovani",
     template: "%s | DeepSafe"
   },
   description: "Il mondo digitale è sotto attacco. Hacker, deepfake e blackout minacciano il nostro paese. Hai le skills per salvarlo? Unisciti a DeepSafe.",
@@ -28,11 +28,15 @@ export const metadata: Metadata = {
   authors: [{ name: "DeepSafe Team" }],
   creator: "DeepSafe",
   publisher: "DeepSafe",
+  icons: {
+    icon: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/icon.png`,
+    apple: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/icon.png`,
+  },
   openGraph: {
     type: "website",
     locale: "it_IT",
     url: "https://deepsafe.app",
-    title: "DeepSafe - Cyber Security Gamified for Youth",
+    title: "DeepSafe - La Cybersicurezza Gamificata per Giovani",
     description: "Il mondo digitale è sotto attacco. Hacker, deepfake e blackout minacciano il nostro paese. Hai le skills per salvarlo?",
     siteName: "DeepSafe",
     images: [
@@ -46,7 +50,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "DeepSafe - Cyber Security Gamified for Youth",
+    title: "DeepSafe - La Cybersicurezza Gamificata per Giovani",
     description: "Il mondo digitale è sotto attacco. Hai le skills per salvarlo?",
     images: ["/landing/assets/og-youth.jpg"],
   },
@@ -54,7 +58,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Deepsafe",
+    title: "DeepSafe",
   },
   robots: {
     index: true,
