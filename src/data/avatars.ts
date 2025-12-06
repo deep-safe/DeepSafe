@@ -7,12 +7,14 @@ export interface Avatar {
     isDefault?: boolean;
 }
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
 export const AVATARS: Avatar[] = [
     {
         id: 'avatar_rookie',
         name: 'Agente Recluta',
         description: 'Identità base assegnata ai nuovi operativi.',
-        src: '/avatars/rookie.png',
+        src: `${basePath}/avatars/rookie.png`,
         rarity: 'common',
         isDefault: true
     },
@@ -20,21 +22,21 @@ export const AVATARS: Avatar[] = [
         id: 'avatar_ninja',
         name: 'Cyber Ninja',
         description: 'Operativo specializzato in infiltrazioni silenziose.',
-        src: '/avatars/ninja.png',
+        src: `${basePath}/avatars/ninja.png`,
         rarity: 'rare'
     },
     {
         id: 'avatar_hacker',
         name: 'Elite Hacker',
         description: 'Maestro del codice e della manipolazione dati.',
-        src: '/avatars/hacker.png',
+        src: `${basePath}/avatars/hacker.png`,
         rarity: 'epic'
     },
     {
         id: 'avatar_architect',
         name: 'Architetto',
         description: 'Entità di alto livello con accesso root al sistema.',
-        src: '/avatars/architect.png',
+        src: `${basePath}/avatars/architect.png`,
         rarity: 'legendary'
     }
 ];

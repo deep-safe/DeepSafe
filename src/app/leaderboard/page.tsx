@@ -299,8 +299,8 @@ export default function LeaderboardPage() {
                     ) : (
                         leaderboardData.map((entry, index) => {
                             // Resolve Avatar
-                            const avatarDef = avatars.find(a => a.id === entry.avatar_url);
-                            const avatarSrc = avatarDef?.src || '/avatars/rookie.png';
+                            const avatarDef = avatars.find(a => a.id === entry.avatar_url) || avatars.find(a => a.id === 'avatar_rookie');
+                            const avatarSrc = avatarDef?.src || `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/avatars/rookie.png`;
 
                             return (
                                 <motion.div
@@ -335,7 +335,7 @@ export default function LeaderboardPage() {
                                             className="w-full h-full object-cover"
                                             onError={(e) => {
                                                 // Fallback if image fails to load
-                                                (e.target as HTMLImageElement).src = '/avatars/rookie.png';
+                                                (e.target as HTMLImageElement).src = `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/avatars/rookie.png`;
                                             }}
                                         />
                                     </div>
