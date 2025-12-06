@@ -1,7 +1,7 @@
 {
-  "name": "DeepSafe - La Cybersicurezza Gamificata",
-  "short_name": "Deepsafe",
-  "description": "Impara a riconoscere le truffe IA e difendi la tua vita digitale.",
+  "name": "DeepSafe",
+  "short_name": "DeepSafe",
+  "description": "Educazione Digitale Gamificata.",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#0B0C10",

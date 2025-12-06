@@ -20,11 +20,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://deepsafe.app'), // Replace with actual domain
   title: {
-    default: "DeepSafe - La Cybersicurezza Gamificata per Giovani",
+    default: "DeepSafe - Educazione Digitale Gamificata",
     template: "%s | DeepSafe"
   },
-  description: "Il mondo digitale è sotto attacco. Hacker, deepfake e blackout minacciano il nostro paese. Hai le skills per salvarlo? Unisciti a DeepSafe.",
-  keywords: ["cyber security", "gamification", "educazione digitale", "sicurezza informatica", "giovani", "italia", "deepfake", "hacker"],
+  description: "Impara a navigare in sicurezza e proteggi la tua vita digitale attraverso il gioco.",
+  keywords: ["educazione digitale", "sicurezza informatica", "gamification", "giovani", "scuola", "cittadinanza digitale", "italia"],
   authors: [{ name: "DeepSafe Team" }],
   creator: "DeepSafe",
   publisher: "DeepSafe",
@@ -36,8 +36,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "it_IT",
     url: "https://deepsafe.app",
-    title: "DeepSafe - La Cybersicurezza Gamificata per Giovani",
-    description: "Il mondo digitale è sotto attacco. Hacker, deepfake e blackout minacciano il nostro paese. Hai le skills per salvarlo?",
+    title: "DeepSafe - Educazione Digitale Gamificata",
+    description: "Impara a navigare in sicurezza e proteggi la tua vita digitale attraverso il gioco.",
     siteName: "DeepSafe",
     images: [
       {
