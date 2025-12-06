@@ -1,0 +1,1 @@
+ALTER TABLE shop_items ADD COLUMN is_visible BOOLEAN DEFAULT TRUE;

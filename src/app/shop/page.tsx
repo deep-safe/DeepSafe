@@ -71,6 +71,7 @@ function ShopContent() {
         const { data, error } = await supabase
             .from('shop_items')
             .select('*')
+            .eq('is_visible', true)
             .order('cost', { ascending: true });
 
         if (error) {

@@ -273,6 +273,7 @@ export interface Database {
                     effect_value: number | null
                     created_at: string
                     label: string | null
+                    is_visible: boolean
                 }
                 Insert: {
                     id: string
@@ -288,6 +289,7 @@ export interface Database {
                     effect_value?: number | null
                     created_at?: string
                     label?: string | null
+                    is_visible?: boolean
                 }
                 Update: {
                     id?: string
@@ -303,6 +305,7 @@ export interface Database {
                     effect_value?: number | null
                     created_at?: string
                     label?: string | null
+                    is_visible?: boolean
                 }
                 Relationships: []
             }

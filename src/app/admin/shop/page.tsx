@@ -35,7 +35,8 @@ export default function AdminShopPage() {
         is_limited: false,
         effect_type: 'none',
         effect_value: null,
-        label: ''
+        label: '',
+        is_visible: true
     });
 
     // Loot State
@@ -113,7 +114,8 @@ export default function AdminShopPage() {
                 is_limited: false,
                 effect_type: 'none',
                 effect_value: null,
-                label: ''
+                label: '',
+                is_visible: true
             });
             setCurrentLoot([]);
         }
@@ -317,10 +319,16 @@ export default function AdminShopPage() {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {items.filter(i => !i.is_limited || (i.stock !== null && i.stock > 0)).map(item => (
-                        <div key={item.id} className="bg-slate-900/50 border border-slate-800 p-6 rounded-xl hover:border-yellow-500/50 transition-colors group relative">
+                        <div key={item.id} className={`bg-slate-900/50 border ${item.is_visible === false ? 'border-red-900/50 opacity-75' : 'border-slate-800'} p-6 rounded-xl hover:border-yellow-500/50 transition-colors group relative`}>
                             {item.label && (
                                 <div className="absolute top-0 right-0 bg-cyan-500 text-black text-[9px] font-bold px-2 py-0.5 rounded-bl rounded-tr-xl z-10">
                                     {item.label}
+                                </div>
+                            )}
+                            {/* Visibility Badge */}
+                            {item.is_visible === false && (
+                                <div className="absolute top-0 left-0 bg-red-900 text-red-200 text-[9px] font-bold px-2 py-0.5 rounded-br rounded-tl-xl z-10 border-r border-b border-red-500/50">
+                                    HIDDEN
                                 </div>
                             )}
                             <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2 z-20">
@@ -388,6 +396,18 @@ export default function AdminShopPage() {
                                         className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm focus:border-yellow-500 outline-none disabled:opacity-50"
                                         placeholder="e.g. magic_potion"
                                     />
+                                </div>
+                                <div className="flex items-center gap-2 py-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.is_visible !== false} // Default true if undefined
+                                        onChange={e => setFormData({ ...formData, is_visible: e.target.checked })}
+                                        className="rounded bg-slate-950 border-slate-700 text-cyan-500 focus:ring-cyan-500 w-5 h-5"
+                                    />
+                                    <div>
+                                        <label className="text-sm font-bold text-white block">Visible in Shop</label>
+                                        <span className="text-xs text-slate-500">Uncheck to hide this item from users without deleting it.</span>
+                                    </div>
                                 </div>
                                 <div>
                                     <label className="block text-xs font-mono text-slate-500 mb-1">Name</label>
