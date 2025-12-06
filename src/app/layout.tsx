@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     description: "Il mondo digitale è sotto attacco. Hai le skills per salvarlo?",
     images: ["/landing/assets/og-youth.jpg"],
   },
-  manifest: "/manifest.json",
+  manifest: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/manifest.json`,
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",

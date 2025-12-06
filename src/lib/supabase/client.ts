@@ -9,7 +9,7 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
         persistSession: true,
         storageKey: 'deepsafe-auth-token',
         storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-        detectSessionInUrl: true,
+        detectSessionInUrl: false,
         flowType: 'pkce',
     },
 });
