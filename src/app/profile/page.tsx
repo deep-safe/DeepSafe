@@ -286,9 +286,15 @@ export default function ProfilePage() {
     };
 
     const getCurrentAvatarSrc = () => {
-        if (!profile?.avatar_url) return avatars.find(a => a.is_default)?.src || '/avatars/rookie.png';
+        const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+        const fallback = `${basePath}/avatars/rookie.png`;
+
+        if (!profile?.avatar_url) {
+            return avatars.find(a => a.is_default)?.src || fallback;
+        }
+
         const avatar = avatars.find(a => a.id === profile.avatar_url);
-        return avatar?.src || '/avatars/rookie.png';
+        return avatar?.src || fallback;
     };
 
     if (loading || avatarsLoading) return <CyberLoading message="INIZIALIZZAZIONE PROTOCOLLI IDENTITÀ..." />;
