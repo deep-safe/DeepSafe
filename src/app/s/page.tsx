@@ -3,9 +3,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 
+import { WaitlistSuccessModal } from '@/components/landing/WaitlistSuccessModal';
+
 export default function SeniorLandingPage() {
     const [email, setEmail] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
 
     const handleWaitlistSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -20,7 +23,8 @@ export default function SeniorLandingPage() {
         console.log(`Registered email (Senior): ${email}`);
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        alert('Grazie per esserti iscritto alla lista d\'attesa! A breve ti invieremo tutte le istruzioni per accedere all\'app');
+        // alert('Grazie per esserti iscritto alla lista d\'attesa! A breve ti invieremo tutte le istruzioni per accedere all\'app');
+        setShowSuccessModal(true);
         setEmail('');
         setIsSubmitting(false);
     };
@@ -31,6 +35,11 @@ export default function SeniorLandingPage() {
             <link rel="stylesheet" href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/css/shared.css`} />
             <link rel="stylesheet" href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/css/theme.css`} />
             <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+
+            <WaitlistSuccessModal
+                isOpen={showSuccessModal}
+                onClose={() => setShowSuccessModal(false)}
+            />
 
             <div className="theme-senior min-h-screen w-full bg-white text-gray-800 font-['Roboto']">
                 {/* Navbar */}

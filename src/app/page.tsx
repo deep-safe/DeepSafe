@@ -4,9 +4,12 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+import { WaitlistSuccessModal } from '@/components/landing/WaitlistSuccessModal';
+
 export default function LandingPage() {
     const [email, setEmail] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
 
     const handleWaitlistSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -24,7 +27,8 @@ export default function LandingPage() {
         // Simulate network delay
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        alert('Grazie per esserti iscritto alla lista d\'attesa! A breve ti invieremo tutte le istruzioni per accedere all\'app');
+        // alert('Grazie per esserti iscritto alla lista d\'attesa! A breve ti invieremo tutte le istruzioni per accedere all\'app');
+        setShowSuccessModal(true);
         setEmail('');
         setIsSubmitting(false);
     };
@@ -35,6 +39,11 @@ export default function LandingPage() {
             <link rel="stylesheet" href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/css/shared.css`} />
             <link rel="stylesheet" href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/css/theme.css`} />
             <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet" />
+
+            <WaitlistSuccessModal
+                isOpen={showSuccessModal}
+                onClose={() => setShowSuccessModal(false)}
+            />
 
             <div className="theme-youth min-h-screen w-full bg-[#0a0a12] text-[#e0e0e0] font-['Outfit'] overflow-x-hidden">
                 {/* Navbar */}
@@ -119,7 +128,7 @@ export default function LandingPage() {
                 <section id="waitlist" className="section py-20 bg-gradient-to-t from-black to-[#161622]">
                     <div className="container mx-auto px-4 text-center">
                         <h2 className="text-3xl md:text-4xl font-bold mb-6 uppercase tracking-wide text-white drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">Sei Pronto a Giocare?</h2>
-                        <p className="mb-10 max-w-lg mx-auto text-gray-300">
+                        <p className="mb-10 max-w-lg mx-auto text-gray-300 text-center">
                             Iscriviti alla lista d'attesa per ottenere l'accesso anticipato e una skin esclusiva per il tuo avatar.
                         </p>
 
