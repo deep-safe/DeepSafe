@@ -103,12 +103,18 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                             onClick={() => router.push(`/training?problemId=mission-1&provinceId=${province.id}&missionId=${mission.id}`)}
                                             className={`group relative flex items-center justify-between p-4 rounded-xl border transition-all duration-300 w-full text-left ${isPassed
                                                 ? 'bg-slate-900/80 border-slate-700 hover:border-emerald-500/50'
-                                                : 'bg-slate-900/50 border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900'
+                                                : mScore.score > 0
+                                                    ? 'bg-amber-950/20 border-amber-900/50 hover:border-amber-500/50'
+                                                    : 'bg-slate-900/50 border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900'
                                                 }`}
                                         >
                                             <div className="flex flex-col items-start gap-1">
                                                 <div className="flex items-center gap-2">
-                                                    <span className={`text-sm font-bold transition-colors ${isPassed ? 'text-emerald-400' : 'text-white group-hover:text-cyan-400'}`}>
+                                                    <span className={`text-sm font-bold transition-colors ${isPassed
+                                                        ? 'text-emerald-400'
+                                                        : mScore.score > 0
+                                                            ? 'text-amber-400'
+                                                            : 'text-white group-hover:text-cyan-400'}`}>
                                                         {mission.title}
                                                     </span>
                                                     {isPassed && (
@@ -138,9 +144,15 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                             </div>
                                             <div className={`px-3 py-1 rounded border text-[10px] font-mono transition-colors ${isPassed
                                                 ? 'bg-emerald-950/30 border-emerald-900/50 text-emerald-500'
-                                                : 'bg-slate-950 border-slate-800 text-slate-400 group-hover:text-cyan-500 group-hover:border-cyan-900'
+                                                : mScore.score > 0
+                                                    ? 'bg-amber-950/30 border-amber-900/50 text-amber-500'
+                                                    : 'bg-slate-950 border-slate-800 text-slate-400 group-hover:text-cyan-500 group-hover:border-cyan-900'
                                                 }`}>
-                                                {isPassed ? 'COMPLETED' : (mission.level || 'SEMPLICE')}
+                                                {isPassed
+                                                    ? 'COMPLETED'
+                                                    : mScore.score > 0
+                                                        ? `PROVATA: ${Math.round((mScore.score / (mScore.maxScore || 1)) * 100)}%`
+                                                        : (mission.level || 'SEMPLICE')}
                                             </div>
                                         </button>
                                     );
@@ -148,22 +160,51 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                             </div>
                         ) : (
                             // Single Mission Action
-                            <button
-                                onClick={() => router.push(`/training?problemId=mission-1&provinceId=${province.id}`)}
-                                className="w-full group relative overflow-hidden rounded-xl bg-cyan-950/30 border border-cyan-900/50 p-6 hover:bg-cyan-900/20 hover:border-cyan-500/50 transition-all duration-300"
-                            >
-                                <div className="flex items-center justify-between relative z-10">
-                                    <div className="flex flex-col items-start">
-                                        <div className="text-xs text-cyber-gray font-mono uppercase">BONUS NC</div>
-                                        <span className="text-lg font-bold text-white">AVVIA MISSIONE</span>
-                                    </div>
-                                    <div className="h-10 w-10 rounded-full bg-cyan-500/10 flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-black transition-all">
-                                        <ChevronRight className="w-6 h-6" />
-                                    </div>
-                                </div>
-                                {/* Scanline effect */}
-                                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000" />
-                            </button>
+                            (() => {
+                                const mScore = singleMission ? (missionScores[singleMission.id] || { score: 0, maxScore: 0, isCompleted: false }) : { score: 0, maxScore: 0, isCompleted: false };
+                                const isPassed = mScore.isCompleted;
+                                const isProvata = mScore.score > 0 && !isPassed;
+
+                                return (
+                                    <button
+                                        onClick={() => router.push(`/training?problemId=mission-1&provinceId=${province.id}`)}
+                                        className={`w-full group relative overflow-hidden rounded-xl border p-6 transition-all duration-300 ${isPassed
+                                            ? 'bg-emerald-950/30 border-emerald-900/50 hover:bg-emerald-900/20 hover:border-emerald-500/50'
+                                            : isProvata
+                                                ? 'bg-amber-950/20 border-amber-900/50 hover:bg-amber-900/20 hover:border-amber-500/50'
+                                                : 'bg-cyan-950/30 border-cyan-900/50 hover:bg-cyan-900/20 hover:border-cyan-500/50'
+                                            }`}
+                                    >
+                                        <div className="flex items-center justify-between relative z-10">
+                                            <div className="flex flex-col items-start">
+                                                <div className={`text-xs font-mono uppercase ${isPassed ? 'text-emerald-500' : isProvata ? 'text-amber-500' : 'text-cyber-gray'
+                                                    }`}>
+                                                    {isPassed
+                                                        ? 'COMPLETATA'
+                                                        : isProvata
+                                                            ? `PROVATA: ${Math.round((mScore.score / (mScore.maxScore || 1)) * 100)}%`
+                                                            : 'BONUS NC'}
+                                                </div>
+                                                <span className={`text-lg font-bold ${isPassed ? 'text-emerald-100' : isProvata ? 'text-amber-100' : 'text-white'
+                                                    }`}>
+                                                    {isPassed ? 'RITENTA' : isProvata ? 'RITENTA MISSIONE' : 'AVVIA MISSIONE'}
+                                                </span>
+                                            </div>
+                                            <div className={`h-10 w-10 rounded-full flex items-center justify-center transition-all ${isPassed
+                                                ? 'bg-emerald-500/10 group-hover:bg-emerald-500 group-hover:text-black text-emerald-500'
+                                                : isProvata
+                                                    ? 'bg-amber-500/10 group-hover:bg-amber-500 group-hover:text-black text-amber-500'
+                                                    : 'bg-cyan-500/10 group-hover:bg-cyan-500 group-hover:text-black'
+                                                }`}>
+                                                <ChevronRight className="w-6 h-6" />
+                                            </div>
+                                        </div>
+                                        {/* Scanline effect */}
+                                        <div className={`absolute inset-0 bg-gradient-to-b from-transparent ${isPassed ? 'via-emerald-500/5' : isProvata ? 'via-amber-500/5' : 'via-cyan-500/5'
+                                            } to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000`} />
+                                    </button>
+                                );
+                            })()
                         )}
                     </div>
                 )}

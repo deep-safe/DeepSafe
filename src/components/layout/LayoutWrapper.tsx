@@ -9,10 +9,14 @@ import { SystemModal } from "@/components/ui/SystemModal";
 import { GiftOverlay } from '@/components/gamification/GiftOverlay';
 import { BiometricGuard } from '@/components/auth/BiometricGuard';
 import { CookieConsent } from '@/components/ui/CookieConsent';
+import { useHeartRefill } from '@/hooks/useHeartRefill';
 
 export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
     const isAdmin = pathname?.startsWith('/admin');
+
+    // Global Heart Refill Logic
+    useHeartRefill();
 
     React.useEffect(() => {
         if ('serviceWorker' in navigator) {

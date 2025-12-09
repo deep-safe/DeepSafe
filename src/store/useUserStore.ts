@@ -53,6 +53,7 @@ interface UserState {
     resetStreak: () => Promise<void>;
     setLastLoginDate: (date: string) => Promise<void>;
     setLastStreakDate: (date: string) => Promise<void>;
+    checkRefill: () => void;
     decrementLives: () => Promise<void>;
     addHeart: (amount: number) => Promise<void>;
     refillLives: () => Promise<void>;
@@ -78,9 +79,62 @@ export const useUserStore = create<UserState>()(
             credits: 100, // Starting bonus
             streak: 0,
             lives: 5,
-            maxLives: 5,
+            maxLives: 5, // Will be updated by checkRefill based on premium
             hasInfiniteLives: false,
             lastRefillTime: null,
+            checkRefill: () => {
+                const state = get();
+                // Determine Max Lives & Refill Interval based on Premium
+                const isPremium = state.isPremium || state.hasInfiniteLives;
+                const dynamicMaxLives = isPremium ? 10 : 5;
+                const refillInterval = isPremium ? 15 * 60 * 1000 : 45 * 60 * 1000; // 15m vs 45m
+
+                // Update maxLives if needed
+                if (state.maxLives !== dynamicMaxLives) {
+                    set({ maxLives: dynamicMaxLives });
+                }
+
+                // If full, reset timer
+                if (state.lives >= dynamicMaxLives) {
+                    if (state.lastRefillTime !== null) set({ lastRefillTime: null });
+                    return;
+                }
+
+                const now = Date.now();
+
+                // Initialize timer if missing
+                if (!state.lastRefillTime) {
+                    set({ lastRefillTime: now });
+                    return;
+                }
+
+                const elapsed = now - state.lastRefillTime;
+                if (elapsed >= refillInterval) {
+                    const heartsToRecover = Math.floor(elapsed / refillInterval);
+                    const newLives = Math.min(dynamicMaxLives, state.lives + heartsToRecover);
+
+                    // Reset time but keep remainder to avoid losing partial progress
+                    const remainder = elapsed % refillInterval;
+                    const newLastRefillTime = newLives === dynamicMaxLives ? null : now - remainder;
+
+                    set({ lives: newLives, lastRefillTime: newLastRefillTime });
+
+                    // Sync with DB (Silent)
+                    if (newLives !== state.lives) {
+                        const sync = async () => {
+                            try {
+                                const { data: { user } } = await supabase.auth.getUser();
+                                if (user) {
+                                    await supabase.from('profiles').update({ current_hearts: newLives }).eq('id', user.id);
+                                }
+                            } catch (e) {
+                                console.error('Error syncing auto-refilled hearts', e);
+                            }
+                        };
+                        sync();
+                    }
+                }
+            },
             unlockedProvinces: ['CB', 'IS'], // Molise (CB, IS) unlocked by default
             provinceScores: {},
             lastLoginDate: null,
@@ -958,6 +1012,8 @@ export const useUserStore = create<UserState>()(
                 mapTier: state.mapTier,
                 completedTiers: state.completedTiers,
                 unlockedMissionsCount: state.unlockedMissionsCount,
+
+                lastRefillTime: state.lastRefillTime, // Persist this!
             })
         }
     )
