@@ -42,7 +42,17 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
                 src: [path],
                 volume: 0.5,
                 preload: true,
-                onloaderror: () => console.warn(`Failed to load sound: ${path}`),
+                onloaderror: (id: any, error: any) => {
+                    console.warn(`Failed to load sound from ${path}, retrying at root...`);
+                    // Retry with root path if base path failed
+                    const rootPath = `/sounds/${key}.mp3`;
+                    if (path !== rootPath) {
+                        newSounds[key] = new Howl({
+                            src: [rootPath],
+                            volume: 0.5
+                        });
+                    }
+                },
             });
         });
         setSounds(newSounds);

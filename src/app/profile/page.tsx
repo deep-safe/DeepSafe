@@ -297,15 +297,18 @@ export default function ProfilePage() {
     };
 
     const getCurrentAvatarSrc = () => {
-        // Fallback or specific default can be hardcoded or fetched
-        const fallback = 'https://placeholder.supabase.co/storage/v1/object/public/avatars/rookie.png';
+        // Use a safe default from the loaded avatars if possible
+        const defaultAvatar = avatars.find(a => a.id === 'avatar_rookie') || avatars[0];
+        // Use verified Supabase Storage URL as hard fallback
+        const hardFallback = 'https://rxbvbxrobuaebrvcrcrg.supabase.co/storage/v1/object/public/avatars/rookie.png';
+        const fallback = defaultAvatar?.src || hardFallback;
 
         if (!profile?.avatar_url) {
-            const defaultAvatar = avatars.find(a => a.is_default);
             return defaultAvatar?.src || fallback;
         }
 
         const avatar = avatars.find(a => a.id === profile.avatar_url);
+
         return avatar?.src || fallback;
     };
 

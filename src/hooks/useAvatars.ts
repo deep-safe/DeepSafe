@@ -19,19 +19,24 @@ export function useAvatars() {
                     .select('*')
                     .order('rarity', { ascending: true }); // Order by rarity or created_at
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Error fetching avatars:', error);
+                    setError(error);
+                } else {
+                    console.log('Fetched Avatars:', data); // DEBUG: Check paths
 
-                // Sort by rarity: common, rare, epic, legendary
-                const rarityOrder = { common: 0, rare: 1, epic: 2, legendary: 3 };
+                    // Sort by rarity: common, rare, epic, legendary
+                    const rarityOrder = { common: 0, rare: 1, epic: 2, legendary: 3 };
 
-                const sortedData = (data || [])
-                    .sort((a, b) => {
-                        const rA = rarityOrder[a.rarity as keyof typeof rarityOrder] || 0;
-                        const rB = rarityOrder[b.rarity as keyof typeof rarityOrder] || 0;
-                        return rA - rB;
-                    });
+                    const sortedData = (data || [])
+                        .sort((a, b) => {
+                            const rA = rarityOrder[a.rarity as keyof typeof rarityOrder] || 0;
+                            const rB = rarityOrder[b.rarity as keyof typeof rarityOrder] || 0;
+                            return rA - rB;
+                        });
 
-                setAvatars(sortedData);
+                    setAvatars(sortedData);
+                }
             } catch (err: any) {
                 console.error('Error fetching avatars:', err);
                 setError(err);
