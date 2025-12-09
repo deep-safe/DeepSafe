@@ -13,6 +13,7 @@ interface MysteryBoxModalProps {
     reward: {
         type: string;
         value: number | string;
+        message?: string;
     } | null;
     isOpening: boolean;
 }
@@ -228,6 +229,17 @@ export function MysteryBoxModal({ isOpen, onClose, reward, isOpening }: MysteryB
                                         </>
                                     )}
                                 </motion.p>
+
+                                {reward.message && (
+                                    <motion.p
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ delay: 0.6 }}
+                                        className="text-xs text-slate-400 font-mono mt-2"
+                                    >
+                                        [{reward.message}]
+                                    </motion.p>
+                                )}
                             </div>
 
                             <motion.button

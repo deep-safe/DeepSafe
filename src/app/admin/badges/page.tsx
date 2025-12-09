@@ -13,7 +13,7 @@ type Badge = Database['public']['Tables']['badges']['Row'];
 
 const BADGE_CATEGORIES = ['Region', 'Streak', 'XP', 'Special'];
 const BADGE_RARITIES = ['common', 'rare', 'legendary'];
-const CONDITION_TYPES = ['region_master', 'streak_milestone', 'xp_milestone', 'first_mission'];
+const CONDITION_TYPES = ['region_master', 'streak_milestone', 'xp_milestone', 'first_mission', 'single_province_master'];
 
 export default function AdminBadgesPage() {
     const router = useRouter();
@@ -330,6 +330,12 @@ export default function AdminBadgesPage() {
                                                     This badge will be awarded automatically when the user completes ALL missions in this region.
                                                 </p>
                                             </div>
+                                        ) : formData.condition_type === 'single_province_master' ? (
+                                            <div className="bg-purple-900/20 p-3 rounded border border-purple-500/30">
+                                                <p className="text-[10px] text-slate-400">
+                                                    This badge will be awarded automatically when the user completes ANY single province for the first time. No value needed.
+                                                </p>
+                                            </div>
                                         ) : (
                                             <div>
                                                 <label className="block text-xs font-mono text-slate-500 mb-1">Value (Optional)</label>
@@ -354,7 +360,8 @@ export default function AdminBadgesPage() {
                         </div>
                     </div>
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }

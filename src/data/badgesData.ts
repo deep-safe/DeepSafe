@@ -7,7 +7,7 @@ export interface BadgeDefinition {
     xpReward: number; // NC Reward
     rarity: 'common' | 'rare' | 'legendary';
     condition: {
-        type: 'region_master' | 'streak_milestone' | 'xp_milestone' | 'first_mission';
+        type: 'region_master' | 'streak_milestone' | 'xp_milestone' | 'first_mission' | 'single_province_master';
         value?: string | number; // Region name or numeric threshold
     };
 }

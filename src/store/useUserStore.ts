@@ -231,6 +231,27 @@ export const useUserStore = create<UserState>()(
                     const { data: { user } } = await supabase.auth.getUser();
                     if (!user) return { success: false, message: 'Utente non autenticato' };
 
+                    // SPECIAL HANDLING: Mystery Box (Encrypted Crate)
+                    // We use a secure server-side API to ensure guaranteed rewards and robust logic.
+                    if (itemId === 'mystery_box') {
+                        const response = await fetch('/api/shop/mystery-box', {
+                            method: 'POST',
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            await get().refreshProfile();
+                            return {
+                                success: true,
+                                reward: result.reward
+                            };
+                        } else {
+                            return { success: false, message: result.message || 'Errore apertura cassa' };
+                        }
+                    }
+
+                    // STANDARD HANDLING: Database RPC for regular items
                     const { data, error } = await supabase.rpc('purchase_item', {
                         p_user_id: user.id,
                         p_item_id: itemId
@@ -660,6 +681,15 @@ export const useUserStore = create<UserState>()(
                                 });
 
                                 if (regionProvinces.length > 0 && allCompleted) {
+                                    unlocked = true;
+                                }
+                            }
+                            break;
+                        case 'single_province_master':
+                            {
+                                // Check if ANY province is completed
+                                const hasCompletedProvince = Object.values(state.provinceScores).some(p => p.isCompleted);
+                                if (hasCompletedProvince) {
                                     unlocked = true;
                                 }
                             }
