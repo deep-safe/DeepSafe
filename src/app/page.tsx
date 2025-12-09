@@ -73,11 +73,11 @@ export default function LandingPage() {
                     {/* Background Map Overlay */}
                     <div className="absolute inset-0 bg-[url('/landing/assets/italy-map-empty.jpg')] bg-no-repeat bg-center bg-cover opacity-20 mix-blend-overlay pointer-events-none"></div>
 
-                    <div className="container mx-auto px-4 relative z-10">
+                    <div className="container mx-auto px-4 relative z-10 flex flex-col items-center">
                         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight uppercase tracking-wide text-white drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">
                             L'Italia del Futuro <br /> <span className="text-[#00f3ff]">Ha Bisogno di Te</span>
                         </h1>
-                        <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto opacity-90 text-gray-300">
+                        <p className="text-lg md:text-xl mb-10 max-w-[600px] mx-auto opacity-90 text-gray-300 text-center">
                             Il mondo digitale è sotto attacco. Hacker, deepfake e blackout minacciano il nostro paese.
                             Hai le skills per salvarlo?
                         </p>
