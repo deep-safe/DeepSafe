@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
@@ -9,7 +10,6 @@ import {
     Edit2,
     Save,
     X,
-
     Users,
     Globe,
     Medal,
@@ -21,7 +21,8 @@ import {
     Bell,
     Volume2,
     Smartphone,
-    MessageSquare
+    MessageSquare,
+    BellOff
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import posthog from 'posthog-js';
@@ -30,7 +31,6 @@ import { useSystemUI } from '@/context/SystemUIContext';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
-// Client is already initialized
 
 interface Profile {
     id: string;
@@ -41,27 +41,20 @@ interface Profile {
     rank?: number;
 }
 
-
 import { AvatarSelector } from '@/components/profile/AvatarSelector';
 import { useAvatars } from '@/hooks/useAvatars';
 import { useUserStore } from '@/store/useUserStore';
 import { BADGES_DATA, BadgeDefinition } from '@/data/badgesData';
 
 import { ArtifactGrid } from '@/components/gamification/ArtifactGrid';
-
 import { Badge } from '@/components/gamification/BadgeCard';
 import { StatisticsSection } from '@/components/profile/StatisticsSection';
-
 import { CyberLoading } from '@/components/ui/CyberLoading';
 import { FeedbackModal } from '@/components/profile/FeedbackModal';
 import { DeleteAccountModal } from '@/components/profile/DeleteAccountModal';
-
-
-
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useLocalNotifications } from '@/hooks/useLocalNotifications';
 import { useBiometrics } from '@/hooks/useBiometrics';
-import { BellOff } from 'lucide-react';
 
 type ToggleColor = 'blue' | 'purple' | 'orange';
 
@@ -110,7 +103,7 @@ export default function ProfilePage() {
 
     // Push Notifications (Local)
     const { isEnabled: notificationsEnabled, toggleNotifications } = useLocalNotifications();
-    // Legacy Push (Remote) - keeping for reference or future use
+    // Legacy Push (Remote)
     const { isSupported, permission, subscribe, unsubscribe, loading: pushLoading } = usePushNotifications();
 
     // Biometrics
@@ -139,38 +132,9 @@ export default function ProfilePage() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const handleDeleteAccount = async () => {
-        setIsDeleting(true);
-        try {
-            const { error } = await (supabase.rpc as any)('delete_account');
-            if (error) throw error;
-
-            await supabase.auth.signOut();
-            router.push('/login');
-        } catch (error: any) {
-            console.error('Error deleting account:', error);
-            // If RPC is missing, show a specific message (for the dev/user)
-            if (error.message?.includes('function delete_account() does not exist')) {
-                alert('ERRORE SISTEMA: Funzione di eliminazione non configurata. Contatta il supporto.');
-            } else {
-                alert('Errore durante l\'eliminazione dell\'account. Riprova più tardi.');
-            }
-        } finally {
-            setIsDeleting(false);
-            setIsDeleteModalOpen(false);
-        }
-    };
-
     // Edit Form State
     const [editName, setEditName] = useState('');
-
-
-    // Gamification State
-
     const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
-
-    // Sync Missions with Inventory (Claimed Status)
-
 
     // Compute Badges with Unlock Status
     const badges = BADGES_DATA.map(badgeDef => {
@@ -188,13 +152,21 @@ export default function ProfilePage() {
         };
     }).filter(b => b.is_unlocked);
 
-
-
+    // Load from Cache on Mount
     useEffect(() => {
+        const cached = localStorage.getItem('user_profile_cache');
+        if (cached) {
+            try {
+                const parsed = JSON.parse(cached);
+                setProfile(parsed);
+                if (parsed.username) setEditName(parsed.username);
+            } catch (e) {
+                console.error('Cache parse error', e);
+            }
+        }
+        // Still fetch fresh data
         fetchProfile();
     }, []);
-
-
 
     const fetchProfile = async () => {
         try {
@@ -229,9 +201,13 @@ export default function ProfilePage() {
             if (rankError) console.error('Error fetching rank:', rankError);
 
             const rank = (count || 0) + 1;
+            const fullProfile = { ...data, rank } as any;
 
-            setProfile({ ...data, rank } as any);
+            setProfile(fullProfile);
             setEditName(data.username || '');
+
+            // Update Cache
+            localStorage.setItem('user_profile_cache', JSON.stringify(fullProfile));
         } catch (error) {
             console.error('Error fetching profile:', error);
         } finally {
@@ -246,12 +222,18 @@ export default function ProfilePage() {
 
             const { error } = await supabase
                 .from('profiles')
-                .update({ avatar_url: avatarId }) // Storing ID in avatar_url column
+                .update({ avatar_url: avatarId })
                 .eq('id', user.id);
 
             if (error) throw error;
 
-            setProfile(prev => prev ? { ...prev, avatar_url: avatarId } : null);
+            const updatedProfile = profile ? { ...profile, avatar_url: avatarId } : null;
+            setProfile(updatedProfile);
+
+            // Update Cache
+            if (updatedProfile) {
+                localStorage.setItem('user_profile_cache', JSON.stringify(updatedProfile));
+            }
         } catch (error) {
             console.error('Error updating avatar:', error);
         } finally {
@@ -259,8 +241,31 @@ export default function ProfilePage() {
         }
     };
 
+    const handleDeleteAccount = async () => {
+        setIsDeleting(true);
+        try {
+            const { error } = await (supabase.rpc as any)('delete_account');
+            if (error) throw error;
+
+            await supabase.auth.signOut();
+            localStorage.removeItem('user_profile_cache'); // Clear cache
+            router.push('/login');
+        } catch (error: any) {
+            console.error('Error deleting account:', error);
+            if (error.message?.includes('function delete_account() does not exist')) {
+                alert('ERRORE SISTEMA: Funzione di eliminazione non configurata. Contatta il supporto.');
+            } else {
+                alert('Errore durante l\'eliminazione dell\'account. Riprova più tardi.');
+            }
+        } finally {
+            setIsDeleting(false);
+            setIsDeleteModalOpen(false);
+        }
+    };
+
     const handleLogout = async () => {
         await supabase.auth.signOut();
+        localStorage.removeItem('user_profile_cache'); // Clear cache
         router.push('/login');
         router.refresh();
     };
@@ -278,8 +283,14 @@ export default function ProfilePage() {
 
             if (error) throw error;
 
-            setProfile(prev => prev ? { ...prev, username: editName } : null);
+            const updatedProfile = profile ? { ...profile, username: editName } : null;
+            setProfile(updatedProfile);
             setIsEditing(false);
+
+            // Update Cache
+            if (updatedProfile) {
+                localStorage.setItem('user_profile_cache', JSON.stringify(updatedProfile));
+            }
         } catch (error) {
             console.error('Error updating profile:', error);
         }
@@ -290,17 +301,21 @@ export default function ProfilePage() {
         const fallback = `${basePath}/avatars/rookie.png`;
 
         if (!profile?.avatar_url) {
-            return avatars.find(a => a.is_default)?.src || fallback;
+            const defaultAvatar = avatars.find(a => a.is_default);
+            if (defaultAvatar?.src) {
+                return defaultAvatar.src.startsWith('/') ? `${basePath}${defaultAvatar.src}` : defaultAvatar.src;
+            }
+            return fallback;
         }
 
         const avatar = avatars.find(a => a.id === profile.avatar_url);
-        return avatar?.src || fallback;
+        if (avatar?.src) {
+            return avatar.src.startsWith('/') ? `${basePath}${avatar.src}` : avatar.src;
+        }
+        return fallback;
     };
 
-    if (loading || avatarsLoading) return <CyberLoading message="INIZIALIZZAZIONE PROTOCOLLI IDENTITÀ..." />;
-
-
-
+    if (loading && !profile) return <CyberLoading message="INIZIALIZZAZIONE PROTOCOLLI IDENTITÀ..." />;
 
     return (
         <div className="space-y-8 pb-32 relative">
@@ -346,19 +361,20 @@ export default function ProfilePage() {
 
                             {/* Avatar Container */}
                             <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-cyber-blue/50 shadow-[0_0_20px_rgba(102,252,241,0.3)] relative bg-black">
-                                <img
+                                <Image
                                     src={getCurrentAvatarSrc()}
                                     alt="Avatar"
-                                    className="w-full h-full object-cover"
+                                    fill
+                                    className="object-cover"
+                                    priority
+                                    unoptimized
                                 />
 
                                 {/* Hover Overlay */}
-                                <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
                                     <Edit2 className="w-8 h-8 text-white" />
                                 </div>
                             </div>
-
-
                         </div>
 
                         {/* User Info */}
@@ -391,8 +407,6 @@ export default function ProfilePage() {
                                             />
                                         </div>
                                     </div>
-
-
 
                                     <div className="flex gap-3 pt-2">
                                         <button
@@ -431,10 +445,6 @@ export default function ProfilePage() {
                 </div>
             </div>
 
-
-
-
-            {/* Section B: Premium Statistics */}
             {/* Section B: Premium Statistics */}
             <StatisticsSection isPremium={isPremium} />
 
@@ -497,7 +507,6 @@ export default function ProfilePage() {
                             onChange={(checked) => handleHapticsToggle(checked)}
                             color="orange"
                         />
-
                     </div>
 
                     {/* Biometric Toggle */}
@@ -514,7 +523,7 @@ export default function ProfilePage() {
                         <SettingsToggle
                             checked={biometricEnabled}
                             onChange={(checked) => toggleBiometrics(checked)}
-                            color="orange" // Reusing orange or adding green if needed
+                            color="orange"
                         />
                     </div>
 
@@ -526,8 +535,6 @@ export default function ProfilePage() {
                         <MessageSquare className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
                         INVIA FEEDBACK
                     </button>
-
-                    {/* Logout Button */}
 
                     {/* Logout Button */}
                     <button
@@ -555,8 +562,6 @@ export default function ProfilePage() {
                     </div>
                 </div>
             </div>
-
-
 
             {/* Section E: Artifact Grid */}
             <ArtifactGrid badges={badges} onSelectBadge={setSelectedBadge} />
@@ -632,7 +637,6 @@ export default function ProfilePage() {
                     </motion.div>
                 )}
             </AnimatePresence>
-
 
             {
                 user && (
