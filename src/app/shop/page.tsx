@@ -7,7 +7,7 @@ import { ShoppingCart, Zap, Shield, Gift, Clock, Lock, Coins, AlertTriangle } fr
 import { useUserStore } from '@/store/useUserStore';
 import TopBar from '@/components/dashboard/TopBar';
 import { provincesData } from '@/data/provincesData';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 // Stripe is handled via API redirect, no need to load it here
 // import { loadStripe } from '@stripe/stripe-js';
@@ -17,14 +17,13 @@ const MysteryBoxModal = dynamic(() => import('@/components/shop/MysteryBoxModal'
 const PurchaseConfirmationModal = dynamic(() => import('@/components/shop/PurchaseConfirmationModal').then(mod => mod.PurchaseConfirmationModal), { ssr: false });
 
 // Initialize Supabase Client
-const supabase = createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Client is already initialized
 
 type ShopItem = Database['public']['Tables']['shop_items']['Row'];
 
 import { Suspense } from 'react';
+
+import { AuthGuardModal } from '@/components/auth/AuthGuardModal';
 
 function ShopContent() {
     const credits = useUserStore(state => state.credits);
@@ -42,6 +41,9 @@ function ShopContent() {
     // Confirmation Modal State
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
     const [itemToBuy, setItemToBuy] = useState<ShopItem | null>(null);
+
+    // Auth Guard State
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
     // Calculate Map Progress for TopBar
     const totalProvinces = provincesData.length;
@@ -69,6 +71,7 @@ function ShopContent() {
         const { data, error } = await supabase
             .from('shop_items')
             .select('*')
+            .eq('is_visible', true)
             .order('cost', { ascending: true });
 
         if (error) {
@@ -79,7 +82,18 @@ function ShopContent() {
         setIsLoading(false);
     };
 
+    const checkAuth = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            setIsAuthModalOpen(true);
+            return false;
+        }
+        return true;
+    };
+
     const handleBuyCredits = async (pack: 'small' | 'medium' | 'large') => {
+        if (!(await checkAuth())) return;
+
         try {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
@@ -174,7 +188,9 @@ function ShopContent() {
         }
     };
 
-    const handleBuyClick = (item: ShopItem) => {
+    const handleBuyClick = async (item: ShopItem) => {
+        if (!(await checkAuth())) return;
+
         // Check if it's a mystery box type - these have their own flow
         if (item.effect_type === 'mystery_box') {
             buyMysteryItem(item.id, item.cost);
@@ -193,7 +209,9 @@ function ShopContent() {
     };
 
     // Wrapper for the specific "Cassa Crittografata" section
-    const handleMysteryBoxSection = () => {
+    const handleMysteryBoxSection = async () => {
+        if (!(await checkAuth())) return;
+
         const mysteryBoxItem = shopItems.find(i => i.id === 'mystery_box') || {
             id: 'mystery_box',
             name: 'Cassa Crittografata',
@@ -318,7 +336,7 @@ function ShopContent() {
                             </div>
                             <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 flex flex-col items-center text-center hover:border-cyan-500 transition-colors group relative overflow-hidden">
                                 <div className="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <div className="absolute top-0 right-0 bg-yellow-500 text-black text-[9px] font-bold px-2 py-0.5 rounded-bl">BEST VALUE</div>
+                                <div className="absolute top-0 right-0 bg-yellow-500 text-black text-[9px] font-bold px-2 py-0.5 rounded-bl">MIGLIOR VALORE</div>
                                 <Coins className="w-8 h-8 text-yellow-400 mb-2" />
                                 <h3 className="font-bold text-white text-sm">2500 NC</h3>
                                 <p className="text-xs text-slate-400 mb-3">Bonus +25%</p>
@@ -396,6 +414,11 @@ function ShopContent() {
                             onConfirm={confirmPurchase}
                             item={itemToBuy}
                             isProcessing={!!isBuying}
+                        />
+
+                        <AuthGuardModal
+                            isOpen={isAuthModalOpen}
+                            onClose={() => setIsAuthModalOpen(false)}
                         />
 
                         {/* Regular Items Grid */}

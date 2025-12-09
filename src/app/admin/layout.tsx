@@ -3,14 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Lock, ChevronRight, AlertTriangle, LogIn } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 
 // Initialize Supabase Client
-const supabase = createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Client is already initialized
 
 export default function AdminLayout({
     children,

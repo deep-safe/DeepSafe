@@ -49,7 +49,7 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
             <div className="relative pb-4 z-10">
                 <div className={`flex items-center gap-2 mb-2 ${isLocked ? 'text-red-500' : 'text-cyan-500'}`}>
                     <Scan className="w-4 h-4" />
-                    <span className="text-[10px] font-orbitron tracking-[0.2em] uppercase">TARGET: PROVINCE</span>
+                    <span className="text-[10px] font-orbitron tracking-[0.2em] uppercase">OBIETTIVO: PROVINCIA</span>
                 </div>
                 <h2 className="text-4xl font-bold text-white font-sans tracking-tight mb-1">
                     {province.name}
@@ -60,13 +60,13 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                         </span>
-                        ONLINE
+                        OPERATIVO
                     </div>
                 )}
                 {isLocked && (
                     <div className="flex items-center gap-2 text-red-500 text-xs font-mono">
                         <Lock className="w-3 h-3" />
-                        LOCKED
+                        BLOCCATO
                     </div>
                 )}
             </div>

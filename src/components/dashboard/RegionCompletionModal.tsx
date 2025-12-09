@@ -59,7 +59,7 @@ export const RegionCompletionModal: React.FC<RegionCompletionModalProps> = ({ is
                 {/* Background Effects */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[100px] animate-pulse" />
-                    <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid.svg')] opacity-10" />
+                    <div className="absolute top-0 left-0 w-full h-full bg-[image:var(--grid-pattern)] opacity-10" style={{ '--grid-pattern': `url('${process.env.NEXT_PUBLIC_BASE_PATH || ''}/grid.svg')` } as React.CSSProperties} />
                 </div>
 
                 <motion.div
@@ -87,11 +87,11 @@ export const RegionCompletionModal: React.FC<RegionCompletionModalProps> = ({ is
                             </span>
                         </motion.div>
                         <h2 className="text-3xl font-bold text-white font-orbitron tracking-wider mb-1">
-                            REGION CONQUERED
+                            REGIONE CONQUISTATA
                         </h2>
                         <div className="flex items-center justify-center gap-2 text-cyan-300 font-mono text-sm">
                             <MapPin className="w-4 h-4" />
-                            {regionName.toUpperCase()} SECURED
+                            {regionName.toUpperCase()} MESSA IN SICUREZZA
                         </div>
                     </div>
 
@@ -99,22 +99,22 @@ export const RegionCompletionModal: React.FC<RegionCompletionModalProps> = ({ is
                     <div className="p-8 text-center space-y-6">
                         <div className="space-y-2">
                             <h3 className="text-xl font-bold text-white">
-                                {badge?.name || 'Master of the Region'}
+                                {badge?.name || 'Signore della Regione'}
                             </h3>
                             <p className="text-slate-400 text-sm leading-relaxed">
-                                {badge?.description || 'You have successfully completed all missions in this region. The territory is now under your protection.'}
+                                {badge?.description || 'Hai completato con successo tutte le missioni in questa regione. Il territorio ora è sotto la tua protezione.'}
                             </p>
                         </div>
 
                         {/* Rewards */}
                         <div className="grid grid-cols-2 gap-4">
                             <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-                                <div className="text-xs text-slate-500 font-mono mb-1">XP EARNED</div>
+                                <div className="text-xs text-slate-500 font-mono mb-1">XP GUADAGNATI</div>
                                 <div className="text-2xl font-bold text-yellow-400">+{badge?.xp_reward || 0}</div>
                             </div>
                             <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-                                <div className="text-xs text-slate-500 font-mono mb-1">STATUS</div>
-                                <div className="text-xl font-bold text-cyan-400">LEGEND</div>
+                                <div className="text-xs text-slate-500 font-mono mb-1">GRADO</div>
+                                <div className="text-xl font-bold text-cyan-400">LEGGENDA</div>
                             </div>
                         </div>
 
@@ -123,7 +123,7 @@ export const RegionCompletionModal: React.FC<RegionCompletionModalProps> = ({ is
                             className="w-full py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] flex items-center justify-center gap-2 group"
                         >
                             <Award className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                            CLAIM BADGE & CONTINUE
+                            RISCATTA BADGE E CONTINUA
                         </button>
                     </div>
                 </motion.div>

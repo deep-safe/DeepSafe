@@ -7,7 +7,7 @@ export interface BadgeDefinition {
     xpReward: number; // NC Reward
     rarity: 'common' | 'rare' | 'legendary';
     condition: {
-        type: 'region_master' | 'streak_milestone' | 'xp_milestone' | 'first_mission';
+        type: 'region_master' | 'streak_milestone' | 'xp_milestone' | 'first_mission' | 'single_province_master';
         value?: string | number; // Region name or numeric threshold
     };
 }
@@ -79,76 +79,15 @@ export const BADGES_DATA: BadgeDefinition[] = [
         condition: { type: 'xp_milestone', value: 5000 }
     },
 
-    // --- Region Badges (Generated for all 20 regions) ---
+    // --- Region Badges ---
     {
-        id: 'master_piemonte',
-        name: 'Maestro del Piemonte',
-        description: 'Completa tutte le province del Piemonte.',
-        icon: '🏔️',
+        id: 'master_region_generic',
+        name: 'Conquistatore Regionale',
+        description: 'Completa tutte le province di una regione.',
+        icon: '🗺️',
         category: 'Region',
-        xpReward: 300,
-        rarity: 'rare',
-        condition: { type: 'region_master', value: 'Piemonte' }
-    },
-    {
-        id: 'master_lombardia',
-        name: 'Maestro della Lombardia',
-        description: 'Completa tutte le province della Lombardia.',
-        icon: '🏭',
-        category: 'Region',
-        xpReward: 300,
-        rarity: 'rare',
-        condition: { type: 'region_master', value: 'Lombardia' }
-    },
-    {
-        id: 'master_veneto',
-        name: 'Maestro del Veneto',
-        description: 'Completa tutte le province del Veneto.',
-        icon: '🎭',
-        category: 'Region',
-        xpReward: 300,
-        rarity: 'rare',
-        condition: { type: 'region_master', value: 'Veneto' }
-    },
-    {
-        id: 'master_toscana',
-        name: 'Maestro della Toscana',
-        description: 'Completa tutte le province della Toscana.',
-        icon: '🍷',
-        category: 'Region',
-        xpReward: 300,
-        rarity: 'rare',
-        condition: { type: 'region_master', value: 'Toscana' }
-    },
-    {
-        id: 'master_lazio',
-        name: 'Maestro del Lazio',
-        description: 'Completa tutte le province del Lazio.',
-        icon: '🏛️',
-        category: 'Region',
-        xpReward: 300,
-        rarity: 'rare',
-        condition: { type: 'region_master', value: 'Lazio' }
-    },
-    {
-        id: 'master_campania',
-        name: 'Maestro della Campania',
-        description: 'Completa tutte le province della Campania.',
-        icon: '🍕',
-        category: 'Region',
-        xpReward: 300,
-        rarity: 'rare',
-        condition: { type: 'region_master', value: 'Campania' }
-    },
-    {
-        id: 'master_sicilia',
-        name: 'Maestro della Sicilia',
-        description: 'Completa tutte le province della Sicilia.',
-        icon: '🍋',
-        category: 'Region',
-        xpReward: 300,
-        rarity: 'rare',
-        condition: { type: 'region_master', value: 'Sicilia' }
-    },
-    // Add more regions as needed or generate dynamically if preferred
+        xpReward: 500, // Increased reward since it's a major milestone
+        rarity: 'legendary',
+        condition: { type: 'region_master' }
+    }
 ];

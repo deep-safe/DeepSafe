@@ -49,30 +49,22 @@ export const Logo: React.FC<LogoProps> = ({
             {/* Logo Icon Container */}
             <div className={`relative ${currentSize.container} flex items-center justify-center`}>
 
-                {/* Outer Glow/Ring */}
-                <div className="absolute inset-0 bg-blue-500/20 rounded-xl rotate-45 blur-sm group-hover:blur-md transition-all duration-500" />
-                <div className="absolute inset-0 border-2 border-blue-500/30 rounded-xl rotate-45 group-hover:rotate-90 transition-transform duration-700 ease-out" />
+                {/* Outer Glow for animated version */}
+                {animated && (
+                    <>
+                        <div className="absolute inset-0 bg-cyan-500/20 rounded-full blur-md animate-pulse" />
+                        <div className="absolute inset-0 bg-blue-500/10 rounded-full blur-xl" />
+                    </>
+                )}
 
-                {/* Inner Background */}
-                <div className="absolute inset-1 bg-[#0B0C10] rounded-lg rotate-45 z-10" />
-
-                {/* Main Icon */}
-                <div className="relative z-20 flex items-center justify-center">
-                    <Shield
-                        className={`${currentSize.icon} text-blue-500 fill-blue-950/50 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]`}
-                        strokeWidth={2}
+                {/* Main Logo Image */}
+                <div className="relative z-20 w-full h-full flex items-center justify-center">
+                    <img
+                        src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/logo.png`}
+                        alt="DeepSafe Logo"
+                        className="w-full h-full object-contain drop-shadow-[0_0_10px_rgba(59,130,246,0.3)]"
                     />
-                    {/* Inner Detail (Lock or D) */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <span className={`font-orbitron font-bold text-blue-100 ${size === 'sm' ? 'text-[10px]' : size === 'md' ? 'text-xs' : size === 'lg' ? 'text-sm' : 'text-xl'}`}>
-                            D
-                        </span>
-                    </div>
                 </div>
-
-                {/* Decorative Dots */}
-                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-500 rounded-full z-20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-500 rounded-full z-20 opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
 
             {/* Text */}

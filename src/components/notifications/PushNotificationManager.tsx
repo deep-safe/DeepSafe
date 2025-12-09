@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { Bell, BellOff, Loader2 } from 'lucide-react';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
-const supabase = createBrowserClient<Database>(supabaseUrl, supabaseKey);
+// Client is already initialized
 
 /**
  * Helper function to convert VAPID key from Base64 to Uint8Array.

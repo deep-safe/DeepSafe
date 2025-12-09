@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { provincesData, Province } from '@/data/provincesData';
 import ItalyMapSVG from './ItalyMapSVG';
@@ -17,12 +17,9 @@ import { useDailyStreak } from '@/hooks/useDailyStreak';
 import { useSound } from '@/context/SoundContext';
 import { useHaptic } from '@/hooks/useHaptic';
 import dynamic from 'next/dynamic';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 
-const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Client is already initialized
 
 const ProvinceModal = dynamic(() => import('./ProvinceModal'), { ssr: false });
 const StreakRewardModal = dynamic(() => import('./StreakRewardModal'), { ssr: false });
@@ -141,7 +138,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
             if (nextBadge.condition_type === 'region_master') {
                 setRegionCompletionData({
                     isOpen: true,
-                    regionName: nextBadge.condition_value || 'Unknown Region',
+                    regionName: nextBadge.condition_value || 'Regione Sconosciuta',
                     badge: nextBadge
                 });
             } else {
@@ -301,7 +298,9 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
         return `${minX} ${minY} ${width} ${height}`;
     };
 
-    const handleProvinceClick = (province: Province) => {
+    const router = useRouter(); // Initialize router
+
+    const handleProvinceClick = async (province: Province) => {
         if (viewMode === 'ITALY') {
             // Level 1: Region Logic
             const regionName = province.region;
@@ -318,7 +317,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                     name: regionName,
                     status: status,
                     type: 'REGION',
-                    details: `${regionProvinces.length} SECTORS`
+                    details: `${regionProvinces.length} SETTORI`
                 });
                 playSound('click');
                 triggerHaptic('light');
@@ -327,6 +326,13 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                 const regionProvinces = dynamicProvincesData.filter(p => p.region === regionName);
                 const isUnlocked = regionProvinces.some(p => p.status === 'unlocked' || p.status === 'safe');
                 if (isUnlocked) {
+                    // AUTH CHECK
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (!user) {
+                        router.push('/login');
+                        return;
+                    }
+
                     enterRegion(regionName);
                     playSound('click');
                     triggerHaptic('light');
@@ -355,13 +361,20 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                     name: province.name,
                     status: province.status,
                     type: 'PROVINCE',
-                    details: `PROGRESS: ${province.progress}%`
+                    details: `PROGRESSO: ${province.progress}%`
                 });
                 playSound('click');
                 triggerHaptic('light');
             } else {
                 // Step 2: Open Modal or Unlock
                 if (province.status !== 'locked') {
+                    // AUTH CHECK
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (!user) {
+                        router.push('/login');
+                        return;
+                    }
+
                     setModalProvince(province);
                     setSelectedTarget(null);
                     playSound('click');
@@ -421,7 +434,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                 name: regionName,
                 status: isUnlocked ? 'unlocked' : 'locked',
                 type: 'REGION',
-                details: `${regionProvinces.length} SECTORS`
+                details: `${regionProvinces.length} SETTORI`
             });
         } else {
             setHoveredTarget({
@@ -429,17 +442,24 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                 name: province.name,
                 status: province.status,
                 type: 'PROVINCE',
-                details: `PROGRESS: ${province.progress}%`
+                details: `PROGRESSO: ${province.progress}%`
             });
         }
     };
 
-    const handleHudAction = () => {
+    const handleHudAction = async () => {
         const target = selectedTarget || hoveredTarget;
         if (!target) return;
 
         if (target.type === 'REGION') {
             if (target.status !== 'locked') {
+                // AUTH CHECK
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) {
+                    router.push('/login');
+                    return;
+                }
+
                 enterRegion(target.name);
                 playSound('click');
                 triggerHaptic('light');
@@ -460,6 +480,13 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
             const province = dynamicProvincesData.find(p => p.id === target.id);
             if (province) {
                 if (province.status !== 'locked') {
+                    // AUTH CHECK
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (!user) {
+                        router.push('/login');
+                        return;
+                    }
+
                     setModalProvince(province);
                     setSelectedTarget(null);
                     playSound('click');
@@ -514,11 +541,11 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
             triggerHaptic('heavy');
 
             const nextTierName = mapTier === 'level_1' ? 'ORANGE' : 'GOLD';
-            showToast(`WELCOME TO THE ${nextTierName} TIER`, 'info');
+            showToast(`BENVENUTO NEL LIVELLO ${nextTierName}`, 'info');
 
             // Reset view to Italy
             handleBackToItaly();
-            showToast('Ascension Failed. Try again.', 'error');
+            showToast('Ascensione Fallita. Riprova.', 'error');
         }
     };
 
@@ -538,9 +565,9 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
 
                 playSound('success');
                 triggerHaptic('success');
-                showToast(`${targetName} UNLOCKED`, 'info');
+                showToast(`${targetName} SBLOCCATO`, 'info');
             } else {
-                showToast(result.message || 'Unlock failed', 'error');
+                showToast(result.message || 'Sblocco fallito', 'error');
                 playSound('error');
                 triggerHaptic('error');
             }
@@ -555,7 +582,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
             setUnlockModalState(null);
             playSound('success');
             triggerHaptic('success');
-            showToast(`${targetName} UNLOCKED`, 'info');
+            showToast(`${targetName} SBLOCCATO`, 'info');
         }
     };
 
@@ -626,7 +653,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
             <ScannerHUD
                 target={activeTarget}
                 onAction={handleHudAction}
-                actionLabel={viewMode === 'ITALY' ? 'ENTER' : 'START'}
+                actionLabel={viewMode === 'ITALY' ? 'ENTRA' : 'AVVIA'}
                 isLocked={!!selectedTarget}
             />
 

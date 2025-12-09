@@ -11,6 +11,7 @@ import { useUserStore } from '@/store/useUserStore';
 import GameOverModal from '@/components/training/GameOverModal';
 import MockAdModal from '@/components/training/MockAdModal';
 import TopBar from '@/components/dashboard/TopBar';
+import { PerfectScoreModal } from '@/components/gamification/PerfectScoreModal';
 
 export default function TrainingPillPage() {
     const params = useParams();
@@ -30,6 +31,7 @@ export default function TrainingPillPage() {
     const [score, setScore] = useState(0);
     const [showGameOver, setShowGameOver] = useState(false);
     const [showAdModal, setShowAdModal] = useState(false);
+    const [showPerfectScoreModal, setShowPerfectScoreModal] = useState(false);
 
     // Calculate Map Progress for TopBar
     const totalProvinces = provincesData.length;
@@ -113,6 +115,8 @@ export default function TrainingPillPage() {
             // NC is now awarded at the end via completeLevel
         } else {
             decrementLives(); // Penalty
+            // Check for Game Over immediately if lives drop to 0?
+            // useEffect handles it.
         }
     };
 
@@ -122,18 +126,25 @@ export default function TrainingPillPage() {
             setSelectedOption(null);
             setIsAnswerChecked(false);
         } else {
-            // Mission Complete
-            if (provinceId) {
-                // unlockProvince(provinceId); // REMOVED: Unlocking is now manual via Map UI
+            // Mission Logic Check
+            const isPerfect = score === lesson.questions.length;
 
-                // Secure Server-Side Completion
-                completeLevel(lesson.id, score, lesson.xpReward);
+            if (isPerfect) {
+                // Mission Complete Success
+                if (provinceId) {
+                    // Unlock logic is manual now
 
-                // Update Province Score (Client-Side & Cache)
-                // This ensures the map updates immediately
-                updateMissionScore(provinceId, lesson.id, score, lesson.questions.length, true);
+                    // Secure Server-Side Completion
+                    completeLevel(lesson.id, score, lesson.xpReward);
+
+                    // Update Province Score (Client-Side & Cache)
+                    updateMissionScore(provinceId, lesson.id, score, lesson.questions.length, true);
+                }
+                setMode('COMPLETE');
+            } else {
+                // Imperfect Score - Show Modal
+                setShowPerfectScoreModal(true);
             }
-            setMode('COMPLETE');
         }
     };
 
@@ -162,6 +173,17 @@ export default function TrainingPillPage() {
                 onClose={() => setShowAdModal(false)}
                 onReward={handleAdReward}
             />
+
+            {showPerfectScoreModal && (
+                <PerfectScoreModal
+                    score={score}
+                    totalQuestions={lesson.questions.length}
+                    onRetry={() => {
+                        window.location.reload();
+                    }}
+                    onExit={handleExit}
+                />
+            )}
 
             {/* Top Bar (Map Progress) */}
             <TopBar progress={unlockedCount} total={totalProvinces} className="!fixed z-40 top-14" />

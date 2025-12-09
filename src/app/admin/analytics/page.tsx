@@ -1,17 +1,14 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Users, Zap, Coins, TrendingUp, Activity, Target } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
 // Initialize Supabase Client
-const supabase = createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Client is already initialized
 
 interface AnalyticsOverview {
     total_users: number;

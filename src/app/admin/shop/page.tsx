@@ -1,16 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 import { useRouter } from 'next/navigation';
 import { ShoppingCart, Plus, X, Save, ArrowLeft, Trash2, Zap } from 'lucide-react';
 
 // Initialize Supabase Client
-const supabase = createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Client is already initialized
 
 type ShopItem = Database['public']['Tables']['shop_items']['Row'];
 
@@ -18,11 +15,14 @@ const ITEM_TYPES = ['consumable', 'permanent', 'cosmetic'];
 const RARITIES = ['common', 'rare', 'epic', 'legendary'];
 const EFFECT_TYPES = ['streak_freeze', 'restore_lives', 'double_xp', 'mystery_box', 'none'];
 
+import { LootManagerModal } from '@/components/admin/shop/LootManagerModal';
+
 export default function AdminShopPage() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [items, setItems] = useState<ShopItem[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isLootManagerOpen, setIsLootManagerOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<ShopItem | null>(null);
 
     // Form State
@@ -38,7 +38,8 @@ export default function AdminShopPage() {
         is_limited: false,
         effect_type: 'none',
         effect_value: null,
-        label: ''
+        label: '',
+        is_visible: true
     });
 
     // Loot State
@@ -116,7 +117,8 @@ export default function AdminShopPage() {
                 is_limited: false,
                 effect_type: 'none',
                 effect_value: null,
-                label: ''
+                label: '',
+                is_visible: true
             });
             setCurrentLoot([]);
         }
@@ -320,10 +322,16 @@ export default function AdminShopPage() {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {items.filter(i => !i.is_limited || (i.stock !== null && i.stock > 0)).map(item => (
-                        <div key={item.id} className="bg-slate-900/50 border border-slate-800 p-6 rounded-xl hover:border-yellow-500/50 transition-colors group relative">
+                        <div key={item.id} className={`bg-slate-900/50 border ${item.is_visible === false ? 'border-red-900/50 opacity-75' : 'border-slate-800'} p-6 rounded-xl hover:border-yellow-500/50 transition-colors group relative`}>
                             {item.label && (
                                 <div className="absolute top-0 right-0 bg-cyan-500 text-black text-[9px] font-bold px-2 py-0.5 rounded-bl rounded-tr-xl z-10">
                                     {item.label}
+                                </div>
+                            )}
+                            {/* Visibility Badge */}
+                            {item.is_visible === false && (
+                                <div className="absolute top-0 left-0 bg-red-900 text-red-200 text-[9px] font-bold px-2 py-0.5 rounded-br rounded-tl-xl z-10 border-r border-b border-red-500/50">
+                                    HIDDEN
                                 </div>
                             )}
                             <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2 z-20">
@@ -391,6 +399,18 @@ export default function AdminShopPage() {
                                         className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm focus:border-yellow-500 outline-none disabled:opacity-50"
                                         placeholder="e.g. magic_potion"
                                     />
+                                </div>
+                                <div className="flex items-center gap-2 py-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.is_visible !== false} // Default true if undefined
+                                        onChange={e => setFormData({ ...formData, is_visible: e.target.checked })}
+                                        className="rounded bg-slate-950 border-slate-700 text-cyan-500 focus:ring-cyan-500 w-5 h-5"
+                                    />
+                                    <div>
+                                        <label className="text-sm font-bold text-white block">Visible in Shop</label>
+                                        <span className="text-xs text-slate-500">Uncheck to hide this item from users without deleting it.</span>
+                                    </div>
                                 </div>
                                 <div>
                                     <label className="block text-xs font-mono text-slate-500 mb-1">Name</label>
@@ -516,74 +536,23 @@ export default function AdminShopPage() {
                                     )}
                                 </div>
 
-                                {/* Loot Table UI - Only if Mystery Box */}
                                 {formData.effect_type === 'mystery_box' && (
-                                    <div className="p-4 bg-purple-900/10 rounded-lg border border-purple-500/30">
-                                        <h4 className="text-xs font-bold text-purple-400 mb-1 uppercase flex items-center gap-2">
-                                            <Zap className="w-3 h-3" /> Mystery Box Rewards
-                                        </h4>
-                                        <p className="text-[10px] text-slate-400 mb-3">
-                                            Define the items users can win when opening this box.
-                                        </p>
-
-                                        <div className="mb-4 space-y-2 max-h-40 overflow-y-auto bg-slate-950/50 p-2 rounded border border-slate-800">
-                                            {currentLoot.length === 0 && <p className="text-slate-500 italic text-xs text-center py-2">No loot defined.</p>}
-                                            {currentLoot.map((loot: any, idx: number) => (
-                                                <div key={idx} className="flex items-center justify-between bg-slate-800 p-2 rounded border border-slate-700">
-                                                    <div>
-                                                        <div className="font-bold text-white text-xs">{loot.description}</div>
-                                                        <div className="text-[10px] text-slate-400 font-mono">
-                                                            {loot.reward_type.toUpperCase()} +{loot.reward_value} | W: {loot.weight}
-                                                        </div>
-                                                    </div>
-                                                    <button onClick={() => handleRemoveLootItem(idx)} className="text-slate-500 hover:text-red-400"><X className="w-3 h-3" /></button>
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-2 mb-2">
-                                            <select
-                                                value={newLootItem.reward_type}
-                                                onChange={e => setNewLootItem({ ...newLootItem, reward_type: e.target.value })}
-                                                className="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs"
-                                            >
-                                                <option value="xp">XP</option>
-                                                <option value="credits">Credits</option>
-                                                <option value="streak_freeze">Streak Freeze</option>
-                                                <option value="lives">Lives</option>
-                                            </select>
-                                            <input
-                                                type="number"
-                                                placeholder="Value"
-                                                value={newLootItem.reward_value}
-                                                onChange={e => setNewLootItem({ ...newLootItem, reward_value: parseInt(e.target.value) })}
-                                                className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs"
-                                            />
-                                            <input
-                                                type="number"
-                                                placeholder="Weight"
-                                                value={newLootItem.weight}
-                                                onChange={e => setNewLootItem({ ...newLootItem, weight: parseInt(e.target.value) })}
-                                                className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs"
-                                            />
-                                            <input
-                                                type="text"
-                                                placeholder="Description"
-                                                value={newLootItem.description}
-                                                onChange={e => setNewLootItem({ ...newLootItem, description: e.target.value })}
-                                                className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs"
-                                            />
-                                        </div>
+                                    <div className="mt-4">
                                         <button
-                                            onClick={handleAddLootItem}
-                                            className="w-full py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded font-bold text-xs transition-colors"
+                                            onClick={() => setIsLootManagerOpen(true)}
+                                            className="w-full py-3 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-bold rounded-lg shadow-lg shadow-purple-900/20 flex items-center justify-center gap-2 transition-transform transform hover:scale-[1.02]"
                                         >
-                                            ADD REWARD OPTION
+                                            <Zap className="w-4 h-4" />
+                                            CONFIGURE LOOT TABLE
                                         </button>
+                                        <p className="text-[10px] text-slate-500 mt-2 text-center">
+                                            Opens the advanced visual loot manager for this box.
+                                        </p>
                                     </div>
                                 )}
                             </div>
                         </div>
+
                         <div className="p-4 border-t border-slate-800 bg-slate-900/50 flex justify-end gap-3">
                             <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-slate-400 hover:text-white transition-colors">Cancel</button>
                             <button onClick={handleSave} className="px-6 py-2 bg-yellow-600 hover:bg-yellow-500 text-black rounded-lg font-bold transition-colors shadow-lg shadow-yellow-900/20">
@@ -592,41 +561,53 @@ export default function AdminShopPage() {
                         </div>
                     </div>
                 </div>
-            )}
+            )
+            }
+
+            {/* Loot Manager Modal */}
+            <LootManagerModal
+                isOpen={isLootManagerOpen}
+                onClose={() => setIsLootManagerOpen(false)}
+                boxId={editingItem ? editingItem.id : formData.id || 'temp'}
+                initialLoot={currentLoot}
+                onSave={(newLoot) => setCurrentLoot(newLoot)}
+            />
 
             {/* Delete Confirmation Modal */}
-            {deleteModalOpen && itemToDelete && (
-                <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[100] p-4">
-                    <div className="bg-slate-900 border border-red-500/50 rounded-2xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(239,68,68,0.2)]">
-                        <div className="p-6 text-center">
-                            <div className="w-16 h-16 bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/30">
-                                <Trash2 className="w-8 h-8 text-red-500" />
-                            </div>
-                            <h3 className="text-xl font-bold text-white font-orbitron mb-2">DELETE ITEM?</h3>
-                            <p className="text-slate-400 text-sm mb-6">
-                                Are you sure you want to permanently delete <span className="text-white font-bold">{itemToDelete.name}</span>?
-                                <br />
-                                <span className="text-red-400 font-bold mt-2 block">This action cannot be undone.</span>
-                            </p>
+            {
+                deleteModalOpen && itemToDelete && (
+                    <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[100] p-4">
+                        <div className="bg-slate-900 border border-red-500/50 rounded-2xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(239,68,68,0.2)]">
+                            <div className="p-6 text-center">
+                                <div className="w-16 h-16 bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/30">
+                                    <Trash2 className="w-8 h-8 text-red-500" />
+                                </div>
+                                <h3 className="text-xl font-bold text-white font-orbitron mb-2">DELETE ITEM?</h3>
+                                <p className="text-slate-400 text-sm mb-6">
+                                    Are you sure you want to permanently delete <span className="text-white font-bold">{itemToDelete.name}</span>?
+                                    <br />
+                                    <span className="text-red-400 font-bold mt-2 block">This action cannot be undone.</span>
+                                </p>
 
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => setDeleteModalOpen(false)}
-                                    className="flex-1 py-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors"
-                                >
-                                    CANCEL
-                                </button>
-                                <button
-                                    onClick={confirmDelete}
-                                    className="flex-1 py-3 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold transition-colors shadow-lg shadow-red-900/20"
-                                >
-                                    DELETE PERMANENTLY
-                                </button>
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={() => setDeleteModalOpen(false)}
+                                        className="flex-1 py-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors"
+                                    >
+                                        CANCEL
+                                    </button>
+                                    <button
+                                        onClick={confirmDelete}
+                                        className="flex-1 py-3 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold transition-colors shadow-lg shadow-red-900/20"
+                                    >
+                                        DELETE PERMANENTLY
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 }

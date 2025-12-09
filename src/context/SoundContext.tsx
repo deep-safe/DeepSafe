@@ -15,12 +15,13 @@ interface SoundContextType {
 const SoundContext = createContext<SoundContextType | undefined>(undefined);
 
 // Define sound paths - these should be in public/sounds/
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 const SOUND_PATHS: Record<SoundType, string> = {
-    click: '/sounds/click.mp3',
-    success: '/sounds/success.mp3',
-    error: '/sounds/error.mp3',
-    levelup: '/sounds/levelup.mp3',
-    hover: '/sounds/hover.mp3',
+    click: `${basePath}/sounds/click.mp3`,
+    success: `${basePath}/sounds/success.mp3`,
+    error: `${basePath}/sounds/error.mp3`,
+    levelup: `${basePath}/sounds/levelup.mp3`,
+    hover: `${basePath}/sounds/hover.mp3`,
 };
 
 export function SoundProvider({ children }: { children: React.ReactNode }) {
@@ -41,7 +42,16 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
                 src: [path],
                 volume: 0.5,
                 preload: true,
-                onloaderror: () => console.warn(`Failed to load sound: ${path}`),
+                onloaderror: (id: any, error: any) => {
+                    // Retry with root path if base path failed
+                    const rootPath = `/sounds/${key}.mp3`;
+                    if (path !== rootPath) {
+                        newSounds[key] = new Howl({
+                            src: [rootPath],
+                            volume: 0.5
+                        });
+                    }
+                },
             });
         });
         setSounds(newSounds);

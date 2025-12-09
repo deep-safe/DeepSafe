@@ -1,12 +1,9 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-
-import { createBrowserClient } from '@supabase/ssr';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
-const supabase = createBrowserClient<Database>(supabaseUrl, supabaseKey);
+type Profile = Database['public']['Tables']['profiles']['Row'];
 
 interface UserState {
     xp: number;
@@ -102,9 +99,9 @@ export const useUserStore = create<UserState>()(
             regionCosts: {},
             lastBadgeCheck: null,
             settings: {
-                notifications: true,
+                notifications: false,
                 sound: true,
-                haptics: true
+                haptics: false
             },
             completeTutorial: async () => {
                 set({ hasSeenTutorial: true });
@@ -184,7 +181,7 @@ export const useUserStore = create<UserState>()(
                     });
 
                     if (error) {
-                        console.error('Error completing level:', error);
+                        console.error('Error completing level:', JSON.stringify(error, null, 2));
                         return false;
                     }
 
@@ -234,6 +231,35 @@ export const useUserStore = create<UserState>()(
                     const { data: { user } } = await supabase.auth.getUser();
                     if (!user) return { success: false, message: 'Utente non autenticato' };
 
+                    // SPECIAL HANDLING: Mystery Box (Encrypted Crate)
+                    // We use a secure server-side API to ensure guaranteed rewards and robust logic.
+                    if (itemId === 'mystery_box') {
+                        // NEW RPC IMPLEMENTATION (Supports Static Export)
+                        // We call a database function 'open_mystery_box' instead of an API route.
+                        // This allows the logic to run on the Supabase server even with a static frontend.
+
+                        const { data, error } = await supabase.rpc('open_mystery_box' as any, {
+                            p_user_id: user.id
+                        });
+
+                        if (error) {
+                            console.error('❌ Mystery Box RPC Error:', error);
+                            return { success: false, message: 'Errore durante l\'apertura della cassa' };
+                        }
+
+                        const result = data as any;
+                        if (result && result.success) {
+                            await get().refreshProfile();
+                            return {
+                                success: true,
+                                reward: result.reward
+                            };
+                        } else {
+                            return { success: false, message: result?.message || 'Errore apertura cassa' };
+                        }
+                    }
+
+                    // STANDARD HANDLING: Database RPC for regular items
                     const { data, error } = await supabase.rpc('purchase_item', {
                         p_user_id: user.id,
                         p_item_id: itemId
@@ -652,17 +678,30 @@ export const useUserStore = create<UserState>()(
                             if (hasCompletedMission) unlocked = true;
                             break;
                         case 'region_master':
-                            if (badge.condition_value) {
-                                const regionName = badge.condition_value;
-                                const regionProvinces = provincesData.filter(p => p.region === regionName);
+                            {
+                                // GENERIC LOGIC: Check if ANY region is fully completed
+                                // 1. Identify all unique regions
+                                const allRegions = Array.from(new Set(provincesData.map(p => p.region)));
 
-                                const allCompleted = regionProvinces.every(p => {
-                                    const scoreData = state.provinceScores[p.id];
-                                    const isProvCompleted = scoreData && scoreData.isCompleted;
-                                    return isProvCompleted;
+                                // 2. Check if any region is fully completed
+                                const anyRegionCompleted = allRegions.some(regionName => {
+                                    const regionProvinces = provincesData.filter(p => p.region === regionName);
+                                    return regionProvinces.every(p => {
+                                        const scoreData = state.provinceScores[p.id];
+                                        return scoreData && scoreData.isCompleted;
+                                    });
                                 });
 
-                                if (regionProvinces.length > 0 && allCompleted) {
+                                if (anyRegionCompleted) {
+                                    unlocked = true;
+                                }
+                            }
+                            break;
+                        case 'single_province_master':
+                            {
+                                // Check if ANY province is completed
+                                const hasCompletedProvince = Object.values(state.provinceScores).some(p => p.isCompleted);
+                                if (hasCompletedProvince) {
                                     unlocked = true;
                                 }
                             }
@@ -782,7 +821,7 @@ export const useUserStore = create<UserState>()(
 
                 // 1. Check Credits
                 if (state.credits < cost) {
-                    return { success: false, message: `Insufficient credits. Need ${cost} NC.` };
+                    return { success: false, message: `Insufficient credits.Need ${cost} NC.` };
                 }
 
                 // 2. Find All Provinces in Region

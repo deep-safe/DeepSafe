@@ -8,7 +8,7 @@ import TopBar from '@/components/dashboard/TopBar';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { missionsData } from '@/data/missionsData';
 import { provincesData } from '@/data/provincesData';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 import { useSystemUI } from '@/context/SystemUIContext';
 
@@ -22,10 +22,7 @@ export default function MissionSelectionPage() {
     const { unlockedProvinces } = useUserStore();
     const { openModal } = useSystemUI();
 
-    const supabase = createBrowserClient<Database>(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    // Client is already initialized
 
     const province = provincesData.find(p => p.id === provinceId);
     const missions = missionsData[provinceId] || [];

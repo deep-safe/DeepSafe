@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useUserStore } from '@/store/useUserStore';
 import { Map, Target, Trophy, ChevronRight, X, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/lib/supabase/client';
 
 const TUTORIAL_STEPS = [
     {
@@ -49,8 +50,15 @@ export function TutorialOverlay() {
     useEffect(() => {
         // Delay slightly to allow map to load first
         if (!hasSeenTutorial) {
-            const timer = setTimeout(() => setIsVisible(true), 1000);
-            return () => clearTimeout(timer);
+            const checkAuth = async () => {
+                // Client is already initialized
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    const timer = setTimeout(() => setIsVisible(true), 1000);
+                    return () => clearTimeout(timer);
+                }
+            };
+            checkAuth();
         }
     }, [hasSeenTutorial]);
 

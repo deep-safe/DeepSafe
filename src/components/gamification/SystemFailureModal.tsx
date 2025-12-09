@@ -57,10 +57,9 @@ export function SystemFailureModal({ onRefill, onPremium }: SystemFailureModalPr
                     </div>
                 </div>
 
-                {/* Monetization Grid */}
+                {/* Monetization Grid - DISABLED (Debug functionality hidden)
                 <div className="grid gap-4 mt-8">
 
-                    {/* Option A: Hero (Subscription) */}
                     <motion.button
                         whileHover={{ scale: 1.02, y: -2 }}
                         whileTap={{ scale: 0.98 }}
@@ -85,7 +84,6 @@ export function SystemFailureModal({ onRefill, onPremium }: SystemFailureModalPr
                         </div>
                     </motion.button>
 
-                    {/* Option B: Refill (Microtransaction) */}
                     <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
@@ -106,6 +104,7 @@ export function SystemFailureModal({ onRefill, onPremium }: SystemFailureModalPr
                         </div>
                     </motion.button>
                 </div>
+                */}
 
                 {/* Option C: Bailout */}
                 <Link

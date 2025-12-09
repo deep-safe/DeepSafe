@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 import { useRouter } from 'next/navigation';
 import { Shield, ArrowLeft, Bug, Lightbulb, ThumbsUp, ThumbsDown, Trash2, CheckCircle, Archive, Filter } from 'lucide-react';
@@ -27,10 +27,7 @@ export default function AdminFeedbackPage() {
     const [filter, setFilter] = useState<'all' | 'new' | 'read' | 'archived'>('all');
     const [typeFilter, setTypeFilter] = useState<'all' | 'bug' | 'feature' | 'like' | 'dislike'>('all');
 
-    const supabase = createBrowserClient<Database>(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    // Client is already initialized
 
     useEffect(() => {
         fetchFeedback();

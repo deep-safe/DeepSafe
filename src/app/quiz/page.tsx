@@ -8,17 +8,18 @@ import { useUserStore } from '@/store/useUserStore';
 import { calculateRewards } from '@/lib/gamification';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 import { VisualQuizCard } from '@/components/gamification/VisualQuizCard';
 import { QuizActionPanel } from '@/components/gamification/QuizActionPanel';
 import { SystemFailureModal } from '@/components/gamification/SystemFailureModal';
+import { PerfectScoreModal } from '@/components/gamification/PerfectScoreModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import posthog from 'posthog-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
-const supabase = createBrowserClient<Database>(supabaseUrl, supabaseKey);
+// Client is already initialized
 
 import { submitDuelScore } from '@/lib/challenges';
 
@@ -43,6 +44,7 @@ export default function QuizPage() {
     const [score, setScore] = useState(0);
     const [showShopModal, setShowShopModal] = useState(false);
     const [showReward, setShowReward] = useState(false);
+    const [showPerfectScoreModal, setShowPerfectScoreModal] = useState(false);
     const [earnedXp, setEarnedXp] = useState(0);
     const [newBadgeId, setNewBadgeId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
@@ -172,6 +174,22 @@ export default function QuizPage() {
         );
     }
 
+    if (showPerfectScoreModal) {
+        return (
+            <PerfectScoreModal
+                score={score + (isCorrect ? 1 : 0)}
+                totalQuestions={quiz.questions.length}
+                onRetry={() => {
+                    // Reload the page is the simplest way to retry for now
+                    window.location.reload();
+                }}
+                onExit={() => {
+                    router.push('/dashboard');
+                }}
+            />
+        );
+    }
+
     const handleAnswer = async (optionIndex: number) => {
         if (selectedOption !== null) return; // Prevent multiple clicks
         setSelectedOption(optionIndex);
@@ -204,23 +222,29 @@ export default function QuizPage() {
         }
     };
 
-    const [percentage, setPercentage] = useState(0);
-
     const handleNext = async () => {
         if (isLastQuestion) {
-            if (isCorrect || isAnswered) {
-                const finalScore = score + (isCorrect ? 1 : 0);
-                const totalQuestions = quiz.questions.length;
+            // Recalculate final score including current question
+            // Logic explanation: score state is updated in handleAnswer.
+            // Since we are in the same render cycle as the button click, and handleAnswer might have caused a re-render...
+            // Actually, handleAnswer calls setScore. React batches updates.
+            // If user clicked Answer, re-render happened with new score.
+            // Then user clicks Next.
+            // So 'score' variable here SHOULD be up to date.
+
+            const totalQuestions = quiz.questions.length;
+            const finalScore = score; // Trusting state
+
+            // Check for perfect score (100%)
+            if (finalScore === totalQuestions) {
 
                 // Calculate percentage
                 const finalPercentage = Math.round((finalScore / totalQuestions) * 100);
                 setPercentage(finalPercentage);
 
-                // Only award XP if 100% accuracy
-                const calculatedXp = finalScore === totalQuestions ? quiz.xpReward : 0;
+                const calculatedXp = quiz.xpReward;
 
                 setEarnedXp(calculatedXp);
-                // addXp removed - handled by complete_level RPC
                 incrementStreak();
                 setShowReward(true);
 
@@ -249,7 +273,7 @@ export default function QuizPage() {
                             quiz_id: id,
                             score: finalScore,
                             xp_earned: calculatedXp,
-                            perfect_score: finalScore === totalQuestions,
+                            perfect_score: true,
                             mode: mode || 'solo'
                         });
 
@@ -258,7 +282,7 @@ export default function QuizPage() {
                             p_user_id: user.id,
                             p_level_id: id as string,
                             p_score: finalScore,
-                            p_earned_xp: calculatedXp // Pass proportional XP
+                            p_earned_xp: calculatedXp
                         });
 
                         // Type assertion for RPC response
@@ -302,6 +326,9 @@ export default function QuizPage() {
                     console.error('❌ Unexpected error completing level:', error);
                     // Don't redirect on error, let user click the button
                 }
+            } else {
+                // ** IMPERFECT SCORE LOGIC **
+                setShowPerfectScoreModal(true);
             }
         } else {
             setCurrentQuestionIndex(prev => prev + 1);
@@ -309,6 +336,12 @@ export default function QuizPage() {
             setIsAnswered(false);
             setIsCorrect(false);
         }
+    };
+
+    const [percentage, setPercentage] = useState(0);
+
+    const handleAnswerAndScore = (optionIndex: number) => {
+        handleAnswer(optionIndex);
     };
 
     if (showReward) {

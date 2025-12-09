@@ -2,14 +2,11 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAvatars } from '@/hooks/useAvatars';
 import { X, Gift, Coins, Zap, Package, Check, Loader2, Users } from 'lucide-react';
-import { createBrowserClient } from '@supabase/ssr';
+import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 import { ConfirmationModal } from './ConfirmationModal';
 
-const supabase = createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Client is already initialized
 
 interface Profile {
     id: string;
