@@ -162,8 +162,12 @@ export function MysteryBoxModal({ isOpen, onClose, reward, isOpening }: MysteryB
                                             {reward.type === 'xp' && <Zap className="w-24 h-24 text-yellow-400 drop-shadow-[0_0_25px_rgba(250,204,21,1)]" />}
                                             {reward.type === 'credits' && <Coins className="w-24 h-24 text-cyan-400 drop-shadow-[0_0_25px_rgba(34,211,238,1)]" />}
                                             {reward.type === 'streak_freeze' && <Clock className="w-24 h-24 text-orange-400 drop-shadow-[0_0_25px_rgba(251,146,60,1)]" />}
-                                            {reward.type === 'lives' && <Gift className="w-24 h-24 text-red-400 drop-shadow-[0_0_25px_rgba(248,113,113,1)]" />}
-                                            {reward.type === 'avatar_duplicate' && <Users className="w-24 h-24 text-slate-400" />}
+                                            {reward.type === 'lives' && (
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-24 h-24 text-red-500 drop-shadow-[0_0_25px_rgba(239,68,68,1)] animate-pulse">
+                                                    <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                                                </svg>
+                                            )}
+                                            {reward.type === 'avatar_duplicate' && <Coins className="w-24 h-24 text-cyan-400 drop-shadow-[0_0_25px_rgba(34,211,238,1)]" />}
 
                                             {/* Fallback for unknown types */}
                                             {!['xp', 'credits', 'streak_freeze', 'lives', 'avatar_duplicate'].includes(reward.type) && (
@@ -216,12 +220,13 @@ export function MysteryBoxModal({ isOpen, onClose, reward, isOpening }: MysteryB
                                     {reward.type === 'avatar' ? (
                                         <span className="text-2xl">{getRewardDetails()?.value}</span>
                                     ) : reward.type === 'avatar_duplicate' ? (
-                                        <span className="text-xl text-slate-400">Nessuna ricompensa</span>
+                                        /* Changed: Now shows +50 NC instead of 'Nessuna ricompensa' */
+                                        <span className="text-4xl text-cyan-400">+50 NC</span>
                                     ) : (
                                         <>
                                             {/* Standard Value Display */}
                                             {reward.type && ['xp', 'credits', 'streak_freeze', 'lives'].includes(reward.type) ? (
-                                                <>+{reward.value} {reward.type === 'xp' ? 'XP' : reward.type === 'credits' ? 'NC' : ''}</>
+                                                <>+{reward.value} {reward.type === 'xp' ? 'XP' : reward.type === 'credits' ? 'NC' : reward.type === 'lives' ? 'VITE' : ''}</>
                                             ) : (
                                                 /* Fallback Value Display */
                                                 <span className="text-3xl">+{reward.value} {(reward.type || 'UNKNOWN').toUpperCase()}</span>
