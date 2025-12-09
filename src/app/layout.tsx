@@ -29,8 +29,8 @@ export const metadata: Metadata = {
   creator: "DeepSafe",
   publisher: "DeepSafe",
   icons: {
-    icon: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/icon.png`,
-    apple: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/icon.png`,
+    icon: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/new-logo.png`,
+    apple: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/new-logo.png`,
   },
   openGraph: {
     type: "website",
