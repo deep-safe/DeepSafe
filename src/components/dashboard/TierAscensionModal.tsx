@@ -18,9 +18,9 @@ export const TierAscensionModal: React.FC<TierAscensionModalProps> = ({
     const nextTier = currentTier === 'level_1' ? 'level_2' : 'level_3';
 
     const tierDisplayNames = {
-        level_1: 'GREEN',
-        level_2: 'ORANGE',
-        level_3: 'GOLD'
+        level_1: 'VERDE',
+        level_2: 'ARANCIONE',
+        level_3: 'ORO'
     };
 
     const tierColors: Record<string, 'cyan' | 'orange' | 'yellow'> = {
