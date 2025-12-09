@@ -61,7 +61,7 @@ export function PerfectScoreModal({ score, totalQuestions, onRetry, onExit }: Pe
                 <div className="bg-yellow-950/20 border border-yellow-900/50 rounded-lg p-3 flex items-start args-2 text-left gap-3">
                     <ShieldAlert className="w-5 h-5 text-yellow-500 shrink-0 mt-0.5" />
                     <p className="text-xs text-yellow-500/80 font-mono">
-                        Nessuna ricompensa assegnata. I dati sensibili sono ancora vulnerabili. Riprova per ottenere la certificazione.
+                        Nessuna ricompensa assegnata. Riprova per ottenere la certificazione.
                     </p>
                 </div>
 
