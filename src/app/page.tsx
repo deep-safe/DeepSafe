@@ -64,7 +64,7 @@ export default function LandingPage() {
                             <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/new-logo.png`} alt="DeepSafe Logo" className="h-10 w-10 md:h-[45px] md:w-[45px]" />
                             <span className="font-['Orbitron'] font-black text-xl md:text-2xl tracking-widest bg-gradient-to-r from-white via-blue-200 to-blue-500 bg-clip-text text-transparent">DEEPSAFE</span>
                         </div>
-                        <a href="#waitlist" className="btn btn-primary" style={{ fontSize: '1.2rem', padding: '15px 40px' }}>ISCRIVITI ALLA LISTA D'ATTESA</a>
+                        <a href="#waitlist" className="btn btn-primary hidden md:inline-block" style={{ fontSize: '1.2rem', padding: '15px 40px' }}>ISCRIVITI ALLA LISTA D'ATTESA</a>
                     </div>
                 </nav>
 
@@ -83,7 +83,7 @@ export default function LandingPage() {
                         </p>
                         <div className="flex flex-col md:flex-row gap-6 justify-center items-center w-full max-w-2xl mx-auto md:max-w-none">
                             <a href="#waitlist" className="btn btn-primary" style={{ fontSize: '1.2rem', padding: '15px 40px' }}>ISCRIVITI ALLA LISTA D'ATTESA</a>
-                            <a href="#features" className="btn" style={{ border: '1px solid white', color: 'white', fontSize: '1.2rem', padding: '15px 40px' }}>SCOPRI DI PIÙ</a>
+                            <a href="#features" className="btn hidden md:inline-block" style={{ border: '1px solid white', color: 'white', fontSize: '1.2rem', padding: '15px 40px' }}>SCOPRI DI PIÙ</a>
                         </div>
                     </div>
                 </header>
@@ -222,13 +222,13 @@ export default function LandingPage() {
 
                 {/* Waitlist Section */}
                 <section id="waitlist" className="section py-20 bg-gradient-to-t from-black to-[#161622]">
-                    <div className="container mx-auto px-4 text-center">
+                    <div className="container mx-auto px-4 text-center flex flex-col items-center">
                         <h2 className="text-3xl md:text-4xl font-bold mb-6 uppercase tracking-wide text-white drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">Sei Pronto a Giocare?</h2>
                         <p className="mb-10 max-w-lg mx-auto text-gray-300 text-center">
                             Iscriviti alla lista d'attesa per ottenere un premio esclusivo e l’accesso anticipato all’app.
                         </p>
 
-                        <form className="waitlist-form mx-auto flex flex-col gap-4" style={{ maxWidth: '400px' }} onSubmit={handleWaitlistSubmit}>
+                        <form className="waitlist-form w-full flex flex-col gap-4" style={{ maxWidth: '400px' }} onSubmit={handleWaitlistSubmit}>
                             <input
                                 type="email"
                                 placeholder="Inserisci la tua email"
