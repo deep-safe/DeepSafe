@@ -62,7 +62,7 @@ export default function AdultLandingPage() {
                             <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/logo.png`} alt="DeepSafe Logo" className="h-10 w-10" />
                             <span className="font-bold text-xl tracking-tight text-slate-900">DEEPSAFE</span>
                         </div>
-                        <a href="#waitlist" className="hidden sm:inline-flex items-center justify-center px-8 py-3 text-sm font-semibold text-white transition-all duration-200 bg-indigo-600 rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 shadow-lg shadow-indigo-600/20">
+                        <a href="#waitlist" className="hidden sm:inline-flex items-center justify-center px-10 py-3 text-sm font-semibold text-white transition-all duration-200 bg-indigo-600 rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 shadow-lg shadow-indigo-600/20">
                             Accesso Anticipato
                         </a>
                     </div>
@@ -89,7 +89,7 @@ export default function AdultLandingPage() {
                                     Un percorso formativo avanzato, progettato per professionisti che non possono permettersi errori.
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                                    <a href="#waitlist" className="inline-flex items-center justify-center px-14 py-6 text-lg font-bold !text-white hover:text-white transition-all duration-200 bg-slate-900 rounded-full hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 shadow-xl hover:shadow-2xl hover:-translate-y-1">
+                                    <a href="#waitlist" className="inline-flex items-center justify-center px-20 py-6 text-lg font-bold !text-white hover:text-white transition-all duration-200 bg-slate-900 rounded-full hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 shadow-xl hover:shadow-2xl hover:-translate-y-1">
                                         Unisciti alla Waitlist
                                     </a>
                                 </div>
@@ -228,7 +228,7 @@ export default function AdultLandingPage() {
                                 </div>
                                 <button
                                     type="submit"
-                                    className="sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white text-lg font-bold px-10 py-5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap"
+                                    className="sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white text-lg font-bold px-16 py-5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap"
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? '...' : 'Inizia Ora'}
