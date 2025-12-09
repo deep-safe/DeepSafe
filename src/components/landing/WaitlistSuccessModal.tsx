@@ -12,7 +12,7 @@ export const WaitlistSuccessModal: React.FC<WaitlistSuccessModalProps> = ({ isOp
     const SOCIALS = [
         {
             name: 'Instagram',
-            url: 'https://instagram.com/deepsafe_app', // Placeholder
+            url: 'https://www.instagram.com/deepsafe_/',
             icon: (
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
                     <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
@@ -24,7 +24,7 @@ export const WaitlistSuccessModal: React.FC<WaitlistSuccessModalProps> = ({ isOp
         },
         {
             name: 'TikTok',
-            url: 'https://tiktok.com/@deepsafe', // Placeholder
+            url: 'https://www.tiktok.com/@deepsafe',
             icon: (
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
                     <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
@@ -34,7 +34,7 @@ export const WaitlistSuccessModal: React.FC<WaitlistSuccessModalProps> = ({ isOp
         },
         {
             name: 'YouTube',
-            url: 'https://youtube.com/@DeepSafe', // Placeholder
+            url: 'https://www.youtube.com/@Deep-Safe',
             icon: (
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
                     <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
@@ -42,6 +42,16 @@ export const WaitlistSuccessModal: React.FC<WaitlistSuccessModalProps> = ({ isOp
                 </svg>
             ),
             color: 'hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10'
+        },
+        {
+            name: 'Facebook',
+            url: 'https://www.facebook.com/profile.php?id=61584281526377',
+            icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                </svg>
+            ),
+            color: 'hover:text-blue-600 hover:border-blue-600/50 hover:bg-blue-600/10'
         }
     ];
 

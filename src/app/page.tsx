@@ -12,7 +12,7 @@ export default function LandingPage() {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
 
     const handleWaitlistSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+        e.preventDefault(); // Prevent default form submission which would reload the page
         if (!email) {
             alert('Per favore inserisci un indirizzo email valido.');
             return;
@@ -20,17 +20,28 @@ export default function LandingPage() {
 
         setIsSubmitting(true);
 
-        // Simulate API call or implement actual logic here
-        // For now, mirroring the demo logic from main.js
-        console.log(`Registered email (Demo): ${email}`);
+        try {
+            const response = await fetch("https://formspree.io/f/mblnawdv", {
+                method: "POST",
+                body: JSON.stringify({ email }),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
 
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // alert('Grazie per esserti iscritto alla lista d\'attesa! A breve ti invieremo tutte le istruzioni per accedere all\'app');
-        setShowSuccessModal(true);
-        setEmail('');
-        setIsSubmitting(false);
+            if (response.ok) {
+                setShowSuccessModal(true);
+                setEmail('');
+            } else {
+                alert('C\'è stato un problema. Riprova più tardi.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Errore di connessione. Riprova più tardi.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -50,10 +61,10 @@ export default function LandingPage() {
                 <nav className="absolute w-full z-10 py-5">
                     <div className="container mx-auto px-4 flex justify-between items-center">
                         <div className="flex items-center gap-3">
-                            <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/logo.png`} alt="DeepSafe Logo" className="h-10 w-10 md:h-[45px] md:w-[45px]" />
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/new-logo.png`} alt="DeepSafe Logo" className="h-10 w-10 md:h-[45px] md:w-[45px]" />
                             <span className="font-['Orbitron'] font-black text-xl md:text-2xl tracking-widest bg-gradient-to-r from-white via-blue-200 to-blue-500 bg-clip-text text-transparent">DEEPSAFE</span>
                         </div>
-                        <a href="#waitlist" className="btn btn-primary" style={{ fontSize: '1.2rem', padding: '15px 40px' }}>UNISCITI ALLA LISTA D'ATTESA</a>
+                        <a href="#waitlist" className="btn btn-primary" style={{ fontSize: '1.2rem', padding: '15px 40px' }}>ISCRIVITI ALLA LISTA D'ATTESA</a>
                     </div>
                 </nav>
 
@@ -71,7 +82,7 @@ export default function LandingPage() {
                             Hai le skills per salvarlo?
                         </p>
                         <div className="flex flex-col md:flex-row gap-6 justify-center items-center w-full max-w-2xl mx-auto md:max-w-none">
-                            <a href="#waitlist" className="btn btn-primary" style={{ fontSize: '1.2rem', padding: '15px 40px' }}>UNISCITI ALLA LISTA D'ATTESA</a>
+                            <a href="#waitlist" className="btn btn-primary" style={{ fontSize: '1.2rem', padding: '15px 40px' }}>ISCRIVITI ALLA LISTA D'ATTESA</a>
                             <a href="#features" className="btn" style={{ border: '1px solid white', color: 'white', fontSize: '1.2rem', padding: '15px 40px' }}>SCOPRI DI PIÙ</a>
                         </div>
                     </div>
@@ -101,9 +112,94 @@ export default function LandingPage() {
                                 </ul>
                             </div>
                             <div className="flex-1 w-full min-w-[300px]">
-                                {/* Placeholder for gameplay video/image */}
                                 <div className="rounded-2xl overflow-hidden border-2 border-[#00f3ff] shadow-[0_0_20px_rgba(0,243,255,0.2)]">
                                     <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/app-screenshot-1.jpg`} alt="Gameplay Preview" className="w-full h-auto block" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Profile Section (from target-youth.html, adding back missing section for completeness) */}
+                <section className="section py-20 bg-[#0a0a12]">
+                    <div className="container mx-auto px-4">
+                        <div className="flex flex-col md:flex-row-reverse items-center gap-10 md:gap-16">
+                            <div className="flex-1 min-w-[300px]">
+                                <h2 className="text-3xl md:text-4xl font-bold mb-6 uppercase tracking-wide text-white drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">Forgia la Tua Leggenda</h2>
+                                <p className="mb-6 text-gray-300 leading-relaxed">
+                                    Il tuo profilo non è solo una pagina, è la tua carta d'identità nel metaverso di DeepSafe.
+                                </p>
+                                <ul className="mb-8 space-y-3">
+                                    <li className="flex items-center text-gray-300">
+                                        <span className="text-[#00f3ff] mr-3">►</span> Personalizza il tuo Avatar 3D
+                                    </li>
+                                    <li className="flex items-center text-gray-300">
+                                        <span className="text-[#00f3ff] mr-3">►</span> Colleziona Badge Esclusivi
+                                    </li>
+                                    <li className="flex items-center text-gray-300">
+                                        <span className="text-[#00f3ff] mr-3">►</span> Monitora i tuoi progressi
+                                    </li>
+                                </ul>
+                            </div>
+                            <div className="flex-1 w-full min-w-[300px]">
+                                <div className="rounded-2xl overflow-hidden border-2 border-[#00f3ff] shadow-[0_0_20px_rgba(0,243,255,0.2)]">
+                                    <video autoPlay loop muted playsInline className="w-full h-auto">
+                                        <source src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/profile-video.mp4`} type="video/mp4" />
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Shop Section */}
+                <section className="section py-20 bg-[#161622]">
+                    <div className="container mx-auto px-4">
+                        <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
+                            <div className="flex-1 min-w-[300px]">
+                                <h2 className="text-3xl md:text-4xl font-bold mb-6 uppercase tracking-wide text-white drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">Cyber Shop</h2>
+                                <p className="mb-6 text-gray-300 leading-relaxed">
+                                    Usa i crediti guadagnati completando le missioni per potenziare il tuo arsenale.
+                                </p>
+                                <p className="mb-8 opacity-80 text-gray-400">
+                                    Accedi allo shop per sbloccare nuovi visualizzatori, skin per l'interfaccia e potenziamenti che
+                                    ti aiuteranno nelle sfide più difficili.
+                                </p>
+                                <a href="#waitlist" className="btn btn-primary" style={{ fontSize: '1rem', padding: '12px 30px' }}>ENTRA NELLO STORE</a>
+                            </div>
+                            <div className="flex-1 w-full min-w-[300px]">
+                                <div className="rounded-2xl overflow-hidden border-2 border-[#00f3ff] shadow-[0_0_20px_rgba(0,243,255,0.2)]">
+                                    <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/app-screenshot-shop.png`} alt="Shop Preview" className="w-full h-auto block" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Daily Streak Section */}
+                <section className="section py-20 bg-[#0a0a12]">
+                    <div className="container mx-auto px-4">
+                        <div className="flex flex-col md:flex-row-reverse items-center gap-10 md:gap-16">
+                            <div className="flex-1 min-w-[300px]">
+                                <h2 className="text-3xl md:text-4xl font-bold mb-6 uppercase tracking-wide text-white drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">Non Perdere la Scia</h2>
+                                <p className="mb-6 text-gray-300 leading-relaxed">
+                                    Accedi ogni giorno per mantenere la tua streak. Sblocca casse misteriose e ricompense esclusive.
+                                </p>
+                                <ul className="mb-8 space-y-3">
+                                    <li className="flex items-center text-gray-300">
+                                        <span className="text-[#00f3ff] mr-3">►</span> Ricompense Giornaliere
+                                    </li>
+                                    <li className="flex items-center text-gray-300">
+                                        <span className="text-[#00f3ff] mr-3">►</span> Moltiplicatori di XP
+                                    </li>
+                                    <li className="flex items-center text-gray-300">
+                                        <span className="text-[#00f3ff] mr-3">►</span> Casse Misteriose
+                                    </li>
+                                </ul>
+                            </div>
+                            <div className="flex-1 w-full min-w-[300px]">
+                                <div className="rounded-2xl overflow-hidden border-2 border-[#00f3ff] shadow-[0_0_20px_rgba(0,243,255,0.2)]">
+                                    <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/app-screenshot-daily-streak.png`} alt="Daily Streak Preview" className="w-full h-auto block" />
                                 </div>
                             </div>
                         </div>
@@ -129,10 +225,10 @@ export default function LandingPage() {
                     <div className="container mx-auto px-4 text-center">
                         <h2 className="text-3xl md:text-4xl font-bold mb-6 uppercase tracking-wide text-white drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">Sei Pronto a Giocare?</h2>
                         <p className="mb-10 max-w-lg mx-auto text-gray-300 text-center">
-                            Iscriviti alla lista d'attesa per ottenere l'accesso anticipato e una skin esclusiva per il tuo avatar.
+                            Iscriviti alla lista d'attesa per ottenere un premio esclusivo e l’accesso anticipato all’app.
                         </p>
 
-                        <form className="waitlist-form max-w-md mx-auto flex flex-col gap-4" onSubmit={handleWaitlistSubmit}>
+                        <form className="waitlist-form mx-auto flex flex-col gap-4" style={{ maxWidth: '400px' }} onSubmit={handleWaitlistSubmit}>
                             <input
                                 type="email"
                                 placeholder="Inserisci la tua email"
@@ -141,8 +237,8 @@ export default function LandingPage() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full p-4 rounded bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-[#00f3ff] transition-colors"
                             />
-                            <button type="submit" className="btn btn-primary" style={{ fontSize: '1.2rem', padding: '15px 40px', width: '100%' }} disabled={isSubmitting}>
-                                {isSubmitting ? 'INVIO...' : 'UNISCITI ALLA LISTA D\'ATTESA'}
+                            <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={isSubmitting}>
+                                {isSubmitting ? 'INVIO...' : 'FAI RICHIESTA PER PARTECIPARE'}
                             </button>
                         </form>
                     </div>
