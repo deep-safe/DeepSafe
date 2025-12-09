@@ -2,13 +2,8 @@
 
 import React from 'react';
 import {
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
     ResponsiveContainer,
+    Tooltip,
     RadarChart,
     PolarGrid,
     PolarAngleAxis,
@@ -47,38 +42,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 // --- XP Trend Chart ---
-export const XPTrendChart = ({ data }: { data: any[] }) => {
-    return (
-        <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={COLORS.grid} opacity={0.2} />
-                <XAxis
-                    dataKey="date"
-                    stroke={COLORS.slate}
-                    fontSize={10}
-                    tickLine={false}
-                    axisLine={false}
-                />
-                <YAxis
-                    stroke={COLORS.slate}
-                    fontSize={10}
-                    tickLine={false}
-                    axisLine={false}
-                />
-                <Tooltip content={<CustomTooltip />} cursor={{ stroke: COLORS.cyan, strokeWidth: 1, strokeDasharray: '5 5' }} />
-                <Line
-                    type="monotone"
-                    dataKey="xp"
-                    name="XP"
-                    stroke={COLORS.cyan}
-                    strokeWidth={3}
-                    dot={{ r: 4, fill: '#000', stroke: COLORS.cyan, strokeWidth: 2 }}
-                    activeDot={{ r: 6, fill: COLORS.cyan }}
-                />
-            </LineChart>
-        </ResponsiveContainer>
-    );
-};
+
 
 // --- Skills Radar Chart ---
 export const SkillsRadarChart = ({ data }: { data: any[] }) => {

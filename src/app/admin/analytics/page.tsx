@@ -13,7 +13,6 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 interface AnalyticsOverview {
     total_users: number;
     dau: number;
-    total_xp: number;
     total_credits: number;
     total_spent: number;
 }
@@ -156,17 +155,7 @@ export default function AdminAnalyticsPage() {
                     <p className="text-sm text-slate-400">Active Agents</p>
                 </div>
 
-                <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-xl relative overflow-hidden group" title="Sum of XP across all users.">
-                    <div className="absolute inset-0 bg-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="flex justify-between items-start mb-4">
-                        <div className="p-3 bg-yellow-500/10 rounded-lg">
-                            <Zap className="w-6 h-6 text-yellow-400" />
-                        </div>
-                        <span className="text-xs font-mono text-yellow-500 bg-yellow-950/30 px-2 py-1 rounded">XP</span>
-                    </div>
-                    <h3 className="text-3xl font-bold text-white font-mono mb-1">{(overview?.total_xp || 0).toLocaleString()}</h3>
-                    <p className="text-sm text-slate-400">Total Experience</p>
-                </div>
+
 
                 <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-xl relative overflow-hidden group" title="Sum of Credits across all users.">
                     <div className="absolute inset-0 bg-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />

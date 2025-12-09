@@ -142,7 +142,7 @@ export default function TrainingPillPage() {
 
                     // Secure Server-Side Completion
                     // Await to ensure 'wasCompleted' check in store isn't preempted by updateMissionScore
-                    const result = await completeLevel(lesson.id, score, lesson.xpReward, provinceId); // AWAITED
+                    const result = await completeLevel(lesson.id, score, provinceId); // AWAITED
 
                     if (result.success && (result.earnedEmeralds > 0 || result.earnedRubies > 0)) {
                         setEarnedMedals({ emeralds: result.earnedEmeralds, rubies: result.earnedRubies });
@@ -395,10 +395,6 @@ export default function TrainingPillPage() {
                                 <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800">
                                     <span className="text-xs text-slate-500 uppercase block mb-1">Punteggio</span>
                                     <span className="text-2xl font-bold text-cyan-400">{score}/{lesson.questions.length}</span>
-                                </div>
-                                <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800">
-                                    <span className="text-xs text-slate-500 uppercase block mb-1">NC Guadagnati</span>
-                                    <span className="text-2xl font-bold text-amber-400">+{lesson.xpReward}</span>
                                 </div>
                             </div>
 

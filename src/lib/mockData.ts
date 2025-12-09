@@ -19,7 +19,6 @@ export interface Quiz {
     id: string;
     title: string;
     description: string;
-    xpReward: number;
     questions: Question[];
     completed: boolean;
     locked: boolean;
@@ -27,7 +26,6 @@ export interface Quiz {
     // Saga Map Fields
     is_milestone?: boolean;
     is_special_mission?: boolean;
-    xp_multiplier?: number;
     badge_reward_id?: string;
 }
 
@@ -37,7 +35,6 @@ export const MOCK_QUIZZES: Quiz[] = [
         id: '1',
         title: 'Modulo 1: Basi IA & Miti',
         description: 'Capisci cos\'è davvero l\'IA e sfata i miti della fantascienza.',
-        xpReward: 50,
         completed: false,
         locked: false,
         questions: [
@@ -110,11 +107,9 @@ export const MOCK_QUIZZES: Quiz[] = [
         id: '2',
         title: 'Missione Speciale: Password Compromessa!',
         description: 'Sfida ad alto rischio! La tua password potrebbe essere stata rubata.',
-        xpReward: 100,
         completed: false,
         locked: true,
         is_special_mission: true,
-        xp_multiplier: 2,
         questions: [
             {
                 id: 'sm1q1',
@@ -148,7 +143,6 @@ export const MOCK_QUIZZES: Quiz[] = [
         id: '3',
         title: 'Traguardo: Configura 2FA',
         description: 'Proteggi il tuo account con l\'Autenticazione a Due Fattori.',
-        xpReward: 150,
         completed: false,
         locked: true,
         is_milestone: true,
@@ -174,7 +168,6 @@ export const MOCK_QUIZZES: Quiz[] = [
         id: '4',
         title: 'Modulo 2: Rilevatore di Truffe',
         description: 'Impara a riconoscere il Phishing e la "Truffa dei Nonni".',
-        xpReward: 75,
         completed: false,
         locked: true,
         questions: [
@@ -250,7 +243,6 @@ export const MOCK_QUIZZES: Quiz[] = [
         id: '5',
         title: 'Modulo 3: Caccia al Deepfake',
         description: 'Allena i tuoi occhi a notare i difetti visivi nelle immagini IA.',
-        xpReward: 100,
         completed: false,
         locked: true,
         questions: [

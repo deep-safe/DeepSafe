@@ -59,7 +59,17 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
     const unlockRegion = useUserStore(state => state.unlockRegion);
 
     const [isProfileLoaded, setIsProfileLoaded] = useState(false);
-    const { streak: currentStreak, showModal: showStreakModal, closeModal: closeStreakModal, previousStreak } = useDailyStreak(isProfileLoaded);
+    const { streak: currentStreak, showModal: showStreakModal, closeModal: closeStreakModal, previousStreak, isFrozen } = useDailyStreak(isProfileLoaded);
+    // ... (unchanged code) ...
+
+    {/* Streak Reward Modal */ }
+    <StreakRewardModal
+        isOpen={showStreakModal}
+        streak={currentStreak}
+        previousStreak={previousStreak}
+        onClose={closeStreakModal}
+        isFrozen={isFrozen}
+    />
     const { playSound } = useSound();
     const { triggerHaptic } = useHaptic();
 

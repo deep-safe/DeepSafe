@@ -155,7 +155,6 @@ export default function ProfilePage() {
             description: badgeDef.description,
             icon_url: badgeDef.icon,
             category: badgeDef.category,
-            // xp_bonus removed
             is_unlocked: !!earned,
             earned_at: earned?.earned_at,
             rarity: badgeDef.rarity

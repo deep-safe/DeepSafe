@@ -18,7 +18,6 @@ type Profile = Database['public']['Tables']['profiles']['Row'];
 const INVENTORY_ITEMS = [
     { id: 'streak_freeze', name: 'Streak Freeze', icon: '❄️' },
     { id: 'system_reboot', name: 'System Reboot', icon: '🔄' },
-    { id: 'double_xp', name: 'Double XP (1h)', icon: '⚡' },
 ];
 
 export default function AdminPage() {
@@ -130,7 +129,6 @@ export default function AdminPage() {
         setEditingId(user.id);
         setEditForm({
             credits: user.credits,
-            xp: user.xp,
             highest_streak: user.highest_streak
         });
     };
@@ -142,7 +140,6 @@ export default function AdminPage() {
             async () => {
                 const { data, error } = await supabase.rpc('admin_update_user' as any, {
                     target_user_id: id,
-                    new_xp: editForm.xp,
                     new_credits: editForm.credits,
                     new_streak: editForm.highest_streak
                 });
@@ -170,7 +167,6 @@ export default function AdminPage() {
                 // Soft ban / Reset
                 const { data, error } = await supabase.rpc('admin_update_user' as any, {
                     target_user_id: id,
-                    new_xp: 0,
                     new_credits: 0,
                     new_streak: 0,
                     new_unlocked_provinces: ['CB', 'IS']
@@ -529,18 +525,7 @@ export default function AdminPage() {
                                             <Crown className="w-4 h-4" />
                                         </button>
                                     </td>
-                                    <td className="p-4 font-mono">
-                                        {editingId === user.id ? (
-                                            <input
-                                                type="number"
-                                                value={editForm.xp || 0}
-                                                onChange={(e) => setEditForm({ ...editForm, xp: parseInt(e.target.value) })}
-                                                className="bg-slate-950 border border-slate-700 rounded px-2 py-1 w-20"
-                                            />
-                                        ) : (
-                                            <span className="text-purple-400">{user.xp}</span>
-                                        )}
-                                    </td>
+
                                     <td className="p-4 font-mono">
                                         {editingId === user.id ? (
                                             <input

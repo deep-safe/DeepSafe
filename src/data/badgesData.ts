@@ -3,10 +3,10 @@ export interface BadgeDefinition {
     name: string;
     description: string;
     icon: string;
-    category: 'Region' | 'Streak' | 'Special'; // Removed XP
+    category: 'Region' | 'Streak' | 'Special';
     rarity: 'common' | 'rare' | 'legendary';
     condition: {
-        type: 'streak_milestone' | 'first_mission'; // Removed XP and Region logic from generic badges
+        type: 'streak_milestone' | 'first_mission';
         value?: string | number;
     };
 }

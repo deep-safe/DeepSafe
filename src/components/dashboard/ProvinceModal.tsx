@@ -129,9 +129,7 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                                     )}
                                                 </div>
                                                 <div className="flex items-center gap-3 text-[10px] font-mono text-slate-500">
-                                                    <span className="flex items-center gap-1">
-                                                        <span className="text-amber-500">★</span> {mission.xpReward} NC
-                                                    </span>
+
                                                     <span className="flex items-center gap-1">
                                                         <span>⏱</span> {mission.estimatedTime}
                                                     </span>

@@ -17,7 +17,6 @@ export interface TrainingLesson {
     title: string;
     content: string; // Markdown or HTML content
     questions: QuizQuestion[];
-    xpReward: number; // Actually NC Reward
     estimatedTime: string; // e.g., "5 min"
     level?: 'TUTORIAL' | 'SEMPLICE' | 'DIFFICILE' | 'BOSS';
     description?: string;
@@ -56,7 +55,6 @@ Una password sicura deve contenere almeno 12 caratteri...
                 explanation: 'Non interagire mai con link o allegati sospetti. Segnala sempre al team di sicurezza.'
             }
         ],
-        xpReward: 100,
         estimatedTime: '3 min'
     },
     'data-protection': {
@@ -79,7 +77,6 @@ Includono informazioni personali (PII), dati finanziari...
                 explanation: 'Il Codice Fiscale è un dato univoco che identifica una persona fisica.'
             }
         ],
-        xpReward: 150,
         estimatedTime: '5 min'
     },
     'industrial-security': {
@@ -102,7 +99,6 @@ Le regioni industriali sono bersagli critici. I sistemi SCADA e OT richiedono pr
                 explanation: 'OT sta per Operational Technology, ovvero l\'hardware e il software che controllano i dispositivi fisici.'
             }
         ],
-        xpReward: 200,
         estimatedTime: '6 min'
     },
     'financial-fraud': {
@@ -125,7 +121,6 @@ Una truffa in cui l'attaccante compromette account email aziendali per autorizza
                 explanation: 'BEC sta per Business Email Compromise, una truffa mirata alle aziende che effettuano bonifici.'
             }
         ],
-        xpReward: 250,
         estimatedTime: '7 min'
     }
 };
@@ -178,7 +173,7 @@ export const getLessonsForProvince = async (provinceId: string, region: string):
                     type: q.type,
                     image_url: q.image_url
                 })),
-                xpReward: mission.xp_reward,
+
                 estimatedTime: mission.estimated_time,
                 level: mission.level,
                 description: mission.description || undefined
@@ -225,7 +220,7 @@ export const getMissionById = async (missionId: string): Promise<TrainingLesson 
                     type: q.type,
                     image_url: q.image_url
                 })),
-                xpReward: mission.xp_reward,
+
                 estimatedTime: mission.estimated_time,
                 level: mission.level,
                 description: mission.description || undefined

@@ -11,9 +11,9 @@ import { Shield, Medal, Plus, X, Save, ArrowLeft, Trash2 } from 'lucide-react';
 
 type Badge = Database['public']['Tables']['badges']['Row'];
 
-const BADGE_CATEGORIES = ['Region', 'Streak', 'XP', 'Special'];
+const BADGE_CATEGORIES = ['Region', 'Streak', 'Special'];
 const BADGE_RARITIES = ['common', 'rare', 'legendary'];
-const CONDITION_TYPES = ['region_master', 'streak_milestone', 'xp_milestone', 'first_mission', 'single_province_master', 'single_region_master'];
+const CONDITION_TYPES = ['region_master', 'streak_milestone', 'first_mission', 'single_province_master', 'single_region_master'];
 
 export default function AdminBadgesPage() {
     const router = useRouter();
@@ -31,9 +31,8 @@ export default function AdminBadgesPage() {
         description: '',
         icon: '🏅',
         category: 'Special',
-        xp_reward: 100,
         rarity: 'common',
-        condition_type: 'xp_milestone',
+        condition_type: 'streak_milestone',
         condition_value: ''
     });
 
@@ -96,9 +95,8 @@ export default function AdminBadgesPage() {
                 description: '',
                 icon: '🏅',
                 category: 'Special',
-                xp_reward: 100,
                 rarity: 'common',
-                condition_type: 'xp_milestone',
+                condition_type: 'streak_milestone',
                 condition_value: ''
             });
         }
@@ -113,7 +111,6 @@ export default function AdminBadgesPage() {
 
         const badgeData = {
             ...formData,
-            xp_reward: Number(formData.xp_reward)
         } as Badge;
 
         if (editingBadge) {
@@ -224,9 +221,7 @@ export default function AdminBadgesPage() {
                                     <span className="px-2 py-1 bg-purple-900/30 text-purple-400 rounded border border-purple-900/50">
                                         {badge.category}
                                     </span>
-                                    <span className="px-2 py-1 bg-yellow-900/30 text-yellow-400 rounded border border-yellow-900/50">
-                                        {badge.xp_reward} XP
-                                    </span>
+
                                     <span className="px-2 py-1 bg-slate-800 text-slate-400 rounded">
                                         {badge.rarity}
                                     </span>
@@ -293,15 +288,7 @@ export default function AdminBadgesPage() {
                                             className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-center text-xl focus:border-purple-500 outline-none"
                                         />
                                     </div>
-                                    <div>
-                                        <label className="block text-xs font-mono text-slate-500 mb-1">XP Reward</label>
-                                        <input
-                                            type="number"
-                                            value={formData.xp_reward}
-                                            onChange={e => setFormData({ ...formData, xp_reward: parseInt(e.target.value) })}
-                                            className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm focus:border-purple-500 outline-none"
-                                        />
-                                    </div>
+
                                 </div>
                             </div>
                             <div className="space-y-4">

@@ -19,7 +19,6 @@ export const StatisticsSection: React.FC<StatisticsSectionProps> = ({ isPremium,
     // const setPremium = useUserStore(state => state.setPremium); // REMOVED: Insecure client-side update
     const router = useRouter();
     const provinceScores = useUserStore(state => state.provinceScores);
-    const xp = useUserStore(state => state.xp);
     const storeRank = useUserStore(state => state.globalRank) || 0;
 
     // Prefer prop rank if available, else store rank

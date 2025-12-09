@@ -6,7 +6,6 @@ import { Database } from '@/types/supabase';
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
 interface UserState {
-    xp: number;
     credits: number; // NeuroCredits
     streak: number;
     lives: number;
@@ -44,7 +43,7 @@ interface UserState {
     completeTutorial: () => void;
     updateSettings: (settings: Partial<{ notifications: boolean; sound: boolean; haptics: boolean }>) => Promise<void>;
     claimMission: (missionId: string) => Promise<boolean>;
-    completeLevel: (levelId: string, score: number, earnedXp: number, provinceId?: string) => Promise<{ success: boolean; earnedEmeralds: number; earnedRubies: number }>;
+    completeLevel: (levelId: string, score: number, provinceId?: string) => Promise<{ success: boolean; earnedEmeralds: number; earnedRubies: number }>;
     addCredits: (amount: number) => Promise<void>;
     spendCredits: (amount: number) => Promise<boolean>;
     buyItem: (itemId: string, cost: number) => Promise<{ success: boolean; message?: string; reward?: any }>;
@@ -75,7 +74,6 @@ interface UserState {
 export const useUserStore = create<UserState>()(
     persist(
         (set, get) => ({
-            xp: 0,
             credits: 100, // Starting bonus
             streak: 0,
             lives: 5,
@@ -222,7 +220,7 @@ export const useUserStore = create<UserState>()(
                 }
             },
 
-            completeLevel: async (levelId, score, earnedId, provinceId) => {
+            completeLevel: async (levelId, score, provinceId) => {
                 try {
                     const { data: { user } } = await supabase.auth.getUser();
                     if (!user) return { success: false, earnedEmeralds: 0, earnedRubies: 0 };
@@ -285,8 +283,7 @@ export const useUserStore = create<UserState>()(
                     const { data, error } = await supabase.rpc('complete_level', {
                         p_user_id: user.id,
                         p_level_id: levelId,
-                        p_score: score,
-                        p_earned_xp: 0 // No XP
+                        p_score: score
                     });
 
                     if (error) {
@@ -594,8 +591,14 @@ export const useUserStore = create<UserState>()(
             },
             addHeart: async (amount: number) => {
                 const state = get();
-                const newLives = Math.min(state.maxLives, state.lives + amount);
-                const newLastRefillTime = (state.lives + amount) >= state.maxLives ? null : state.lastRefillTime;
+                // Allow exceeding maxLives for rewards/purchases
+                const newLives = state.lives + amount;
+
+                // If we are now over the limit, we don't need a refill timer associated with "refilling to max".
+                // However, if we were below max and now are above, we should clear the timer.
+                // If we are still below max (e.g. 0 -> 2, max 5), we keep the timer or let checkRefill handle it.
+                // The safest is: if >= max, clear timer.
+                const newLastRefillTime = newLives >= state.maxLives ? null : state.lastRefillTime;
 
                 set({ lives: newLives, lastRefillTime: newLastRefillTime });
 
@@ -664,7 +667,7 @@ export const useUserStore = create<UserState>()(
 
                     const { data: profile, error } = await supabase
                         .from('profiles')
-                        .select('xp, current_hearts, highest_streak, unlocked_provinces, province_scores, last_login, last_streak_date, earned_badges, credits, streak_freezes, inventory, owned_avatars, settings_notifications, settings_sound, settings_haptics, has_seen_tutorial, is_premium, map_tier, completed_tiers')
+                        .select('current_hearts, highest_streak, unlocked_provinces, province_scores, last_login, last_streak_date, earned_badges, credits, streak_freezes, inventory, owned_avatars, settings_notifications, settings_sound, settings_haptics, has_seen_tutorial, is_premium, map_tier, completed_tiers')
                         .eq('id', user.id)
                         .single();
 
@@ -675,7 +678,6 @@ export const useUserStore = create<UserState>()(
 
                     if (profile) {
                         set({
-                            xp: profile.xp ?? 0,
                             credits: profile.credits ?? 100,
                             lives: profile.current_hearts ?? 5,
                             streak: profile.highest_streak ?? 0,
@@ -751,7 +753,7 @@ export const useUserStore = create<UserState>()(
             },
             checkBadges: async (force = false) => {
                 const state = get();
-                const { xp, streak, earnedBadges, lastBadgeCheck } = state;
+                const { streak, earnedBadges, lastBadgeCheck } = state;
 
                 // Cooldown check: 5 minutes (300000 ms)
                 const nowTime = Date.now();
@@ -783,11 +785,6 @@ export const useUserStore = create<UserState>()(
                     let unlocked = false;
 
                     switch (badge.condition_type) {
-                        case 'xp_milestone':
-                            if (badge.condition_value && xp >= Number(badge.condition_value)) {
-                                unlocked = true;
-                            }
-                            break;
                         case 'streak_milestone':
                             if (badge.condition_value && streak >= Number(badge.condition_value)) {
                                 unlocked = true;
@@ -994,7 +991,6 @@ export const useUserStore = create<UserState>()(
         {
             name: 'deepsafe-user-storage',
             partialize: (state) => ({
-                xp: state.xp,
                 credits: state.credits,
                 lives: state.lives,
                 streak: state.streak,

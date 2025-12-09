@@ -5,7 +5,6 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Check, X, AlertTriangle } from 'lucide-react';
 import { Quiz } from '@/lib/mockData';
 import { useUserStore } from '@/store/useUserStore';
-import { calculateRewards } from '@/lib/gamification';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase/client';
@@ -45,7 +44,6 @@ export default function QuizPage() {
     const [showShopModal, setShowShopModal] = useState(false);
     const [showReward, setShowReward] = useState(false);
     const [showPerfectScoreModal, setShowPerfectScoreModal] = useState(false);
-    const [earnedXp, setEarnedXp] = useState(0);
     const [newBadgeId, setNewBadgeId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -81,7 +79,6 @@ export default function QuizPage() {
                     id: levelData.id,
                     title: levelData.title,
                     description: 'Missione attiva', // Could fetch from modules if needed
-                    xpReward: levelData.xp_reward,
                     completed: false,
                     locked: false,
                     questions: questionsData.map((q: any) => ({
@@ -242,9 +239,6 @@ export default function QuizPage() {
                 const finalPercentage = Math.round((finalScore / totalQuestions) * 100);
                 setPercentage(finalPercentage);
 
-                const calculatedXp = quiz.xpReward;
-
-                setEarnedXp(calculatedXp);
                 incrementStreak();
                 setShowReward(true);
 
@@ -275,14 +269,13 @@ export default function QuizPage() {
                         posthog.capture('quiz_completed', {
                             quiz_id: id,
                             score: finalScore,
-                            xp_earned: calculatedXp,
                             perfect_score: true,
                             mode: mode || 'solo'
                         });
 
                         // 1. Complete Level (Store Action)
                         // This handles: DB RPC, Emerald/Ruby increment, Profile Refresh
-                        const success = await completeLevel(id as string, finalScore, calculatedXp);
+                        const success = await completeLevel(id as string, finalScore);
 
                         if (!success) {
                             console.error('❌ Error completing level via store.');
@@ -341,11 +334,6 @@ export default function QuizPage() {
                     <p className="text-xl font-medium text-cyber-blue">
                         Accuratezza: <span className={percentage === 100 ? "text-green-400" : "text-yellow-400"}>{percentage}%</span>
                     </p>
-                    {earnedXp > 0 ? (
-                        <p className="text-lg text-green-400 font-bold">Dati Messi in Sicurezza: +{earnedXp} XP</p>
-                    ) : (
-                        <p className="text-sm text-red-400">Nessun XP guadagnato (Richiesto 100%)</p>
-                    )}
 
                     {newBadgeId && (
                         <div className="mt-4 p-3 bg-yellow-500/20 border border-yellow-500/50 rounded-xl animate-pulse">

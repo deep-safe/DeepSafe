@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Activity, TrendingUp, Zap, PieChart as PieIcon, List } from 'lucide-react';
 import { useUserStore } from '@/store/useUserStore';
-import { XPTrendChart, SkillsRadarChart, MissionPieChart } from '@/components/profile/StatsCharts';
+import { SkillsRadarChart, MissionPieChart } from '@/components/profile/StatsCharts';
 import { CyberModal } from '@/components/ui/CyberModal';
 
 export default function AdvancedStatsPage() {
@@ -73,7 +73,7 @@ export default function AdvancedStatsPage() {
         );
     }
 
-    const xpTrendData = stats?.xp_trend || [];
+
     const missionData = stats?.mission_distribution || [];
     const recentActivity = stats?.recent_activity || [];
 
@@ -112,23 +112,7 @@ export default function AdvancedStatsPage() {
 
             <main className="max-w-4xl mx-auto p-4 space-y-6 relative z-10">
 
-                {/* XP Trend Section */}
-                <section className="bg-black/40 border border-cyber-gray/30 rounded-xl p-6 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 blur-[40px] rounded-full pointer-events-none" />
-                    <h2 className="text-lg font-bold font-orbitron text-white mb-4 flex items-center gap-2">
-                        <TrendingUp className="w-5 h-5 text-cyan-500" />
-                        CRESCITA ESPERIENZA (7 GIORNI)
-                    </h2>
-                    <div className="h-[300px] w-full">
-                        {xpTrendData.length > 0 ? (
-                            <XPTrendChart data={xpTrendData} />
-                        ) : (
-                            <div className="flex items-center justify-center h-full text-slate-500 font-mono text-sm">
-                                DATI INSUFFICIENTI
-                            </div>
-                        )}
-                    </div>
-                </section>
+                {/* XP Trend Section Removed */}
 
                 <div className="grid grid-cols-1 gap-6">
                     {/* Skills Radar */}

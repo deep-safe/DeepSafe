@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase/client';
 export const useDailyStreak = (enabled: boolean = true) => {
     const { streak, lastStreakDate, incrementStreak, resetStreak } = useUserStore();
     const [showModal, setShowModal] = useState(false);
+    const [isFrozen, setIsFrozen] = useState(false);
     const hasChecked = useRef(false); // Prevent double-check on strict mode/remounts
 
     useEffect(() => {
@@ -24,7 +25,9 @@ export const useDailyStreak = (enabled: boolean = true) => {
             // Case 1: Same Day (Already logged in today)
             if (lastStreakDate === today) {
                 // Check if we have a pending modal from a previous mount/reload
-                if (sessionStorage.getItem(STREAK_MODAL_KEY) === 'true') {
+                const modalState = sessionStorage.getItem(STREAK_MODAL_KEY);
+                if (modalState) {
+                    if (modalState === 'frozen') setIsFrozen(true);
                     setShowModal(true);
                     hasChecked.current = true;
                 }
@@ -35,18 +38,46 @@ export const useDailyStreak = (enabled: boolean = true) => {
             if (lastStreakDate && isYesterday(lastStreakDate)) {
                 sessionStorage.setItem(STREAK_PREV_KEY, String(streak));
                 incrementStreak();
-                // setLastLoginDate(today); // Handled by incrementStreak now
                 sessionStorage.setItem(STREAK_MODAL_KEY, 'true');
                 setShowModal(true);
                 hasChecked.current = true;
                 return;
             }
 
-            // Case 3: Broken Streak or First Time (Last login older than yesterday or null)
+            // Case 3: Missed Day Logic (Gap > 1 day)
+            // Calculate gap
+            let daysMissed = 0;
+            if (lastStreakDate) {
+                const last = new Date(lastStreakDate);
+                const current = new Date(today);
+                const diffTime = Math.abs(current.getTime() - last.getTime());
+                daysMissed = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) - 1; // -1 because 1 day diff is consecutive
+            }
+
+            // If missed exactly 1 day (Gap = 2 days total diff) and has freeze
+            const { streakFreezes, useStreakFreeze } = useUserStore.getState();
+
+            if (daysMissed === 1 && streakFreezes > 0) {
+                // FROZEN!
+                // Use freeze
+                const success = await useStreakFreeze();
+                if (success) {
+                    sessionStorage.setItem(STREAK_PREV_KEY, String(streak));
+                    await incrementStreak(); // Continue streak!
+
+                    // Mark as frozen for the modal to potentially show a different message
+                    sessionStorage.setItem(STREAK_MODAL_KEY, 'frozen');
+                    setIsFrozen(true);
+                    setShowModal(true);
+                    hasChecked.current = true;
+                    return;
+                }
+            }
+
+            // Case 4: Broken Streak or First Time (or no freezes available)
             // Reset to 1 (since user logged in today)
             sessionStorage.setItem(STREAK_PREV_KEY, String(streak));
             resetStreak();
-            // setLastLoginDate(today); // Handled by resetStreak now
             sessionStorage.setItem(STREAK_MODAL_KEY, 'true');
             setShowModal(true);
             hasChecked.current = true;
@@ -58,6 +89,7 @@ export const useDailyStreak = (enabled: boolean = true) => {
     const closeModal = () => {
         sessionStorage.removeItem('deepsafe_streak_modal_pending');
         setShowModal(false);
+        setIsFrozen(false);
     };
 
     const previousStreak = typeof window !== 'undefined'
@@ -68,6 +100,7 @@ export const useDailyStreak = (enabled: boolean = true) => {
         streak,
         showModal,
         closeModal,
-        previousStreak
+        previousStreak,
+        isFrozen
     };
 };

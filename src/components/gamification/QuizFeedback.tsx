@@ -52,15 +52,6 @@ export function QuizFeedback({
                         )}>
                             {isCorrect ? "ACCESSO GARANTITO" : "MINACCIA RILEVATA"}
                         </h2>
-                        {isCorrect && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="text-xs font-mono text-cyber-blue font-bold"
-                            >
-                                +10 XP CARICATI
-                            </motion.div>
-                        )}
                     </div>
                 </div>
 

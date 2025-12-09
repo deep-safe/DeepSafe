@@ -17,7 +17,6 @@ interface LeaderboardEntry {
     id: string;
     username: string;
     avatar_url: string | null;
-    xp: number;
     rubies: number;
     emeralds: number;
     credits: number;
@@ -88,7 +87,7 @@ export default function LeaderboardPage() {
             if (leaderboardTab === 'global') {
                 const { data: profiles, error } = await supabase
                     .from('profiles')
-                    .select('id, username, avatar_url, xp, rubies, emeralds, credits')
+                    .select('id, username, avatar_url, rubies, emeralds, credits')
                     .order('rubies', { ascending: false })
                     .order('emeralds', { ascending: false })
                     .order('credits', { ascending: false })
@@ -113,7 +112,7 @@ export default function LeaderboardPage() {
                 // 2. Get profiles
                 const { data: profiles, error: profilesError } = await supabase
                     .from('profiles')
-                    .select('id, username, avatar_url, xp, rubies, emeralds, credits')
+                    .select('id, username, avatar_url, rubies, emeralds, credits')
                     .in('id', friendIds)
                     .order('rubies', { ascending: false })
                     .order('emeralds', { ascending: false })
@@ -128,7 +127,6 @@ export default function LeaderboardPage() {
                 id: profile.id,
                 username: profile.username || 'Agente Sconosciuto',
                 avatar_url: profile.avatar_url,
-                xp: profile.xp || 0,
                 rubies: profile.rubies || 0,
                 emeralds: profile.emeralds || 0,
                 credits: profile.credits || 0,
