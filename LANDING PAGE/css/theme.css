@@ -113,3 +113,270 @@ body.theme-senior {
     border: 2px solid #e5e7eb;
     box-shadow: none;
 }
+
+/* Youth Theme Optimizations & Mobile Responsiveness */
+@media (max-width: 768px) {
+    .theme-youth h1 {
+        font-size: 2.5rem !important;
+        /* Force override of inline styles if any remain */
+    }
+
+    .theme-youth .hero p {
+        font-size: 1rem !important;
+        padding: 0 1rem;
+    }
+
+    .feature-row {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .feature-row.reverse {
+        flex-direction: column-reverse;
+    }
+
+    .theme-youth .hero {
+        padding-top: 100px !important;
+        min-height: auto !important;
+        padding-bottom: 60px;
+    }
+}
+
+/* New Section Styles */
+.feature-section {
+    padding: 80px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-section:nth-child(even) {
+    background-color: var(--card-bg);
+}
+
+.feature-row {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    justify-content: space-between;
+}
+
+.feature-content {
+    flex: 1;
+    min-width: 300px;
+}
+
+.feature-media {
+    flex: 1;
+    min-width: 300px;
+    position: relative;
+}
+
+.media-frame {
+    border-radius: 20px;
+    overflow: hidden;
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 30px rgba(0, 243, 255, 0.15);
+    background: #000;
+}
+
+.media-frame video,
+.media-frame img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Cyberpunk Accents */
+.neon-text {
+    color: var(--primary-color);
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.8);
+}
+
+.gradient-text {
+    background: linear-gradient(to right, #fff, var(--primary-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    /* Dark overlay */
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: #0a0a12;
+    /* Match deep dark bg */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 40px rgba(0, 243, 255, 0.1);
+    /* Slight cyan glow for youth theme */
+    border-radius: 24px;
+    padding: 40px;
+    text-align: center;
+    max-width: 480px;
+    width: 90%;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.modal-close:hover {
+    color: white;
+}
+
+.modal-success-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(0, 210, 106, 0.1);
+    border: 1px solid rgba(0, 210, 106, 0.3);
+}
+
+.modal-success-icon svg {
+    width: 40px;
+    height: 40px;
+    stroke: #00d26a;
+}
+
+.modal-content h3 {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+    font-family: 'Outfit', sans-serif;
+}
+
+.modal-content p {
+    color: #9ca3af;
+    margin-bottom: 32px;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+.modal-divider {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    color: #4b5563;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.modal-divider::before,
+.modal-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #1f2937;
+}
+
+.modal-divider span {
+    padding: 0 16px;
+}
+
+.modal-socials {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.social-link {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    /* Subtle glass */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+}
+
+.social-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.social-link svg {
+    width: 22px;
+    height: 22px;
+    fill: #9ca3af;
+    transition: fill 0.3s;
+}
+
+.social-link:hover svg {
+    fill: white;
+}
+
+/* Specific Brand Colors on Hover (Optional, or keep clean white) */
+.social-link.instagram:hover svg {
+    fill: #E1306C;
+}
+
+.social-link.tiktok:hover svg {
+    fill: #00f2ea;
+}
+
+/* Cyan/Magenta mix usually, plain cyan for theme */
+.social-link.youtube:hover svg {
+    fill: #FF0000;
+}
+
+.social-link.facebook:hover svg {
+    fill: #1877F2;
+}
+
+.modal-content .btn-primary {
+    width: 100%;
+    padding: 16px;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    /* Fully rounded */
+}

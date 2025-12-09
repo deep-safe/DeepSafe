@@ -2,6 +2,49 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('App initialized');
 
+    // Modal Logic
+    const modal = document.getElementById('success-modal');
+    const closeBtns = [document.getElementById('modal-close-btn'), document.getElementById('close-modal-main-btn')];
+
+    function openModal() {
+        if (modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        } else {
+            // Fallback if modal is missing (e.g., on other pages if they don't have it yet)
+            alert('Grazie per esserti iscritto alla lista d\'attesa! A breve ti invieremo tutte le istruzioni per accedere all\'app');
+        }
+    }
+
+    function closeModal() {
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+
+    closeBtns.forEach(btn => {
+        if (btn) {
+            btn.addEventListener('click', closeModal);
+        }
+    });
+
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+    }
+
+    // Form Handling
     const forms = document.querySelectorAll('.waitlist-form');
 
     forms.forEach(form => {
@@ -13,14 +56,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const originalBtnText = btn.innerText;
 
             if (email) {
-                // Check if the form has an action attribute (e.g., Formspree)
                 const action = form.getAttribute('action');
+
+                // Simulate loading state
+                btn.innerText = 'Invio...';
+                btn.disabled = true;
 
                 if (action) {
                     try {
-                        btn.innerText = 'Invio in corso...';
-                        btn.disabled = true;
-
                         const response = await fetch(action, {
                             method: form.method || 'POST',
                             body: new FormData(form),
@@ -30,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
 
                         if (response.ok) {
-                            alert('Grazie per esserti iscritto alla lista d\'attesa! A breve ti invieremo tutte le istruzioni per accedere all\'app');
+                            openModal();
                             form.reset();
                         } else {
                             alert('C\'è stato un problema. Riprova più tardi.');
@@ -43,10 +86,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         btn.disabled = false;
                     }
                 } else {
-                    // Fallback for demo/testing if no action is set
+                    // Demo/Testing fallback
                     console.log(`Registered email (Demo): ${email}`);
-                    alert('Grazie per esserti iscritto alla lista d\'attesa! A breve ti invieremo tutte le istruzioni per accedere all\'app');
-                    form.reset();
+
+                    // Simulate network delay for effect
+                    setTimeout(() => {
+                        openModal();
+                        form.reset();
+                        btn.innerText = originalBtnText;
+                        btn.disabled = false;
+                    }, 800);
                 }
             } else {
                 alert('Per favore inserisci un indirizzo email valido.');
