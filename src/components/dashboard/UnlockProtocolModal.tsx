@@ -115,10 +115,10 @@ export const UnlockProtocolModal: React.FC<UnlockProtocolModalProps> = ({
                                 <Terminal className="w-4 h-4 text-cyan-400" />
                             </div>
                             <div>
-                                <h3 className="font-orbitron font-bold text-cyan-100 tracking-wider text-sm">SECURITY PROTOCOL</h3>
+                                <h3 className="font-orbitron font-bold text-cyan-100 tracking-wider text-sm">PROTOCOLLO DI SICUREZZA</h3>
                                 <div className="flex items-center gap-2">
                                     <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                                    <span className="text-[10px] font-mono text-cyan-500/70">ENCRYPTION: LEVEL 5</span>
+                                    <span className="text-[10px] font-mono text-cyan-500/70">CRITTOGRAFIA: LIVELLO 5</span>
                                 </div>
                             </div>
                         </div>
@@ -180,29 +180,29 @@ export const UnlockProtocolModal: React.FC<UnlockProtocolModalProps> = ({
                                 {status === 'DECRYPTING' ? (
                                     <span className="font-mono text-cyan-400">{scrambleText}</span>
                                 ) : status === 'ACCESS_GRANTED' ? (
-                                    <span className="text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.5)]">ACCESS GRANTED</span>
+                                    <span className="text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.5)]">ACCESSO GARANTITO</span>
                                 ) : (
                                     targetName.toUpperCase()
                                 )}
                             </h2>
                             <p className="text-slate-400 text-sm font-mono">
-                                {status === 'DECRYPTING' ? 'BYPASSING SECURITY FIREWALL...' :
-                                    status === 'ACCESS_GRANTED' ? 'SYSTEM UNLOCKED. WELCOME COMMANDER.' :
-                                        `LOCKED ${targetType} DETECTED. AUTHORIZATION REQUIRED.`}
+                                {status === 'DECRYPTING' ? 'AGGIRO FIREWALL DI SICUREZZA...' :
+                                    status === 'ACCESS_GRANTED' ? 'SISTEMA SBLOCCATO. BENVENUTO COMANDANTE.' :
+                                        `${targetType === 'REGION' ? 'REGIONE' : 'SETTORE'} BLOCCATO RILEVATO. AUTORIZZAZIONE RICHIESTA.`}
                             </p>
                         </div>
 
                         {/* Cost & Balance Grid */}
                         <div className="w-full grid grid-cols-2 gap-4 mb-8">
                             <div className="bg-slate-900/50 p-3 rounded border border-slate-800 flex flex-col items-center">
-                                <span className="text-[10px] text-slate-500 font-mono uppercase mb-1">PROTOCOL COST</span>
+                                <span className="text-[10px] text-slate-500 font-mono uppercase mb-1">COSTO PROTOCOLLO</span>
                                 <span className="font-mono font-bold text-yellow-400 flex items-center gap-1.5 text-lg">
-                                    {cost > 0 ? cost.toLocaleString() : 'FREE'} <Coins className="w-3.5 h-3.5" />
+                                    {cost > 0 ? cost.toLocaleString() : 'GRATIS'} <Coins className="w-3.5 h-3.5" />
                                 </span>
                             </div>
                             <div className={`bg-slate-900/50 p-3 rounded border flex flex-col items-center transition-colors ${canAfford ? 'border-slate-800' : 'border-red-500/30 bg-red-950/10'
                                 }`}>
-                                <span className="text-[10px] text-slate-500 font-mono uppercase mb-1">AVAILABLE CREDITS</span>
+                                <span className="text-[10px] text-slate-500 font-mono uppercase mb-1">CREDITI DISPONIBILI</span>
                                 <span className={`font-mono font-bold flex items-center gap-1.5 text-lg ${canAfford ? 'text-emerald-400' : 'text-red-400'}`}>
                                     {credits.toLocaleString()} <Coins className="w-3.5 h-3.5" />
                                 </span>
@@ -228,7 +228,7 @@ export const UnlockProtocolModal: React.FC<UnlockProtocolModalProps> = ({
                                 disabled={status === 'DECRYPTING' || status === 'ACCESS_GRANTED'}
                                 className="flex-1 py-3.5 rounded bg-slate-900/50 hover:bg-slate-800 border border-slate-700 text-slate-400 font-mono text-xs font-bold tracking-wider transition-colors disabled:opacity-50"
                             >
-                                ABORT
+                                ANNULLA
                             </button>
                             <button
                                 onClick={handleUnlockClick}
@@ -239,18 +239,18 @@ export const UnlockProtocolModal: React.FC<UnlockProtocolModalProps> = ({
                                     }`}
                             >
                                 {status === 'DECRYPTING' ? (
-                                    <span className="animate-pulse">DECRYPTING...</span>
+                                    <span className="animate-pulse">DECRITTAZIONE...</span>
                                 ) : status === 'ACCESS_GRANTED' ? (
-                                    <span>UNLOCKED</span>
+                                    <span>SBLOCCATO</span>
                                 ) : !canAfford ? (
                                     <>
                                         <AlertTriangle className="w-3 h-3" />
-                                        <span>INSUFFICIENT FUNDS</span>
+                                        <span>FONDI INSUFFICIENTI</span>
                                     </>
                                 ) : (
                                     <>
                                         <Unlock className="w-3 h-3 group-hover:rotate-12 transition-transform" />
-                                        <span>INITIATE DECRYPTION</span>
+                                        <span>AVVIA DECRITTAZIONE</span>
                                     </>
                                 )}
                             </button>

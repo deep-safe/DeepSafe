@@ -50,7 +50,7 @@ export function QuizFeedback({
                             "text-2xl font-bold font-orbitron tracking-wider",
                             isCorrect ? "text-cyber-green text-glow" : "text-cyber-red text-glow-danger"
                         )}>
-                            {isCorrect ? "ACCESS GRANTED" : "THREAT DETECTED"}
+                            {isCorrect ? "ACCESSO GARANTITO" : "MINACCIA RILEVATA"}
                         </h2>
                         {isCorrect && (
                             <motion.div
@@ -58,7 +58,7 @@ export function QuizFeedback({
                                 animate={{ opacity: 1, y: 0 }}
                                 className="text-xs font-mono text-cyber-blue font-bold"
                             >
-                                +10 XP UPLOADED
+                                +10 XP CARICATI
                             </motion.div>
                         )}
                     </div>
@@ -69,7 +69,7 @@ export function QuizFeedback({
                     {!isCorrect && (
                         <div className="flex items-start gap-2 text-cyber-red font-bold text-sm uppercase tracking-wide mb-2">
                             <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-                            <span>Correct Protocol: {correctAnswerText}</span>
+                            <span>Protocollo Corretto: {correctAnswerText}</span>
                         </div>
                     )}
                     <p className="text-lg text-white leading-relaxed font-medium">
@@ -87,7 +87,7 @@ export function QuizFeedback({
                             : "bg-cyber-red text-white hover:bg-white hover:text-cyber-red hover:shadow-[0_0_20px_#FF0055]"
                     )}
                 >
-                    {isLastQuestion ? "COMPLETE MISSION" : "CONTINUE"} <ArrowRight className="w-5 h-5" />
+                    {isLastQuestion ? "COMPLETA MISSIONE" : "CONTINUA"} <ArrowRight className="w-5 h-5" />
                 </button>
             </div>
         </motion.div>

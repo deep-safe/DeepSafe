@@ -93,7 +93,7 @@ export default function LandingPage() {
                     <div className="container mx-auto px-4">
                         <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
                             <div className="flex-1 min-w-[300px]">
-                                <h2 className="text-3xl md:text-4xl font-bold mb-6 uppercase tracking-wide text-white drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">Level Up Your Skills</h2>
+                                <h2 className="text-3xl md:text-4xl font-bold mb-6 uppercase tracking-wide text-white drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">Potenzia le Tue Abilità</h2>
                                 <p className="mb-6 text-gray-300 leading-relaxed">
                                     Non è solo un corso, è una missione. Viaggia attraverso le regioni italiane in un futuro
                                     cyberpunk.
@@ -265,7 +265,7 @@ export default function LandingPage() {
 
                 <footer className="py-10 text-center border-t border-[#333] text-gray-500 bg-[#0a0a12]">
                     <div className="container mx-auto px-4">
-                        <p>&copy; 2025 DeepSafe. All rights reserved. | <Link href="/privacy-policy" className="hover:text-gray-300 transition-colors">Privacy Policy</Link> | <Link href="/terms" className="hover:text-gray-300 transition-colors">Terms</Link></p>
+                        <p>&copy; 2025 DeepSafe. Tutti i diritti riservati. | <Link href="/privacy-policy" className="hover:text-gray-300 transition-colors">Privacy Policy</Link> | <Link href="/terms" className="hover:text-gray-300 transition-colors">Termini e Condizioni</Link></p>
                     </div>
                 </footer>
             </div>

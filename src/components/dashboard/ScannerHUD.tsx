@@ -53,7 +53,7 @@ const ScannerHUD: React.FC<ScannerHUDProps> = ({ target, onAction, actionLabel, 
                             <div className="flex items-center gap-2 mb-0.5">
                                 <Scan className={`w-3 h-3 ${target ? 'text-cyan-400 animate-pulse' : 'text-slate-600'}`} />
                                 <span className="text-[10px] font-orbitron tracking-widest text-slate-500 uppercase">
-                                    {target ? `TARGET: ${target.type}` : 'STANDBY'}
+                                    {target ? `OBIETTIVO: ${target.type}` : 'STANDBY'}
                                 </span>
                             </div>
 
@@ -86,7 +86,7 @@ const ScannerHUD: React.FC<ScannerHUDProps> = ({ target, onAction, actionLabel, 
                                         exit={{ opacity: 0 }}
                                         className="text-slate-500 text-xs font-mono"
                                     >
-                                        SELECT SECTOR
+                                        SELEZIONA SETTORE
                                     </motion.div>
                                 )}
                             </AnimatePresence>

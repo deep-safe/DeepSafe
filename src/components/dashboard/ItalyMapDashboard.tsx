@@ -138,7 +138,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
             if (nextBadge.condition_type === 'region_master') {
                 setRegionCompletionData({
                     isOpen: true,
-                    regionName: nextBadge.condition_value || 'Unknown Region',
+                    regionName: nextBadge.condition_value || 'Regione Sconosciuta',
                     badge: nextBadge
                 });
             } else {
@@ -317,7 +317,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                     name: regionName,
                     status: status,
                     type: 'REGION',
-                    details: `${regionProvinces.length} SECTORS`
+                    details: `${regionProvinces.length} SETTORI`
                 });
                 playSound('click');
                 triggerHaptic('light');
@@ -361,7 +361,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                     name: province.name,
                     status: province.status,
                     type: 'PROVINCE',
-                    details: `PROGRESS: ${province.progress}%`
+                    details: `PROGRESSO: ${province.progress}%`
                 });
                 playSound('click');
                 triggerHaptic('light');
@@ -434,7 +434,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                 name: regionName,
                 status: isUnlocked ? 'unlocked' : 'locked',
                 type: 'REGION',
-                details: `${regionProvinces.length} SECTORS`
+                details: `${regionProvinces.length} SETTORI`
             });
         } else {
             setHoveredTarget({
@@ -442,7 +442,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                 name: province.name,
                 status: province.status,
                 type: 'PROVINCE',
-                details: `PROGRESS: ${province.progress}%`
+                details: `PROGRESSO: ${province.progress}%`
             });
         }
     };
@@ -541,11 +541,11 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
             triggerHaptic('heavy');
 
             const nextTierName = mapTier === 'level_1' ? 'ORANGE' : 'GOLD';
-            showToast(`WELCOME TO THE ${nextTierName} TIER`, 'info');
+            showToast(`BENVENUTO NEL LIVELLO ${nextTierName}`, 'info');
 
             // Reset view to Italy
             handleBackToItaly();
-            showToast('Ascension Failed. Try again.', 'error');
+            showToast('Ascensione Fallita. Riprova.', 'error');
         }
     };
 
@@ -565,9 +565,9 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
 
                 playSound('success');
                 triggerHaptic('success');
-                showToast(`${targetName} UNLOCKED`, 'info');
+                showToast(`${targetName} SBLOCCATO`, 'info');
             } else {
-                showToast(result.message || 'Unlock failed', 'error');
+                showToast(result.message || 'Sblocco fallito', 'error');
                 playSound('error');
                 triggerHaptic('error');
             }
@@ -582,7 +582,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
             setUnlockModalState(null);
             playSound('success');
             triggerHaptic('success');
-            showToast(`${targetName} UNLOCKED`, 'info');
+            showToast(`${targetName} SBLOCCATO`, 'info');
         }
     };
 
@@ -653,7 +653,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
             <ScannerHUD
                 target={activeTarget}
                 onAction={handleHudAction}
-                actionLabel={viewMode === 'ITALY' ? 'ENTER' : 'START'}
+                actionLabel={viewMode === 'ITALY' ? 'ENTRA' : 'AVVIA'}
                 isLocked={!!selectedTarget}
             />
 
