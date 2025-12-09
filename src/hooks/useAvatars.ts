@@ -23,13 +23,8 @@ export function useAvatars() {
 
                 // Sort by rarity: common, rare, epic, legendary
                 const rarityOrder = { common: 0, rare: 1, epic: 2, legendary: 3 };
-                const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
                 const sortedData = (data || [])
-                    .map(avatar => ({
-                        ...avatar,
-                        src: avatar.src.startsWith('http') ? avatar.src : `${basePath}${avatar.src}`
-                    }))
                     .sort((a, b) => {
                         const rA = rarityOrder[a.rarity as keyof typeof rarityOrder] || 0;
                         const rB = rarityOrder[b.rarity as keyof typeof rarityOrder] || 0;

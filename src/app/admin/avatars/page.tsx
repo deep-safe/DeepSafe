@@ -58,12 +58,7 @@ export default function AdminAvatarsPage() {
         if (error) {
             console.error('Error fetching avatars:', error);
         } else {
-            const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-            const processedData = (data || []).map(avatar => ({
-                ...avatar,
-                src: avatar.src.startsWith('http') ? avatar.src : `${basePath}${avatar.src}`
-            }));
-            setAvatars(processedData);
+            setAvatars(data || []);
         }
         setIsLoading(false);
     };

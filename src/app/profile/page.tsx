@@ -297,17 +297,15 @@ export default function ProfilePage() {
     };
 
     const getCurrentAvatarSrc = () => {
-        const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-        const fallback = `${basePath}/avatars/rookie.png`;
+        // Fallback or specific default can be hardcoded or fetched
+        const fallback = 'https://placeholder.supabase.co/storage/v1/object/public/avatars/rookie.png';
 
         if (!profile?.avatar_url) {
             const defaultAvatar = avatars.find(a => a.is_default);
-            // useAvatars already adds basePath, so we use src directly
             return defaultAvatar?.src || fallback;
         }
 
         const avatar = avatars.find(a => a.id === profile.avatar_url);
-        // useAvatars already adds basePath, so we use src directly
         return avatar?.src || fallback;
     };
 
