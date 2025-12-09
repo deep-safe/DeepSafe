@@ -1,11 +1,7 @@
 import { TrainingModule } from '@/components/missions/TrainingPill';
 
 export const trainingData: Record<string, TrainingModule> = {
-    // Molise - Campobasso - Mission 1 - Problem 1 (Segnaletica Carente -> now "Sovraccarico Dati" in new dataset but let's map to existing IDs for now)
-    // Existing IDs in missionsData.ts are "p1", "p2", "p3" under "m1".
-    // I need to be careful about ID uniqueness. In missionsData.ts, problem IDs are "p1", "p2" etc. nested in missions.
-    // I should probably construct a unique ID like `${missionId}_${problemId}`.
-
+    // Molise - Campobasso - Mission 1 - Problem 1
     "m1_p1": {
         id: "m1_p1",
         title: "Digital Wellbeing: Notifiche",
@@ -25,8 +21,7 @@ export const trainingData: Record<string, TrainingModule> = {
                 { id: "c", text: "Controllare le email ogni 5 minuti", isCorrect: false }
             ],
             explanation: "Disattivare le notifiche riduce le interruzioni involontarie e permette di mantenere il focus su compiti complessi."
-        },
-        xpReward: 50
+        }
     },
     "m1_p2": {
         id: "m1_p2",
@@ -47,8 +42,7 @@ export const trainingData: Record<string, TrainingModule> = {
                 { id: "c", text: "Giuseppe1980", isCorrect: false }
             ],
             explanation: "La password corretta è lunga, complessa e non contiene informazioni personali facilmente reperibili."
-        },
-        xpReward: 75
+        }
     },
     // Default fallback
     "default": {
@@ -70,7 +64,6 @@ export const trainingData: Record<string, TrainingModule> = {
                 { id: "c", text: "Rispondere chiedendo chi è", isCorrect: false }
             ],
             explanation: "Le email di phishing cercano di ingannarti. Non interagire mai con link o allegati sospetti."
-        },
-        xpReward: 50
+        }
     }
 };

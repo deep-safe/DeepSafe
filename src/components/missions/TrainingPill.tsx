@@ -14,12 +14,12 @@ export interface TrainingModule {
         options: { id: string; text: string; isCorrect: boolean }[];
         explanation: string;
     };
-    xpReward: number;
+    // xpReward removed
 }
 
 interface TrainingPillProps {
     module: TrainingModule;
-    onComplete: (success: boolean, xp: number) => void;
+    onComplete: (success: boolean) => void;
     onClose: () => void;
 }
 
@@ -42,7 +42,7 @@ const TrainingPill: React.FC<TrainingPillProps> = ({ module, onComplete, onClose
 
     const handleClose = () => {
         if (step === 'result' && isCorrect) {
-            onComplete(true, module.xpReward);
+            onComplete(true);
         } else {
             onClose();
         }
@@ -191,7 +191,7 @@ const TrainingPill: React.FC<TrainingPillProps> = ({ module, onComplete, onClose
 
                                 <p className="text-slate-400 max-w-md mx-auto mb-6 md:mb-8 text-sm md:text-base">
                                     {isCorrect
-                                        ? `Ottimo lavoro! Hai guadagnato ${module.xpReward} XP e messo in sicurezza il settore.`
+                                        ? `Ottimo lavoro! Hai messo in sicurezza il settore.`
                                         : 'La risposta non è corretta. Rivedi il briefing e riprova per sbloccare il settore.'
                                     }
                                 </p>

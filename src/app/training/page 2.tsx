@@ -11,6 +11,7 @@ import { useUserStore } from '@/store/useUserStore';
 import GameOverModal from '@/components/training/GameOverModal';
 import MockAdModal from '@/components/training/MockAdModal';
 import TopBar from '@/components/dashboard/TopBar';
+import { BadgeUnlockModal } from '@/components/gamification/BadgeUnlockModal';
 
 export default function TrainingPillPage() {
     const params = useParams();
@@ -30,6 +31,7 @@ export default function TrainingPillPage() {
     const [score, setScore] = useState(0);
     const [showGameOver, setShowGameOver] = useState(false);
     const [showAdModal, setShowAdModal] = useState(false);
+    const [newBadgeId, setNewBadgeId] = useState<string | null>(null);
 
     // Calculate Map Progress for TopBar
     const totalProvinces = provincesData.length;
@@ -116,7 +118,7 @@ export default function TrainingPillPage() {
         }
     };
 
-    const handleNextQuestion = () => {
+    const handleNextQuestion = async () => {
         if (currentQuestionIndex < lesson.questions.length - 1) {
             setCurrentQuestionIndex(prev => prev + 1);
             setSelectedOption(null);
@@ -127,7 +129,13 @@ export default function TrainingPillPage() {
                 // unlockProvince(provinceId); // REMOVED: Unlocking is now manual via Map UI
 
                 // Secure Server-Side Completion
-                completeLevel(lesson.id, score, lesson.xpReward);
+                await completeLevel(lesson.id, score, lesson.xpReward, provinceId);
+
+                // Check for new badges
+                const { newBadges } = await useUserStore.getState().checkBadges(true);
+                if (newBadges && newBadges.length > 0) {
+                    setNewBadgeId(newBadges[0]);
+                }
 
                 // Update Province Score (Client-Side & Cache)
                 // This ensures the map updates immediately
@@ -161,6 +169,12 @@ export default function TrainingPillPage() {
                 isOpen={showAdModal}
                 onClose={() => setShowAdModal(false)}
                 onReward={handleAdReward}
+            />
+
+            <BadgeUnlockModal
+                isOpen={!!newBadgeId}
+                badgeId={newBadgeId}
+                onClose={() => setNewBadgeId(null)}
             />
 
             {/* Top Bar (Map Progress) */}

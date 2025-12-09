@@ -71,7 +71,7 @@ export function BadgeUnlockModal({ isOpen, onClose, badgeId }: BadgeUnlockModalP
                         {badge.name}
                     </h3>
                     <div className="inline-block px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-cyan-500 text-cyan-400 bg-cyan-950/30">
-                        +{badge.xpReward} XP
+                        {badge.rarity}
                     </div>
                 </div>
 

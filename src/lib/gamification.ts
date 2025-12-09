@@ -1,20 +1,15 @@
-export const XP_PER_QUIZ = 10;
-export const XP_BONUS_PER_STREAK = 5;
+// XP Logic Removed - Replaced with Badge Counters
+export const XP_PER_QUIZ = 0;
+export const XP_BONUS_PER_STREAK = 0;
 
+// Legacy support (to be removed once fully refactored)
 export function calculateXp(baseXp: number, streak: number): number {
-    const streakBonus = Math.min(streak * 0.1, 0.5); // Max 50% bonus
-    return Math.round(baseXp * (1 + streakBonus));
+    return 0;
 }
 
 export function calculateRewards(quiz: any, baseStreak: number) {
-    let finalXp = calculateXp(quiz.xpReward, baseStreak);
-
-    if (quiz.xp_multiplier) {
-        finalXp *= quiz.xp_multiplier;
-    }
-
     return {
-        xp: finalXp,
+        xp: 0,
         badgeId: quiz.badge_reward_id || null
     };
 }

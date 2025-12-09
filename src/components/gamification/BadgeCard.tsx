@@ -10,7 +10,7 @@ export interface Badge {
     description: string;
     icon_url: string;
     category: string;
-    xp_bonus: number;
+    // xp_bonus removed
     is_unlocked: boolean;
     earned_at?: string;
     rarity?: 'common' | 'rare' | 'legendary';
@@ -70,11 +70,6 @@ export function BadgeCard({ badge, onClick }: BadgeCardProps) {
                         )}>
                             {badge.rarity === 'legendary' ? 'Leggendario' : badge.rarity === 'rare' ? 'Raro' : 'Comune'}
                         </span>
-                        {badge.is_unlocked && (
-                            <span className="text-[10px] text-cyber-green font-mono">
-                                +{badge.xp_bonus} XP
-                            </span>
-                        )}
                     </div>
                 </div>
 

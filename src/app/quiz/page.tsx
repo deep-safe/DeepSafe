@@ -248,9 +248,12 @@ export default function QuizPage() {
                 incrementStreak();
                 setShowReward(true);
 
-                // Call the complete_level RPC
+                // Call the complete_level via Store (Handles Emeralds/Rubies logic)
                 try {
                     const { data: { user } } = await supabase.auth.getUser();
+
+                    const completeLevel = useUserStore.getState().completeLevel;
+                    const checkBadges = useUserStore.getState().checkBadges;
 
                     if (user) {
                         // -- DUEL MODE LOGIC --
@@ -277,20 +280,13 @@ export default function QuizPage() {
                             mode: mode || 'solo'
                         });
 
-                        // Call the robust RPC
-                        const { data, error } = await supabase.rpc('complete_level', {
-                            p_user_id: user.id,
-                            p_level_id: id as string,
-                            p_score: finalScore,
-                            p_earned_xp: calculatedXp
-                        });
+                        // 1. Complete Level (Store Action)
+                        // This handles: DB RPC, Emerald/Ruby increment, Profile Refresh
+                        const success = await completeLevel(id as string, finalScore, calculatedXp);
 
-                        // Type assertion for RPC response
-                        const rpcResult = data as { success?: boolean; error?: string; new_badge_id?: string } | null;
-
-                        if (error || (rpcResult && !rpcResult.success)) {
-                            console.error('❌ Error completing level (RPC):', error, rpcResult);
-                            // Fallback: Insert directly into user_progress (Partial fix if RPC fails)
+                        if (!success) {
+                            console.error('❌ Error completing level via store.');
+                            // Fallback: Insert directly into user_progress
                             await supabase.from('user_progress').upsert({
                                 user_id: user.id,
                                 quiz_id: id as string,
@@ -298,33 +294,23 @@ export default function QuizPage() {
                                 status: 'completed',
                                 completed_at: new Date().toISOString()
                             }, { onConflict: 'user_id, quiz_id' });
-
-                            console.warn('complete_level RPC failed, XP may not be updated correctly');
                         } else {
-                            console.log('✅ Level completed successfully:', data);
-                            if (rpcResult?.new_badge_id) {
-                                console.log('🏆 New Badge Earned:', rpcResult.new_badge_id);
-                                setNewBadgeId(rpcResult.new_badge_id);
+                            console.log('✅ Level completed successfully (Store)');
+
+                            // 2. Check for new badges
+                            const { newBadges } = await checkBadges(true);
+                            if (newBadges && newBadges.length > 0) {
+                                console.log('🏆 New Badge Earned:', newBadges[0]);
+                                setNewBadgeId(newBadges[0]);
                             }
                         }
                     }
 
-                    // 2. CRITICAL: Force refresh the user profile to get new XP
-                    try {
-                        console.log('🔄 Refreshing profile...');
-                        await useUserStore.getState().refreshProfile();
-                        console.log('✅ Profile refreshed');
-                    } catch (refreshError) {
-                        console.error('❌ Error refreshing profile:', refreshError);
-                        alert('Errore aggiornamento profilo (vedi console)');
-                    }
-
-                    // 3. Background Refresh (No auto-redirect)
-                    console.log('✅ Profile refreshed, waiting for user input...');
+                    // No need to manually refresh profile here, store action does it.
+                    console.log('✅ Workflow complete, waiting for user input...');
 
                 } catch (error) {
                     console.error('❌ Unexpected error completing level:', error);
-                    // Don't redirect on error, let user click the button
                 }
             } else {
                 // ** IMPERFECT SCORE LOGIC **

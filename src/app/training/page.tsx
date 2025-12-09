@@ -12,6 +12,7 @@ import GameOverModal from '@/components/training/GameOverModal';
 import MockAdModal from '@/components/training/MockAdModal';
 import TopBar from '@/components/dashboard/TopBar';
 import { PerfectScoreModal } from '@/components/gamification/PerfectScoreModal';
+import { BadgeUnlockModal } from '@/components/gamification/BadgeUnlockModal';
 
 export default function TrainingPillPage() {
     const params = useParams();
@@ -32,6 +33,7 @@ export default function TrainingPillPage() {
     const [showGameOver, setShowGameOver] = useState(false);
     const [showAdModal, setShowAdModal] = useState(false);
     const [showPerfectScoreModal, setShowPerfectScoreModal] = useState(false);
+    const [newBadgeId, setNewBadgeId] = useState<string | null>(null);
 
     // Calculate Map Progress for TopBar
     const totalProvinces = provincesData.length;
@@ -120,7 +122,7 @@ export default function TrainingPillPage() {
         }
     };
 
-    const handleNextQuestion = () => {
+    const handleNextQuestion = async () => {
         if (currentQuestionIndex < lesson.questions.length - 1) {
             setCurrentQuestionIndex(prev => prev + 1);
             setSelectedOption(null);
@@ -135,7 +137,19 @@ export default function TrainingPillPage() {
                     // Unlock logic is manual now
 
                     // Secure Server-Side Completion
-                    completeLevel(lesson.id, score, lesson.xpReward);
+                    // Await to ensure 'wasCompleted' check in store isn't preempted by updateMissionScore
+                    await completeLevel(lesson.id, score, lesson.xpReward, provinceId); // AWAITED
+
+                    // Check for new badges (and await to show popup)
+                    const { newBadges } = await useUserStore.getState().checkBadges(true);
+
+                    if (newBadges && newBadges.length > 0) {
+                        // We need a way to show these. For now, log and maybe set a simple local state if we had a modal.
+                        // But for now, let's just log. The user asked for a POPUP. 
+                        // We will implement the popup state in the next step.
+                        console.log('🏆 New Badges:', newBadges);
+                        setNewBadgeId(newBadges[0]);
+                    }
 
                     // Update Province Score (Client-Side & Cache)
                     updateMissionScore(provinceId, lesson.id, score, lesson.questions.length, true);
@@ -184,6 +198,13 @@ export default function TrainingPillPage() {
                     onExit={handleExit}
                 />
             )}
+
+
+            <BadgeUnlockModal
+                isOpen={!!newBadgeId}
+                badgeId={newBadgeId}
+                onClose={() => setNewBadgeId(null)}
+            />
 
             {/* Top Bar (Map Progress) */}
             <TopBar progress={unlockedCount} total={totalProvinces} className="!fixed z-40 top-14" />

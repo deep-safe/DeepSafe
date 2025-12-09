@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Check, Gift, Target } from 'lucide-react';
+import { Check, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface Mission {
@@ -9,7 +9,7 @@ export interface Mission {
     title: string;
     target_count: number;
     current_count: number;
-    reward_xp: number;
+    // reward_xp removed
     is_completed: boolean;
     is_claimed: boolean;
     frequency: 'daily' | 'weekly' | 'one_time';
@@ -82,7 +82,7 @@ export function MissionCard({ mission, onClaim }: MissionCardProps) {
 
                 {/* Action Button */}
                 <div className="flex flex-col items-end gap-1">
-                    <span className="text-xs font-bold text-cyber-purple font-mono">+{mission.reward_xp} XP</span>
+                    {/* XP Removed */}
 
                     {isClaimable ? (
                         <motion.button

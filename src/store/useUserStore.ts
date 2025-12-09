@@ -44,7 +44,7 @@ interface UserState {
     completeTutorial: () => void;
     updateSettings: (settings: Partial<{ notifications: boolean; sound: boolean; haptics: boolean }>) => Promise<void>;
     claimMission: (missionId: string) => Promise<boolean>;
-    completeLevel: (levelId: string, score: number, earnedXp: number) => Promise<boolean>;
+    completeLevel: (levelId: string, score: number, earnedXp: number, provinceId?: string) => Promise<boolean>;
     addCredits: (amount: number) => Promise<void>;
     spendCredits: (amount: number) => Promise<boolean>;
     buyItem: (itemId: string, cost: number) => Promise<{ success: boolean; message?: string; reward?: any }>;
@@ -168,16 +168,71 @@ export const useUserStore = create<UserState>()(
                 }
             },
 
-            completeLevel: async (levelId, score, earnedXp) => {
+            completeLevel: async (levelId, score, earnedId, provinceId) => {
                 try {
                     const { data: { user } } = await supabase.auth.getUser();
                     if (!user) return false;
+
+                    const state = get();
+                    const { provincesData } = await import('@/data/provincesData');
+
+                    // 1. Identify which province this level belongs to.
+                    // If provinceId is passed explicitly (New System), use it.
+                    // Otherwise, fallback to assuming levelId might be the province ID (Old System).
+                    const targetProvinceId = provinceId || levelId;
+                    const provinceEntry = provincesData.find(p => p.id === targetProvinceId);
+
+                    let addEmeralds = 0;
+                    let addRubies = 0;
+
+                    if (provinceEntry) {
+                        // Check if previously completed
+                        const prevData = state.provinceScores[targetProvinceId];
+                        const wasCompleted = prevData?.isCompleted || false;
+
+                        // IMPORTANT: The generic 'isCompleted' passed might depend on score threshold or sub-missions.
+                        // Assuming completeLevel is called when it IS successfully completed.
+                        // We check if it wasn't completed before.
+
+                        // NOTE: strict completion logic is usually in updateProvinceScore. 
+                        // But completeLevel is the "event".
+                        // Let's check state.provinceScores AFTER updateProvinceScore is likely called?
+                        // Actually completeLevel is called usually at the END of the flow.
+
+                        // Better approach: Check if this completion action makes it complete.
+                        // COMPLETE LOGIC UPDATE:
+                        // If we are here, we assume the level (Province) is successfully finished.
+
+                        if (!wasCompleted) {
+                            addEmeralds = 1;
+
+                            // Check Region Completion
+                            const regionName = provinceEntry.region;
+                            const regionProvinces = provincesData.filter(p => p.region === regionName);
+
+                            // Check if ALL OTHER provinces in this region are ALREADY completed
+                            const otherProvinces = regionProvinces.filter(p => p.id !== targetProvinceId);
+                            const allOthersCompleted = otherProvinces.every(p => {
+                                const s = state.provinceScores[p.id];
+                                return s && s.isCompleted;
+                            });
+
+                            if (allOthersCompleted) {
+                                addRubies = 1;
+                            }
+                        }
+                    }
+
+                    // 2. Call RPC (Legacy + New)
+                    // We keep 'complete_level' for legacy/consistency, but we ALSO call 'update_rank_counters' if needed.
+                    // actually, better to just call 'complete_level' and let IT handle it? No, we decided Client logic is easier for Regions.
+                    // So we call update_rank_counters explicitly if there are gains.
 
                     const { data, error } = await supabase.rpc('complete_level', {
                         p_user_id: user.id,
                         p_level_id: levelId,
                         p_score: score,
-                        p_earned_xp: earnedXp
+                        p_earned_xp: 0 // No XP
                     });
 
                     if (error) {
@@ -185,9 +240,20 @@ export const useUserStore = create<UserState>()(
                         return false;
                     }
 
+                    if (addEmeralds > 0 || addRubies > 0) {
+                        console.log(`💎 Awarding: ${addEmeralds} Emeralds, ${addRubies} Rubies`);
+                        const { error: rankError } = await supabase.rpc('update_rank_counters' as any, {
+                            p_user_id: user.id,
+                            p_add_emeralds: addEmeralds,
+                            p_add_rubies: addRubies
+                        });
+
+                        if (rankError) {
+                            console.error('Error updating rank counters:', rankError);
+                        }
+                    }
+
                     await get().refreshProfile();
-                    // Dual Ledger: XP is now Lifetime NC, Credits are spendable wallet
-                    // The RPC updates both.
                     return true;
                 } catch (err) {
                     console.error('Unexpected error completing level:', err);

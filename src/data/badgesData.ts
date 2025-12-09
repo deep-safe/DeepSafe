@@ -3,12 +3,11 @@ export interface BadgeDefinition {
     name: string;
     description: string;
     icon: string;
-    category: 'Region' | 'Streak' | 'XP' | 'Special';
-    xpReward: number; // NC Reward
+    category: 'Region' | 'Streak' | 'Special'; // Removed XP
     rarity: 'common' | 'rare' | 'legendary';
     condition: {
-        type: 'region_master' | 'streak_milestone' | 'xp_milestone' | 'first_mission' | 'single_province_master';
-        value?: string | number; // Region name or numeric threshold
+        type: 'streak_milestone' | 'first_mission'; // Removed XP and Region logic from generic badges
+        value?: string | number;
     };
 }
 
@@ -20,7 +19,6 @@ export const BADGES_DATA: BadgeDefinition[] = [
         description: 'Completa la tua prima missione.',
         icon: '🩸',
         category: 'Special',
-        xpReward: 50,
         rarity: 'common',
         condition: { type: 'first_mission' }
     },
@@ -32,7 +30,6 @@ export const BADGES_DATA: BadgeDefinition[] = [
         description: 'Raggiungi una serie di 3 giorni.',
         icon: '🔥',
         category: 'Streak',
-        xpReward: 100,
         rarity: 'common',
         condition: { type: 'streak_milestone', value: 3 }
     },
@@ -42,7 +39,6 @@ export const BADGES_DATA: BadgeDefinition[] = [
         description: 'Raggiungi una serie di 7 giorni.',
         icon: '🧨',
         category: 'Streak',
-        xpReward: 250,
         rarity: 'rare',
         condition: { type: 'streak_milestone', value: 7 }
     },
@@ -52,42 +48,7 @@ export const BADGES_DATA: BadgeDefinition[] = [
         description: 'Raggiungi una serie di 30 giorni.',
         icon: '👑',
         category: 'Streak',
-        xpReward: 1000,
         rarity: 'legendary',
         condition: { type: 'streak_milestone', value: 30 }
-    },
-
-    // --- XP Badges ---
-    {
-        id: 'xp_1000',
-        name: 'White Hat',
-        description: 'Guadagna 1.000 NC totali.',
-        icon: '🎩',
-        category: 'XP', // Keep category ID for now, but UI shows NC
-        xpReward: 200,
-        rarity: 'common',
-        condition: { type: 'xp_milestone', value: 1000 }
-    },
-    {
-        id: 'xp_5000',
-        name: 'Cyber Sentinel',
-        description: 'Guadagna 5.000 NC totali.',
-        icon: '🛡️',
-        category: 'XP',
-        xpReward: 500,
-        rarity: 'rare',
-        condition: { type: 'xp_milestone', value: 5000 }
-    },
-
-    // --- Region Badges ---
-    {
-        id: 'master_region_generic',
-        name: 'Conquistatore Regionale',
-        description: 'Completa tutte le province di una regione.',
-        icon: '🗺️',
-        category: 'Region',
-        xpReward: 500, // Increased reward since it's a major milestone
-        rarity: 'legendary',
-        condition: { type: 'region_master' }
     }
 ];

@@ -36,7 +36,8 @@ interface Profile {
     id: string;
     username: string;
     avatar_url: string | null;
-    xp: number;
+    rubies: number;
+    emeralds: number;
     highest_streak: number;
     rank?: number;
 }
@@ -49,6 +50,7 @@ import { BADGES_DATA, BadgeDefinition } from '@/data/badgesData';
 import { ArtifactGrid } from '@/components/gamification/ArtifactGrid';
 import { Badge } from '@/components/gamification/BadgeCard';
 import { StatisticsSection } from '@/components/profile/StatisticsSection';
+import { MedagliereSection } from '@/components/profile/MedagliereSection';
 import { CyberLoading } from '@/components/ui/CyberLoading';
 import { FeedbackModal } from '@/components/profile/FeedbackModal';
 import { DeleteAccountModal } from '@/components/profile/DeleteAccountModal';
@@ -153,7 +155,7 @@ export default function ProfilePage() {
             description: badgeDef.description,
             icon_url: badgeDef.icon,
             category: badgeDef.category,
-            xp_bonus: badgeDef.xpReward,
+            // xp_bonus removed
             is_unlocked: !!earned,
             earned_at: earned?.earned_at,
             rarity: badgeDef.rarity
@@ -200,16 +202,13 @@ export default function ProfilePage() {
 
             if (error) throw error;
 
-            // Calculate Rank
-            const { count, error: rankError } = await supabase
-                .from('profiles')
-                .select('*', { count: 'exact', head: true })
-                .gt('xp', data.xp);
+            // Calculate Rank by Rubies then Emeralds
+            // (Simplified: We just use the rank RPC or a quick count if needed, but here we can just fetch the rank directly via RPC if we want accurate rank)
+            // For now, let's trust get_user_rank RPC or just omit 'rank' calculation here if it's heavy.
+            // But let's try to keep it simple.
 
-            if (rankError) console.error('Error fetching rank:', rankError);
-
-            const rank = (count || 0) + 1;
-            const fullProfile = { ...data, rank } as any;
+            const { data: rank } = await supabase.rpc('get_user_rank');
+            const fullProfile = { ...data, rank: rank || 0 } as any;
 
             setProfile(fullProfile);
             setEditName(data.username || '');
@@ -450,6 +449,14 @@ export default function ProfilePage() {
                 </div>
             </div>
 
+            {/* Section A.5: Medagliere */}
+            {profile && (
+                <MedagliereSection
+                    rubies={profile.rubies || 0}
+                    emeralds={profile.emeralds || 0}
+                />
+            )}
+
             {/* Section B: Premium Statistics */}
             <StatisticsSection isPremium={isPremium} />
 
@@ -658,8 +665,8 @@ export default function ProfilePage() {
 
                                 <div className="grid grid-cols-2 gap-4 w-full pt-4 border-t border-cyber-gray/20">
                                     <div className="text-center">
-                                        <div className="text-xs text-cyber-gray font-mono uppercase">BONUS NC</div>
-                                        <div className="text-xl font-bold text-cyber-green">+{selectedBadge.xp_bonus}</div>
+                                        <div className="text-xs text-cyber-gray font-mono uppercase">TIPO</div>
+                                        <div className="text-md font-bold text-cyber-blue">{selectedBadge.category}</div>
                                     </div>
                                     <div className="text-center">
                                         <div className="text-xs text-cyber-gray font-mono uppercase">OTTENUTO IL</div>

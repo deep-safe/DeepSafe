@@ -10,18 +10,18 @@ import { cn } from '@/lib/utils';
 
 // Mock Data (Replace with Supabase fetch)
 const MOCK_MISSIONS: Mission[] = [
-    { id: '1', title: 'Daily Login', target_count: 1, current_count: 1, reward_xp: 50, is_completed: true, is_claimed: false, frequency: 'daily' },
-    { id: '2', title: 'Quiz Master', target_count: 3, current_count: 2, reward_xp: 150, is_completed: false, is_claimed: false, frequency: 'daily' },
-    { id: '3', title: 'Perfect Streak', target_count: 1, current_count: 1, reward_xp: 200, is_completed: true, is_claimed: true, frequency: 'weekly' },
+    { id: '1', title: 'Daily Login', target_count: 1, current_count: 1, is_completed: true, is_claimed: false, frequency: 'daily' },
+    { id: '2', title: 'Quiz Master', target_count: 3, current_count: 2, is_completed: false, is_claimed: false, frequency: 'daily' },
+    { id: '3', title: 'Perfect Streak', target_count: 1, current_count: 1, is_completed: true, is_claimed: true, frequency: 'weekly' },
 ];
 
 const MOCK_BADGES: Badge[] = [
-    { id: '1', name: 'First Steps', description: 'Completed your first quiz.', icon_url: '👣', category: 'General', xp_bonus: 50, is_unlocked: true, earned_at: '2024-05-20', rarity: 'common' },
-    { id: '2', name: 'Shield Bearer', description: 'Secured account with 2FA.', icon_url: '🛡️', category: 'Defense', xp_bonus: 100, is_unlocked: true, earned_at: '2024-05-21', rarity: 'rare' },
-    { id: '3', name: 'Cyber Legend', description: 'Completed the 30-Day Buffer.', icon_url: '👑', category: 'Mastery', xp_bonus: 500, is_unlocked: true, earned_at: '2024-05-24', rarity: 'legendary' },
-    { id: '4', name: 'Phishing Terminator', description: 'Reported 10 phishing attempts.', icon_url: '🎣', category: 'Defense', xp_bonus: 200, is_unlocked: false, rarity: 'rare' },
-    { id: '5', name: 'Speed Demon', description: 'Finished a quiz in under 30s.', icon_url: '⚡', category: 'Speed', xp_bonus: 100, is_unlocked: false, rarity: 'common' },
-    { id: '6', name: 'Social Engineer', description: 'Invited 5 friends.', icon_url: '🤝', category: 'Social', xp_bonus: 150, is_unlocked: false, rarity: 'common' },
+    { id: '1', name: 'First Steps', description: 'Completed your first quiz.', icon_url: '👣', category: 'General', is_unlocked: true, earned_at: '2024-05-20', rarity: 'common' },
+    { id: '2', name: 'Shield Bearer', description: 'Secured account with 2FA.', icon_url: '🛡️', category: 'Defense', is_unlocked: true, earned_at: '2024-05-21', rarity: 'rare' },
+    { id: '3', name: 'Cyber Legend', description: 'Completed the 30-Day Buffer.', icon_url: '👑', category: 'Mastery', is_unlocked: true, earned_at: '2024-05-24', rarity: 'legendary' },
+    { id: '4', name: 'Phishing Terminator', description: 'Reported 10 phishing attempts.', icon_url: '🎣', category: 'Defense', is_unlocked: false, rarity: 'rare' },
+    { id: '5', name: 'Speed Demon', description: 'Finished a quiz in under 30s.', icon_url: '⚡', category: 'Speed', is_unlocked: false, rarity: 'common' },
+    { id: '6', name: 'Social Engineer', description: 'Invited 5 friends.', icon_url: '🤝', category: 'Social', is_unlocked: false, rarity: 'common' },
 ];
 
 export default function AchievementsPage() {
@@ -80,7 +80,6 @@ export default function AchievementsPage() {
                         <h2 className="font-bold font-orbitron tracking-wide text-sm">I TUOI BADGE</h2>
                     </div>
 
-                    {/* Hex Grid Layout */}
                     {/* Hex Grid Layout - Honeycomb */}
                     <div className="flex flex-wrap justify-center mx-auto pb-12 px-4 w-fit max-w-full">
                         {badges.map((badge) => (
@@ -173,8 +172,8 @@ export default function AchievementsPage() {
 
                                 <div className="grid grid-cols-2 gap-4 w-full pt-4 border-t border-cyber-gray/20">
                                     <div className="text-center">
-                                        <div className="text-xs text-cyber-gray font-mono uppercase">XP BONUS</div>
-                                        <div className="text-xl font-bold text-cyber-green">+{selectedBadge.xp_bonus}</div>
+                                        <div className="text-xs text-cyber-gray font-mono uppercase">CATEGORIA</div>
+                                        <div className="text-md font-bold text-cyber-blue">{selectedBadge.category}</div>
                                     </div>
                                     <div className="text-center">
                                         <div className="text-xs text-cyber-gray font-mono uppercase">EARNED ON</div>
