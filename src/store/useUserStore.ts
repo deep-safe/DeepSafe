@@ -234,20 +234,28 @@ export const useUserStore = create<UserState>()(
                     // SPECIAL HANDLING: Mystery Box (Encrypted Crate)
                     // We use a secure server-side API to ensure guaranteed rewards and robust logic.
                     if (itemId === 'mystery_box') {
-                        const response = await fetch('/api/shop/mystery-box', {
-                            method: 'POST',
+                        // NEW RPC IMPLEMENTATION (Supports Static Export)
+                        // We call a database function 'open_mystery_box' instead of an API route.
+                        // This allows the logic to run on the Supabase server even with a static frontend.
+
+                        const { data, error } = await supabase.rpc('open_mystery_box' as any, {
+                            p_user_id: user.id
                         });
 
-                        const result = await response.json();
+                        if (error) {
+                            console.error('❌ Mystery Box RPC Error:', error);
+                            return { success: false, message: 'Errore durante l\'apertura della cassa' };
+                        }
 
-                        if (result.success) {
+                        const result = data as any;
+                        if (result && result.success) {
                             await get().refreshProfile();
                             return {
                                 success: true,
                                 reward: result.reward
                             };
                         } else {
-                            return { success: false, message: result.message || 'Errore apertura cassa' };
+                            return { success: false, message: result?.message || 'Errore apertura cassa' };
                         }
                     }
 
