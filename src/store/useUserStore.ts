@@ -678,17 +678,21 @@ export const useUserStore = create<UserState>()(
                             if (hasCompletedMission) unlocked = true;
                             break;
                         case 'region_master':
-                            if (badge.condition_value) {
-                                const regionName = badge.condition_value;
-                                const regionProvinces = provincesData.filter(p => p.region === regionName);
+                            {
+                                // GENERIC LOGIC: Check if ANY region is fully completed
+                                // 1. Identify all unique regions
+                                const allRegions = Array.from(new Set(provincesData.map(p => p.region)));
 
-                                const allCompleted = regionProvinces.every(p => {
-                                    const scoreData = state.provinceScores[p.id];
-                                    const isProvCompleted = scoreData && scoreData.isCompleted;
-                                    return isProvCompleted;
+                                // 2. Check if any region is fully completed
+                                const anyRegionCompleted = allRegions.some(regionName => {
+                                    const regionProvinces = provincesData.filter(p => p.region === regionName);
+                                    return regionProvinces.every(p => {
+                                        const scoreData = state.provinceScores[p.id];
+                                        return scoreData && scoreData.isCompleted;
+                                    });
                                 });
 
-                                if (regionProvinces.length > 0 && allCompleted) {
+                                if (anyRegionCompleted) {
                                     unlocked = true;
                                 }
                             }
