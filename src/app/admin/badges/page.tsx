@@ -13,7 +13,7 @@ type Badge = Database['public']['Tables']['badges']['Row'];
 
 const BADGE_CATEGORIES = ['Region', 'Streak', 'XP', 'Special'];
 const BADGE_RARITIES = ['common', 'rare', 'legendary'];
-const CONDITION_TYPES = ['region_master', 'streak_milestone', 'xp_milestone', 'first_mission', 'single_province_master'];
+const CONDITION_TYPES = ['region_master', 'streak_milestone', 'xp_milestone', 'first_mission', 'single_province_master', 'single_region_master'];
 
 export default function AdminBadgesPage() {
     const router = useRouter();
@@ -21,6 +21,8 @@ export default function AdminBadgesPage() {
     const [badges, setBadges] = useState<Badge[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingBadge, setEditingBadge] = useState<Badge | null>(null);
+
+    const [activeTab, setActiveTab] = useState<'medaglie' | 'badges'>('medaglie');
 
     // Form State
     const [formData, setFormData] = useState<Partial<Badge>>({
@@ -33,6 +35,15 @@ export default function AdminBadgesPage() {
         rarity: 'common',
         condition_type: 'xp_milestone',
         condition_value: ''
+    });
+
+    // Filter Logic
+    const filteredBadges = badges.filter(badge => {
+        if (activeTab === 'medaglie') {
+            return ['single_province_master', 'single_region_master'].includes(badge.condition_type);
+        } else {
+            return !['single_province_master', 'single_region_master'].includes(badge.condition_type);
+        }
     });
 
     useEffect(() => {
@@ -159,18 +170,40 @@ export default function AdminBadgesPage() {
                         <p className="text-slate-500 font-mono text-sm">SYSTEM ADMINISTRATION CONSOLE</p>
                     </div>
                 </div>
-                <button
-                    onClick={() => handleOpenModal()}
-                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors font-bold"
-                >
-                    <Plus className="w-5 h-5" />
-                    NEW BADGE
-                </button>
+                <div className="flex items-center gap-4">
+                    <div className="bg-slate-900 border border-slate-800 rounded-lg p-1 flex font-mono text-sm">
+                        <button
+                            onClick={() => setActiveTab('medaglie')}
+                            className={`px-4 py-1.5 rounded transition-all ${activeTab === 'medaglie'
+                                ? 'bg-purple-600 text-white font-bold shadow-lg shadow-purple-900/50'
+                                : 'text-slate-400 hover:text-white'
+                                }`}
+                        >
+                            MEDAGLIE
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('badges')}
+                            className={`px-4 py-1.5 rounded transition-all ${activeTab === 'badges'
+                                ? 'bg-purple-600 text-white font-bold shadow-lg shadow-purple-900/50'
+                                : 'text-slate-400 hover:text-white'
+                                }`}
+                        >
+                            BADGES
+                        </button>
+                    </div>
+                    <button
+                        onClick={() => handleOpenModal()}
+                        className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors font-bold"
+                    >
+                        <Plus className="w-5 h-5" />
+                        NEW BADGE
+                    </button>
+                </div>
             </header>
 
             {/* Badges Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {badges.map(badge => (
+                {filteredBadges.map(badge => (
                     <div key={badge.id} className="bg-slate-900/50 border border-slate-800 p-6 rounded-xl hover:border-purple-500/50 transition-colors group relative">
                         <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
                             <button onClick={() => handleOpenModal(badge)} className="p-1.5 bg-slate-800 text-cyan-400 rounded hover:bg-slate-700">
@@ -334,6 +367,12 @@ export default function AdminBadgesPage() {
                                             <div className="bg-purple-900/20 p-3 rounded border border-purple-500/30">
                                                 <p className="text-[10px] text-slate-400">
                                                     This badge will be awarded automatically when the user completes ANY single province for the first time. No value needed.
+                                                </p>
+                                            </div>
+                                        ) : formData.condition_type === 'single_region_master' ? (
+                                            <div className="bg-purple-900/20 p-3 rounded border border-purple-500/30">
+                                                <p className="text-[10px] text-slate-400">
+                                                    This badge will be awarded automatically when the user completes ANY single region for the first time. No value needed.
                                                 </p>
                                             </div>
                                         ) : (

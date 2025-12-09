@@ -99,9 +99,9 @@ export const useUserStore = create<UserState>()(
             regionCosts: {},
             lastBadgeCheck: null,
             settings: {
-                notifications: true,
+                notifications: false,
                 sound: true,
-                haptics: true
+                haptics: false
             },
             completeTutorial: async () => {
                 set({ hasSeenTutorial: true });
@@ -181,7 +181,7 @@ export const useUserStore = create<UserState>()(
                     });
 
                     if (error) {
-                        console.error('Error completing level:', error);
+                        console.error('Error completing level:', JSON.stringify(error, null, 2));
                         return false;
                     }
 

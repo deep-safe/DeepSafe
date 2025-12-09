@@ -125,6 +125,14 @@ export default function ProfilePage() {
     // -- State Management --
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<Profile | null>(null);
+
+    // Enforce Mobile-Only Settings (Clear persisted state on Web)
+    useEffect(() => {
+        if (!Capacitor.isNativePlatform()) {
+            if (settings.haptics) updateSettings({ haptics: false });
+        }
+    }, [settings.haptics]);
+
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -461,13 +469,30 @@ export default function ProfilePage() {
                                 <Bell className="w-5 h-5" />
                             </div>
                             <div>
-                                <div className="text-sm font-bold text-white font-orbitron tracking-wide">NOTIFICHE PUSH</div>
+                                <div className="flex items-center gap-2">
+                                    <div className="text-sm font-bold text-white font-orbitron tracking-wide">NOTIFICHE PUSH</div>
+                                    {!Capacitor.isNativePlatform() && (
+                                        <span className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] font-mono text-slate-400">
+                                            MOBILE
+                                        </span>
+                                    )}
+                                </div>
                                 <div className="text-xs text-zinc-500 font-mono">Ricevi aggiornamenti sulle missioni</div>
                             </div>
                         </div>
                         <SettingsToggle
                             checked={notificationsEnabled}
-                            onChange={(checked) => toggleNotifications(checked)}
+                            onChange={(checked) => {
+                                if (!Capacitor.isNativePlatform()) {
+                                    openModal({
+                                        title: "FUNZIONE MOBILE",
+                                        message: "Le notifiche push sono disponibili solo sull'app mobile ufficiale.",
+                                        type: 'info'
+                                    });
+                                    return;
+                                }
+                                toggleNotifications(checked);
+                            }}
                             color="blue"
                         />
                     </div>
@@ -495,7 +520,14 @@ export default function ProfilePage() {
                                 <Smartphone className="w-5 h-5" />
                             </div>
                             <div>
-                                <div className="text-sm font-bold text-white font-orbitron tracking-wide">FEEDBACK APTICO</div>
+                                <div className="flex items-center gap-2">
+                                    <div className="text-sm font-bold text-white font-orbitron tracking-wide">FEEDBACK APTICO</div>
+                                    {!Capacitor.isNativePlatform() && (
+                                        <span className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] font-mono text-slate-400">
+                                            MOBILE
+                                        </span>
+                                    )}
+                                </div>
                                 <div className="text-xs text-zinc-500 font-mono">Vibrazione su interazioni</div>
                             </div>
                         </div>
@@ -513,7 +545,14 @@ export default function ProfilePage() {
                                 <Shield className="w-5 h-5" />
                             </div>
                             <div>
-                                <div className="text-sm font-bold text-white font-orbitron tracking-wide">SICUREZZA BIOMETRICA</div>
+                                <div className="flex items-center gap-2">
+                                    <div className="text-sm font-bold text-white font-orbitron tracking-wide">SICUREZZA BIOMETRICA</div>
+                                    {!Capacitor.isNativePlatform() && (
+                                        <span className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] font-mono text-slate-400">
+                                            MOBILE
+                                        </span>
+                                    )}
+                                </div>
                                 <div className="text-xs text-zinc-500 font-mono">Proteggi l'app con FaceID/TouchID</div>
                             </div>
                         </div>
