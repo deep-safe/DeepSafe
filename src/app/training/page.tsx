@@ -13,6 +13,7 @@ import MockAdModal from '@/components/training/MockAdModal';
 import TopBar from '@/components/dashboard/TopBar';
 import { PerfectScoreModal } from '@/components/gamification/PerfectScoreModal';
 import { BadgeUnlockModal } from '@/components/gamification/BadgeUnlockModal';
+import { MedalUnlockModal } from '@/components/gamification/MedalUnlockModal';
 
 export default function TrainingPillPage() {
     const params = useParams();
@@ -34,12 +35,15 @@ export default function TrainingPillPage() {
     const [showAdModal, setShowAdModal] = useState(false);
     const [showPerfectScoreModal, setShowPerfectScoreModal] = useState(false);
     const [newBadgeId, setNewBadgeId] = useState<string | null>(null);
+    const [earnedMedals, setEarnedMedals] = useState({ emeralds: 0, rubies: 0 });
 
     // Calculate Map Progress for TopBar
     const totalProvinces = provincesData.length;
     const unlockedCount = unlockedProvinces.length;
 
     useEffect(() => {
+        // ... (rest of useEffect)
+
         const fetchLesson = async () => {
             if (missionId) {
                 // Priority 1: Load specific mission by ID
@@ -138,7 +142,11 @@ export default function TrainingPillPage() {
 
                     // Secure Server-Side Completion
                     // Await to ensure 'wasCompleted' check in store isn't preempted by updateMissionScore
-                    await completeLevel(lesson.id, score, lesson.xpReward, provinceId); // AWAITED
+                    const result = await completeLevel(lesson.id, score, lesson.xpReward, provinceId); // AWAITED
+
+                    if (result.success && (result.earnedEmeralds > 0 || result.earnedRubies > 0)) {
+                        setEarnedMedals({ emeralds: result.earnedEmeralds, rubies: result.earnedRubies });
+                    }
 
                     // Check for new badges (and await to show popup)
                     const { newBadges } = await useUserStore.getState().checkBadges(true);
@@ -199,11 +207,17 @@ export default function TrainingPillPage() {
                 />
             )}
 
-
             <BadgeUnlockModal
                 isOpen={!!newBadgeId}
                 badgeId={newBadgeId}
                 onClose={() => setNewBadgeId(null)}
+            />
+
+            <MedalUnlockModal
+                isOpen={earnedMedals.emeralds > 0 || earnedMedals.rubies > 0}
+                onClose={() => setEarnedMedals({ emeralds: 0, rubies: 0 })}
+                emeralds={earnedMedals.emeralds}
+                rubies={earnedMedals.rubies}
             />
 
             {/* Top Bar (Map Progress) */}

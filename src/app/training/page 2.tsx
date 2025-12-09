@@ -12,6 +12,7 @@ import GameOverModal from '@/components/training/GameOverModal';
 import MockAdModal from '@/components/training/MockAdModal';
 import TopBar from '@/components/dashboard/TopBar';
 import { BadgeUnlockModal } from '@/components/gamification/BadgeUnlockModal';
+import { MedalUnlockModal } from '@/components/gamification/MedalUnlockModal';
 
 export default function TrainingPillPage() {
     const params = useParams();
@@ -32,6 +33,7 @@ export default function TrainingPillPage() {
     const [showGameOver, setShowGameOver] = useState(false);
     const [showAdModal, setShowAdModal] = useState(false);
     const [newBadgeId, setNewBadgeId] = useState<string | null>(null);
+    const [earnedMedals, setEarnedMedals] = useState({ emeralds: 0, rubies: 0 });
 
     // Calculate Map Progress for TopBar
     const totalProvinces = provincesData.length;
@@ -129,7 +131,11 @@ export default function TrainingPillPage() {
                 // unlockProvince(provinceId); // REMOVED: Unlocking is now manual via Map UI
 
                 // Secure Server-Side Completion
-                await completeLevel(lesson.id, score, lesson.xpReward, provinceId);
+                const result = await completeLevel(lesson.id, score, lesson.xpReward, provinceId);
+
+                if (result.success && (result.earnedEmeralds > 0 || result.earnedRubies > 0)) {
+                    setEarnedMedals({ emeralds: result.earnedEmeralds, rubies: result.earnedRubies });
+                }
 
                 // Check for new badges
                 const { newBadges } = await useUserStore.getState().checkBadges(true);
@@ -171,10 +177,19 @@ export default function TrainingPillPage() {
                 onReward={handleAdReward}
             />
 
+
+
             <BadgeUnlockModal
                 isOpen={!!newBadgeId}
                 badgeId={newBadgeId}
                 onClose={() => setNewBadgeId(null)}
+            />
+
+            <MedalUnlockModal
+                isOpen={earnedMedals.emeralds > 0 || earnedMedals.rubies > 0}
+                onClose={() => setEarnedMedals({ emeralds: 0, rubies: 0 })}
+                emeralds={earnedMedals.emeralds}
+                rubies={earnedMedals.rubies}
             />
 
             {/* Top Bar (Map Progress) */}

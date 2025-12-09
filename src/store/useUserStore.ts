@@ -44,7 +44,7 @@ interface UserState {
     completeTutorial: () => void;
     updateSettings: (settings: Partial<{ notifications: boolean; sound: boolean; haptics: boolean }>) => Promise<void>;
     claimMission: (missionId: string) => Promise<boolean>;
-    completeLevel: (levelId: string, score: number, earnedXp: number, provinceId?: string) => Promise<boolean>;
+    completeLevel: (levelId: string, score: number, earnedXp: number, provinceId?: string) => Promise<{ success: boolean; earnedEmeralds: number; earnedRubies: number }>;
     addCredits: (amount: number) => Promise<void>;
     spendCredits: (amount: number) => Promise<boolean>;
     buyItem: (itemId: string, cost: number) => Promise<{ success: boolean; message?: string; reward?: any }>;
@@ -171,7 +171,7 @@ export const useUserStore = create<UserState>()(
             completeLevel: async (levelId, score, earnedId, provinceId) => {
                 try {
                     const { data: { user } } = await supabase.auth.getUser();
-                    if (!user) return false;
+                    if (!user) return { success: false, earnedEmeralds: 0, earnedRubies: 0 };
 
                     const state = get();
                     const { provincesData } = await import('@/data/provincesData');
@@ -237,7 +237,7 @@ export const useUserStore = create<UserState>()(
 
                     if (error) {
                         console.error('Error completing level:', JSON.stringify(error, null, 2));
-                        return false;
+                        return { success: false, earnedEmeralds: 0, earnedRubies: 0 };
                     }
 
                     if (addEmeralds > 0 || addRubies > 0) {
@@ -254,10 +254,10 @@ export const useUserStore = create<UserState>()(
                     }
 
                     await get().refreshProfile();
-                    return true;
+                    return { success: true, earnedEmeralds: addEmeralds, earnedRubies: addRubies };
                 } catch (err) {
                     console.error('Unexpected error completing level:', err);
-                    return false;
+                    return { success: false, earnedEmeralds: 0, earnedRubies: 0 };
                 }
             },
 
