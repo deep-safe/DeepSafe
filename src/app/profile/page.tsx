@@ -302,17 +302,13 @@ export default function ProfilePage() {
 
         if (!profile?.avatar_url) {
             const defaultAvatar = avatars.find(a => a.is_default);
-            if (defaultAvatar?.src) {
-                return defaultAvatar.src.startsWith('/') ? `${basePath}${defaultAvatar.src}` : defaultAvatar.src;
-            }
-            return fallback;
+            // useAvatars already adds basePath, so we use src directly
+            return defaultAvatar?.src || fallback;
         }
 
         const avatar = avatars.find(a => a.id === profile.avatar_url);
-        if (avatar?.src) {
-            return avatar.src.startsWith('/') ? `${basePath}${avatar.src}` : avatar.src;
-        }
-        return fallback;
+        // useAvatars already adds basePath, so we use src directly
+        return avatar?.src || fallback;
     };
 
     if (loading && !profile) return <CyberLoading message="INIZIALIZZAZIONE PROTOCOLLI IDENTITÀ..." />;
