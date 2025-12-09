@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Globe, Users, Medal, Cpu, UserPlus, Check, X } from 'lucide-react';
+import { Activity, Globe, Users, Medal, Cpu, UserPlus, Check, X, Gem, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AddFriendModal } from '@/components/leaderboard/AddFriendModal';
 import { useAvatars } from '@/hooks/useAvatars';
@@ -18,6 +18,9 @@ interface LeaderboardEntry {
     username: string;
     avatar_url: string | null;
     xp: number;
+    rubies: number;
+    emeralds: number;
+    credits: number;
     rank: number;
 }
 
@@ -85,8 +88,10 @@ export default function LeaderboardPage() {
             if (leaderboardTab === 'global') {
                 const { data: profiles, error } = await supabase
                     .from('profiles')
-                    .select('id, username, avatar_url, xp')
-                    .order('xp', { ascending: false })
+                    .select('id, username, avatar_url, xp, rubies, emeralds, credits')
+                    .order('rubies', { ascending: false })
+                    .order('emeralds', { ascending: false })
+                    .order('credits', { ascending: false })
                     .limit(50);
 
                 if (error) throw error;
@@ -108,9 +113,11 @@ export default function LeaderboardPage() {
                 // 2. Get profiles
                 const { data: profiles, error: profilesError } = await supabase
                     .from('profiles')
-                    .select('id, username, avatar_url, xp')
+                    .select('id, username, avatar_url, xp, rubies, emeralds, credits')
                     .in('id', friendIds)
-                    .order('xp', { ascending: false });
+                    .order('rubies', { ascending: false })
+                    .order('emeralds', { ascending: false })
+                    .order('credits', { ascending: false });
 
                 if (profilesError) throw profilesError;
                 data = profiles || [];
@@ -122,6 +129,9 @@ export default function LeaderboardPage() {
                 username: profile.username || 'Agente Sconosciuto',
                 avatar_url: profile.avatar_url,
                 xp: profile.xp || 0,
+                rubies: profile.rubies || 0,
+                emeralds: profile.emeralds || 0,
+                credits: profile.credits || 0,
                 rank: index + 1
             }));
 
@@ -349,8 +359,24 @@ export default function LeaderboardPage() {
                                         </h3>
                                     </div>
 
-                                    <div className="text-right">
-                                        <span className="font-mono text-cyber-purple font-bold text-xs tracking-wider">{entry.xp} XP</span>
+                                    <div className="flex items-center gap-4 text-right">
+                                        <div className="flex flex-col items-end">
+                                            {/* Primary Score: Rubies */}
+                                            <div className="flex items-center gap-1.5 text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]">
+                                                <span className="font-orbitron font-bold text-lg">{entry.rubies}</span>
+                                                <Gem className="w-4 h-4 fill-current" />
+                                            </div>
+                                            {/* Secondary: Emeralds */}
+                                            <div className="flex items-center gap-1.5 text-emerald-500 text-xs opacity-90">
+                                                <span className="font-mono font-bold">{entry.emeralds}</span>
+                                                <Medal className="w-3 h-3 fill-current" />
+                                            </div>
+                                            {/* Tertiary: NC Tokens */}
+                                            <div className="flex items-center gap-1.5 text-cyber-blue text-[10px] opacity-70 mt-0.5">
+                                                <span className="font-mono font-bold">{entry.credits}</span>
+                                                <Cpu className="w-3 h-3" />
+                                            </div>
+                                        </div>
                                     </div>
                                 </motion.div>
                             );

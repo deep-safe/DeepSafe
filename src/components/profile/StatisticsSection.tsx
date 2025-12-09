@@ -10,16 +10,21 @@ import { useUserStore } from '@/store/useUserStore';
 
 interface StatisticsSectionProps {
     isPremium: boolean;
+    globalRank?: number;
 }
 
-export const StatisticsSection: React.FC<StatisticsSectionProps> = ({ isPremium }) => {
+export const StatisticsSection: React.FC<StatisticsSectionProps> = ({ isPremium, globalRank: propRank }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
     // const setPremium = useUserStore(state => state.setPremium); // REMOVED: Insecure client-side update
     const router = useRouter();
     const provinceScores = useUserStore(state => state.provinceScores);
     const xp = useUserStore(state => state.xp);
-    const globalRank = useUserStore(state => state.globalRank) || 0;
+    const storeRank = useUserStore(state => state.globalRank) || 0;
+
+    // Prefer prop rank if available, else store rank
+    const globalRank = propRank !== undefined ? propRank : storeRank;
+
     const totalMissions = useUserStore(state => state.totalMissions) || 0;
     const unlockedMissionsCount = useUserStore(state => state.unlockedMissionsCount) || 0;
 

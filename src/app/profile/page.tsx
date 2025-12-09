@@ -202,12 +202,15 @@ export default function ProfilePage() {
 
             if (error) throw error;
 
-            // Calculate Rank by Rubies then Emeralds
-            // (Simplified: We just use the rank RPC or a quick count if needed, but here we can just fetch the rank directly via RPC if we want accurate rank)
-            // For now, let's trust get_user_rank RPC or just omit 'rank' calculation here if it's heavy.
-            // But let's try to keep it simple.
+            // Fetch Rank
+            const { data: rank, error: rankError } = await supabase.rpc('get_user_rank');
 
-            const { data: rank } = await supabase.rpc('get_user_rank');
+            if (rankError) {
+                console.error('❌ Error fetching user rank:', rankError);
+            } else {
+                console.log('✅ User Rank:', rank);
+            }
+
             const fullProfile = { ...data, rank: rank || 0 } as any;
 
             setProfile(fullProfile);
@@ -458,7 +461,7 @@ export default function ProfilePage() {
             )}
 
             {/* Section B: Premium Statistics */}
-            <StatisticsSection isPremium={isPremium} />
+            <StatisticsSection isPremium={isPremium} globalRank={profile?.rank || 0} />
 
             {/* Section C: Settings */}
             <div className="bg-black/40 border border-cyber-gray/30 rounded-xl p-6 space-y-6 relative overflow-hidden">
