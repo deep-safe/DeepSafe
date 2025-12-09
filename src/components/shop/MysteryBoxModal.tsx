@@ -40,7 +40,6 @@ export function MysteryBoxModal({ isOpen, onClose, reward, isOpening }: MysteryB
 
     const getRewardDetails = () => {
         if (!reward) return null;
-        console.log('🎁 Mystery Box Reward:', reward); // Debug logging
         if (reward.type === 'avatar') {
             const avatar = avatars.find(a => a.id === reward.value);
             return {
@@ -81,7 +80,7 @@ export function MysteryBoxModal({ isOpen, onClose, reward, isOpening }: MysteryB
                 )}
 
                 {/* Background Effects */}
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10 pointer-events-none" />
+                <div className="absolute inset-0 bg-[image:var(--grid-pattern)] opacity-10 pointer-events-none" style={{ '--grid-pattern': `url('${process.env.NEXT_PUBLIC_BASE_PATH || ''}/grid.svg')` } as React.CSSProperties} />
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-500/20 blur-[100px] rounded-full pointer-events-none" />
 
                 <AnimatePresence mode="wait">

@@ -116,7 +116,7 @@ export function GiftOverlay() {
                     {/* Background Effects */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/20 blur-[100px] rounded-full animate-pulse" />
-                        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
+                        <div className="absolute inset-0 bg-[image:var(--grid-pattern)] opacity-20" style={{ '--grid-pattern': `url('${process.env.NEXT_PUBLIC_BASE_PATH || ''}/grid.svg')` } as React.CSSProperties} />
                     </div>
 
                     <div className="relative z-10 max-w-md w-full p-4 text-center">

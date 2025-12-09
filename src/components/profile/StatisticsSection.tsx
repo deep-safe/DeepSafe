@@ -28,8 +28,6 @@ export const StatisticsSection: React.FC<StatisticsSectionProps> = ({ isPremium 
         return acc + (p.missions ? Object.values(p.missions).filter(m => m.isCompleted).length : 0);
     }, 0);
 
-    console.log('Stats Debug:', { totalMissions, unlockedMissionsCount, completedMissions, provinceScores });
-
     // Use unlockedMissionsCount as the denominator
     // Ensure we don't divide by zero and handle edge cases where completed > unlocked (shouldn't happen but safe to handle)
     const effectiveTotal = Math.max(unlockedMissionsCount, completedMissions);

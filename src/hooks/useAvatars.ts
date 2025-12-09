@@ -23,8 +23,6 @@ export function useAvatars() {
                     console.error('Error fetching avatars:', error);
                     setError(error);
                 } else {
-                    console.log('Fetched Avatars:', data); // DEBUG: Check paths
-
                     // Sort by rarity: common, rare, epic, legendary
                     const rarityOrder = { common: 0, rare: 1, epic: 2, legendary: 3 };
 

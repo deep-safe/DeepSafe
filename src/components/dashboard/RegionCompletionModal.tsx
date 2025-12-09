@@ -59,7 +59,7 @@ export const RegionCompletionModal: React.FC<RegionCompletionModalProps> = ({ is
                 {/* Background Effects */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[100px] animate-pulse" />
-                    <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid.svg')] opacity-10" />
+                    <div className="absolute top-0 left-0 w-full h-full bg-[image:var(--grid-pattern)] opacity-10" style={{ '--grid-pattern': `url('${process.env.NEXT_PUBLIC_BASE_PATH || ''}/grid.svg')` } as React.CSSProperties} />
                 </div>
 
                 <motion.div
