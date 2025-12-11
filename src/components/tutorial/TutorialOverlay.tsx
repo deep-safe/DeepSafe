@@ -26,9 +26,9 @@ const TUTORIAL_STEPS = [
     },
     {
         id: 'missions',
-        title: 'MISSIONI & XP',
+        title: 'MISSIONI & MEDAGLIE',
         icon: <Target className="w-16 h-16 text-cyber-purple" />,
-        content: "Clicca su una provincia per accedere alle Missioni di Addestramento. Guadagna XP per salire di grado e Crediti per potenziare il tuo equipaggiamento.",
+        content: "Clicca su una provincia per accedere alle Missioni di Addestramento. Guadagna Medaglie per salire di grado e Crediti per potenziare il tuo equipaggiamento.",
         color: 'text-cyber-purple',
         borderColor: 'border-cyber-purple'
     },
