@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Search, UserPlus, Check, Loader2 } from 'lucide-react';
+import { X, Search, UserPlus, Check, Loader2, Share2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 import { useAvatars } from '@/hooks/useAvatars';
@@ -22,6 +22,7 @@ export function AddFriendModal({ isOpen, onClose, currentUserId }: AddFriendModa
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [sentRequests, setSentRequests] = useState<Set<string>>(new Set());
+    const [inviteCopied, setInviteCopied] = useState(false);
     const { avatars } = useAvatars();
 
     const handleSearch = async () => {
@@ -141,8 +142,24 @@ export function AddFriendModal({ isOpen, onClose, currentUserId }: AddFriendModa
                                 );
                             })}
                             {searchResults.length === 0 && searchQuery && !loading && (
-                                <div className="text-center text-zinc-500 text-sm py-4">
-                                    Nessun agente trovato.
+                                <div className="text-center py-8 space-y-3">
+                                    <p className="text-zinc-400 text-sm">
+                                        Nessun agente trovato con questo nome.
+                                    </p>
+                                    <div className="flex flex-col items-center gap-2">
+                                        <p className="text-xs text-zinc-500">Il tuo amico non è ancora su DeepSafe?</p>
+                                        <button
+                                            onClick={() => {
+                                                navigator.clipboard.writeText(window.location.origin + '/login');
+                                                setInviteCopied(true);
+                                                setTimeout(() => setInviteCopied(false), 2000);
+                                            }}
+                                            className="flex items-center gap-2 bg-cyber-blue/10 border border-cyber-blue/30 px-4 py-2 rounded-lg text-cyber-blue text-sm font-bold hover:bg-cyber-blue/20 transition-all"
+                                        >
+                                            {inviteCopied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+                                            {inviteCopied ? 'LINK COPIATO!' : 'INVITA UN AMICO'}
+                                        </button>
+                                    </div>
                                 </div>
                             )}
                         </div>
