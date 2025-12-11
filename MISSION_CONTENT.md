@@ -47,6 +47,15 @@ This document tracks the regions, topics, and provinces that have been populated
 - **SV** (Savona): Ready for Import (APT, Living off the Land & Lateral Move)
 - **IM** (Imperia): Ready for Import (Quantum Security, Q-Day & PQC)
 
+## Lazio (AI Special Edition)
+**Argomento:** L'Era Sintetica: Intelligenza Artificiale & Controllo
+**Provinces:**
+- **RM** (Roma): Ready for Import [SPECIAL: 5 Missions] (AGI, Warfare, Surveillance, Alignment, Politics)
+- **VT** (Viterbo): Ready for Import (Voice Cloning & Vishing)
+- **RI** (Rieti): Ready for Import (Prompt Injection & Jailbreaking)
+- **LT** (Latina): Ready for Import (Data Poisoning & Privacy)
+- **FR** (Frosinone): Ready for Import (Algorithmic Bias & Dark Patterns)
+
 ## Veneto
 **Argomento:** Ingegneria Sociale & Psicologia dell'Hacker ("L'Arte dell'Inganno")
 **Provinces:**
