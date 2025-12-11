@@ -180,7 +180,7 @@ export interface Database {
                     region: string | null
                     province_id: string | null
                     created_at: string
-                    level: 'TUTORIAL' | 'SEMPLICE' | 'DIFFICILE' | 'BOSS'
+                    level: 'semplice' | 'medio' | 'difficile' | 'speciale'
                     description: string | null
                     tier: 'level_1' | 'level_2' | 'level_3'
                     credits_reward: number
@@ -194,7 +194,7 @@ export interface Database {
                     region?: string | null
                     province_id?: string | null
                     created_at?: string
-                    level?: 'TUTORIAL' | 'SEMPLICE' | 'DIFFICILE' | 'BOSS'
+                    level?: 'semplice' | 'medio' | 'difficile' | 'speciale'
                     description?: string | null
                     tier?: 'level_1' | 'level_2' | 'level_3'
                     credits_reward?: number
@@ -208,7 +208,7 @@ export interface Database {
                     region?: string | null
                     province_id?: string | null
                     created_at?: string
-                    level?: 'TUTORIAL' | 'SEMPLICE' | 'DIFFICILE' | 'BOSS'
+                    level?: 'semplice' | 'medio' | 'difficile' | 'speciale'
                     description?: string | null
                     tier?: 'level_1' | 'level_2' | 'level_3'
                     credits_reward?: number

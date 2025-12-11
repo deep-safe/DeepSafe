@@ -93,6 +93,7 @@ Explore the detailed documentation to understand the system:
 - **[💰 Monetization & Shop](docs/MONETIZATION.md)**: Setting up Stripe products, webhooks, and ad rewards.
 - **[🚀 Deployment (VPS)](docs/VPS.md)**: Server requirements and deployment guide.
 - **[📝 Content Contribution](docs/CONTRIBUTING.md)**: Guide for adding new quizzes and levels to the game.
+- **[🗺️ Mission Content Tracker](MISSION_CONTENT.md)**: Status of implemented missions by region.
 
 ---
 *Built with 💙 by the Deepsafe Team*
