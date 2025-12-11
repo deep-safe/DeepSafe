@@ -10,6 +10,7 @@ import { GiftOverlay } from '@/components/gamification/GiftOverlay';
 import { BiometricGuard } from '@/components/auth/BiometricGuard';
 import { CookieConsent } from '@/components/ui/CookieConsent';
 import { useHeartRefill } from '@/hooks/useHeartRefill';
+import { useUserStore } from '@/store/useUserStore';
 
 export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
@@ -17,6 +18,22 @@ export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
 
     // Global Heart Refill Logic
     useHeartRefill();
+
+    // Sync Last Login Date
+    const { setLastLoginDate } = useUserStore();
+
+    React.useEffect(() => {
+        const updateLogin = async () => {
+            try {
+                // Update Last Login to now
+                await setLastLoginDate(new Date().toISOString());
+            } catch (error) {
+                console.error('Failed to update last login:', error);
+            }
+        };
+
+        updateLogin();
+    }, []);
 
     React.useEffect(() => {
         if ('serviceWorker' in navigator) {

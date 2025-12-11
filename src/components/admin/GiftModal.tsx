@@ -21,7 +21,7 @@ interface GiftModalProps {
     currentAdminId: string;
 }
 
-type GiftType = 'credits' | 'xp' | 'hearts' | 'avatar';
+type GiftType = 'credits' | 'hearts' | 'avatar';
 
 export function GiftModal({ isOpen, onClose, users, currentAdminId }: GiftModalProps) {
     const [selectedUserId, setSelectedUserId] = useState<string>('all');
@@ -143,7 +143,7 @@ export function GiftModal({ isOpen, onClose, users, currentAdminId }: GiftModalP
                                         </div>
 
                                         {/* Gift Type */}
-                                        <div className="grid grid-cols-4 gap-3">
+                                        <div className="grid grid-cols-3 gap-3">
                                             <button
                                                 onClick={() => setGiftType('credits')}
                                                 className={`p-3 rounded-lg border flex flex-col items-center gap-2 transition-all ${giftType === 'credits'
@@ -154,16 +154,7 @@ export function GiftModal({ isOpen, onClose, users, currentAdminId }: GiftModalP
                                                 <Coins className="w-6 h-6" />
                                                 <span className="text-xs font-bold">CREDITI</span>
                                             </button>
-                                            <button
-                                                onClick={() => setGiftType('xp')}
-                                                className={`p-3 rounded-lg border flex flex-col items-center gap-2 transition-all ${giftType === 'xp'
-                                                    ? 'bg-purple-500/20 border-purple-500 text-purple-400'
-                                                    : 'bg-slate-800/50 border-slate-700 text-slate-400 hover:bg-slate-800'
-                                                    }`}
-                                            >
-                                                <Zap className="w-6 h-6" />
-                                                <span className="text-xs font-bold">XP</span>
-                                            </button>
+
                                             <button
                                                 onClick={() => setGiftType('hearts')}
                                                 className={`p-3 rounded-lg border flex flex-col items-center gap-2 transition-all ${giftType === 'hearts'
@@ -264,7 +255,6 @@ export function GiftModal({ isOpen, onClose, users, currentAdminId }: GiftModalP
                                                     {[
                                                         { id: 'coins', src: '/icons/gift-coins.png', label: 'Coins' },
                                                         { id: 'box', src: '/icons/gift-box.png', label: 'Box' },
-                                                        { id: 'xp', src: '/icons/gift-xp.png', label: 'XP' }, // Placeholder, maybe use emoji or generic if missing
                                                         { id: 'trophy', src: '/icons/gift-trophy.png', label: 'Trophy' } // Placeholder
                                                     ].map((icon) => (
                                                         <button
