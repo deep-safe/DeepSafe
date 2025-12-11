@@ -30,6 +30,7 @@ interface UserState {
     globalRank: number | null;
     totalMissions: number;
     unlockedMissionsCount: number;
+    provinceMissionCounts: Record<string, number>; // Cache of total missions per province
     mapTier: 'level_1' | 'level_2' | 'level_3';
     completedTiers: string[];
     regionCosts: Record<string, number>;
@@ -146,6 +147,7 @@ export const useUserStore = create<UserState>()(
             globalRank: null,
             totalMissions: 0,
             unlockedMissionsCount: 0,
+            provinceMissionCounts: {},
             mapTier: 'level_1',
             completedTiers: [],
             regionCosts: {},
@@ -226,94 +228,106 @@ export const useUserStore = create<UserState>()(
                     if (!user) return { success: false, earnedEmeralds: 0, earnedRubies: 0 };
 
                     const state = get();
-                    const { provincesData } = await import('@/data/provincesData');
 
-                    // 1. Identify which province this level belongs to.
-                    // If provinceId is passed explicitly (New System), use it.
-                    // Otherwise, fallback to assuming levelId might be the province ID (Old System).
-                    const targetProvinceId = provinceId || levelId;
-                    const provinceEntry = provincesData.find(p => p.id === targetProvinceId);
-
-                    let addEmeralds = 0;
-                    let addRubies = 0;
-
-                    if (provinceEntry) {
-                        // Check if previously completed
-                        const prevData = state.provinceScores[targetProvinceId];
-                        const wasCompleted = prevData?.isCompleted || false;
-
-                        // IMPORTANT: The generic 'isCompleted' passed might depend on score threshold or sub-missions.
-                        // Assuming completeLevel is called when it IS successfully completed.
-                        // We check if it wasn't completed before.
-
-                        // NOTE: strict completion logic is usually in updateProvinceScore. 
-                        // But completeLevel is the "event".
-                        // Let's check state.provinceScores AFTER updateProvinceScore is likely called?
-                        // Actually completeLevel is called usually at the END of the flow.
-
-                        // Better approach: Check if this completion action makes it complete.
-                        // COMPLETE LOGIC UPDATE:
-                        // If we are here, we assume the level (Province) is successfully finished.
-
-                        if (!wasCompleted) {
-                            addEmeralds = 1;
-
-                            // Check Region Completion
-                            const regionName = provinceEntry.region;
-                            const regionProvinces = provincesData.filter(p => p.region === regionName);
-
-                            // Check if ALL OTHER provinces in this region are ALREADY completed
-                            const otherProvinces = regionProvinces.filter(p => p.id !== targetProvinceId);
-                            const allOthersCompleted = otherProvinces.every(p => {
-                                const s = state.provinceScores[p.id];
-                                return s && s.isCompleted;
-                            });
-
-                            if (allOthersCompleted) {
-                                addRubies = 1;
-                            }
-                        }
+                    // 1. Identify Target Province (Robustly)
+                    let targetProvinceId = provinceId;
+                    if (!targetProvinceId) {
+                        try {
+                            // Try to look up assuming levelId is a mission ID, if we have mission counts cached or similar logic.
+                            // However, strictly speaking, completeLevel should probably be called with provinceId if possible.
+                            // Fallback: Assume the caller knows what they are doing if they don't pass provinceId.
+                            // But usually usage is completeLevel(mission.id, score, mission.province_id)
+                            targetProvinceId = levelId;
+                        } catch (e) { console.warn('Could not resolve province ID', e); }
                     }
 
-                    // 2. Call RPC (Legacy + New)
-                    // We keep 'complete_level' for legacy/consistency, but we ALSO call 'update_rank_counters' if needed.
-                    // actually, better to just call 'complete_level' and let IT handle it? No, we decided Client logic is easier for Regions.
-                    // So we call update_rank_counters explicitly if there are gains.
+                    // Capture 'Before' State from the Store (which should be relatively fresh)
+                    const prevScoreData = targetProvinceId ? state.provinceScores[targetProvinceId] : null;
+                    const wasCompleted = prevScoreData?.isCompleted || false;
 
-                    console.log('🚀 Calling complete_level with:', { p_user_id: user.id, p_level_id: levelId, p_score: score });
+                    console.log('🚀 Completing Level/Mission:', { levelId, score, provinceId: targetProvinceId, wasCompleted });
+
+                    // 2. Call RPC to Process Reward (NC) and Log Completion in DB
                     const { data, error } = await supabase.rpc('complete_level', {
                         p_user_id: user.id,
                         p_level_id: levelId,
                         p_score: score
                     });
-                    console.log('🏁 complete_level Result:', { data, error });
 
                     if (error) {
-                        console.error('Error completing level:', JSON.stringify(error, null, 2));
+                        console.error('Error completing level (Network/RPC):', JSON.stringify(error, null, 2));
                         return { success: false, earnedEmeralds: 0, earnedRubies: 0 };
                     }
 
-                    // UPDATE LOCAL STORE IMMEDIATELY
                     const responseData = data as any;
+                    console.log('📦 RPC Response:', responseData);
+
+                    if (responseData && responseData.success === false) {
+                        console.error('❌ Database Error completing level:', responseData.error);
+                        // Even if DB failed, we might want to refresh to be safe, or just return.
+                        // But if it failed, no progress was saved.
+                        return { success: false, earnedEmeralds: 0, earnedRubies: 0 };
+                    }
+
+                    // 3. REFRESH PROFILE to Calculate New State from Source of Truth
+                    await get().refreshProfile();
+
+                    // 4. Analyze New State for Province Completion (Emeralds)
+                    const newState = get();
+
+                    let addEmeralds = 0;
+                    let addRubies = 0;
+
+                    if (targetProvinceId) {
+                        const newScoreData = newState.provinceScores[targetProvinceId];
+                        const isNowCompleted = newScoreData?.isCompleted || false;
+
+                        if (!wasCompleted && isNowCompleted) {
+                            console.log('🎉 Province Newly Completed! Awarding Emerald.');
+                            addEmeralds = 1;
+
+                            // Check Region Completion (Rubies)
+                            try {
+                                const { provincesData } = await import('@/data/provincesData');
+                                const provinceEntry = provincesData.find(p => p.id === targetProvinceId);
+                                if (provinceEntry) {
+                                    const regionName = provinceEntry.region;
+                                    const regionProvinces = provincesData.filter(p => p.region === regionName);
+
+                                    const otherProvinces = regionProvinces.filter(p => p.id !== targetProvinceId);
+                                    const allOthersCompleted = otherProvinces.every(p => {
+                                        const s = newState.provinceScores[p.id];
+                                        return s && s.isCompleted;
+                                    });
+
+                                    if (allOthersCompleted) {
+                                        console.log('🌟 Region Completed! Awarding Ruby.');
+                                        addRubies = 1;
+                                    }
+                                }
+                            } catch (e) {
+                                console.error('Error checking region completion:', e);
+                            }
+
+                            // Persist the Rank Counters (Emeralds/Rubies)
+                            if (addEmeralds > 0 || addRubies > 0) {
+                                const { error: rankError } = await supabase.rpc('update_rank_counters' as any, {
+                                    p_user_id: user.id,
+                                    p_add_emeralds: addEmeralds,
+                                    p_add_rubies: addRubies
+                                });
+                                if (rankError) console.error('Error updating rank counters:', rankError);
+                            }
+                        }
+                    }
+
+                    // Update Credits in Store specifically if RPC returned it
                     if (responseData && typeof responseData.new_credits === 'number') {
                         set({ credits: responseData.new_credits });
                     }
 
-                    if (addEmeralds > 0 || addRubies > 0) {
-                        console.log(`💎 Awarding: ${addEmeralds} Emeralds, ${addRubies} Rubies`);
-                        const { error: rankError } = await supabase.rpc('update_rank_counters' as any, {
-                            p_user_id: user.id,
-                            p_add_emeralds: addEmeralds,
-                            p_add_rubies: addRubies
-                        });
-
-                        if (rankError) {
-                            console.error('Error updating rank counters:', rankError);
-                        }
-                    }
-
-                    await get().refreshProfile();
                     return { success: true, earnedEmeralds: addEmeralds, earnedRubies: addRubies };
+
                 } catch (err) {
                     console.error('Unexpected error completing level:', err);
                     return { success: false, earnedEmeralds: 0, earnedRubies: 0 };
@@ -673,6 +687,7 @@ export const useUserStore = create<UserState>()(
                     const { data: { user } } = await supabase.auth.getUser();
                     if (!user) return;
 
+                    // 1. Fetch Basic Profile
                     const { data: profile, error } = await supabase
                         .from('profiles')
                         .select('current_hearts, highest_streak, unlocked_provinces, province_scores, last_login, last_streak_date, earned_badges, credits, streak_freezes, inventory, owned_avatars, settings_notifications, settings_sound, settings_haptics, has_seen_tutorial, is_premium, map_tier, completed_tiers')
@@ -685,12 +700,128 @@ export const useUserStore = create<UserState>()(
                     }
 
                     if (profile) {
+                        // 2. Fetch ALL Missions to build a map (MissionID -> ProvinceID)
+                        // Fetching count of questions to dynamically set maxScore (1 question = 1 point)
+                        const { data: allMissions, error: missionsError } = await supabase
+                            .from('missions')
+                            .select('id, province_id, mission_questions(count)');
+
+                        const missionMap = new Map<string, { provinceId: string; maxScore: number }>();
+                        const provinceMaxScores: Record<string, number> = {};
+                        const provinceMissionCounts: Record<string, number> = {};
+
+                        if (allMissions && !missionsError) {
+                            allMissions.forEach((m: any) => {
+                                if (m.province_id) {
+                                    // Parse question count
+                                    let qCount = 10; // Default fallback
+                                    if (m.mission_questions && Array.isArray(m.mission_questions) && m.mission_questions.length > 0) {
+                                        qCount = m.mission_questions[0].count || 0;
+                                    }
+
+                                    // If qCount is 0 (e.g. no questions linked yet), keep 10 to avoid division by zero, 
+                                    // OR set to 1 if we prefer. But 10 is a safe "legacy" default.
+                                    // actually if it has 5 questions, maxScore should be 5.
+                                    const finalMaxScore = qCount > 0 ? qCount : 10;
+
+                                    missionMap.set(m.id, { provinceId: m.province_id, maxScore: finalMaxScore });
+
+                                    // Sum Max Score per province (Robust Metric)
+                                    provinceMaxScores[m.province_id] = (provinceMaxScores[m.province_id] || 0) + finalMaxScore;
+
+                                    // Count missions per province (Keep for compatibility/dashboard usage if needed)
+                                    provinceMissionCounts[m.province_id] = (provinceMissionCounts[m.province_id] || 0) + 1;
+                                }
+                            });
+                        }
+
+                        // 3. Fetch User Progress (Generic User Progress Table)
+                        const { data: userProgress, error: progressError } = await supabase
+                            .from('user_progress')
+                            .select('quiz_id, score, status, completed_at')
+                            .eq('user_id', user.id);
+
+
+                        // 4. Calculate Dynamic Province Scores
+                        const newProvinceScores: Record<string, { score: number; maxScore: number; isCompleted: boolean; missions: Record<string, any> }> = {};
+
+                        // Initialize known provinces with TRUE max score
+                        Object.keys(provinceMaxScores).forEach(provId => {
+                            newProvinceScores[provId] = {
+                                score: 0,
+                                maxScore: provinceMaxScores[provId],
+                                isCompleted: false,
+                                missions: {}
+                            };
+                        });
+
+                        if (userProgress && !progressError) {
+                            // Cast to any[] to avoid strict type checks if fields are missing in generated types
+                            (userProgress as any[]).forEach(up => {
+                                // Find which province this mission belongs to
+                                const missionInfo = missionMap.get(up.quiz_id);
+                                if (missionInfo) {
+                                    const { provinceId } = missionInfo;
+
+                                    if (!newProvinceScores[provinceId]) {
+                                        newProvinceScores[provinceId] = { score: 0, maxScore: 10, isCompleted: false, missions: {} };
+                                    }
+
+                                    const provData = newProvinceScores[provinceId];
+
+                                    // Add to score
+                                    provData.score += (up.score || 0);
+
+                                    // Track individual mission completion
+                                    // Treat as completed if status is 'completed' OR if score equals maxScore (100%)
+                                    const isScorePerfect = up.score >= missionInfo.maxScore && missionInfo.maxScore > 0;
+                                    if (up.status === 'completed' || isScorePerfect) {
+                                        provData.missions[up.quiz_id] = { completed: true, score: up.score, maxScore: missionInfo.maxScore };
+                                    }
+                                } else {
+                                    if (up.quiz_id === '5a4b3c2d-1e0f-9a8b-7c6d-5e4f3a2b1c0d') {
+                                        console.error('❌ Tracce in Montagna ID found in progress but NOT in mission map!');
+                                    }
+                                }
+                            });
+                        }
+
+                        // 5. Determine Final Province Completion Status
+                        let unlockedMissionsCount = 0;
+                        const unlockedProvinces = profile.unlocked_provinces ?? ['CB', 'IS', 'FG'];
+
+                        // Calculate total unlocked missions count for UI
+                        unlockedProvinces.forEach(provId => {
+                            unlockedMissionsCount += (provinceMissionCounts[provId] || 0);
+                        });
+
+                        Object.keys(newProvinceScores).forEach(provId => {
+                            const data = newProvinceScores[provId];
+                            const totalMissions = provinceMissionCounts[provId] || 0;
+                            const completedMissionsCount = Object.keys(data.missions).length;
+
+                            // A province is completed ONLY if ALL missions are completed
+                            if (totalMissions > 0 && completedMissionsCount >= totalMissions) {
+                                data.isCompleted = true;
+                            } else {
+                                data.isCompleted = false;
+                            }
+                            // Ensure maxScore covers all missions
+                            data.maxScore = totalMissions * 10;
+                        });
+
+                        // Set Store
                         set({
                             credits: profile.credits ?? 100,
                             lives: profile.current_hearts ?? 5,
                             streak: profile.highest_streak ?? 0,
-                            unlockedProvinces: profile.unlocked_provinces ?? ['CB', 'IS', 'FG'],
-                            provinceScores: (profile.province_scores as any) ?? {},
+                            unlockedProvinces: unlockedProvinces,
+
+                            // USE DYNAMIC SCORES
+                            provinceScores: newProvinceScores,
+                            provinceMissionCounts: provinceMissionCounts,
+                            unlockedMissionsCount: unlockedMissionsCount,
+
                             lastLoginDate: profile.last_login ?? null,
                             lastStreakDate: profile.last_streak_date ?? null,
                             earnedBadges: (profile.earned_badges as any) ?? [],
@@ -705,9 +836,15 @@ export const useUserStore = create<UserState>()(
                             hasSeenTutorial: profile.has_seen_tutorial ?? false,
                             isPremium: profile.is_premium ?? false,
                             mapTier: (profile.map_tier as 'level_1' | 'level_2' | 'level_3') ?? 'level_1',
-                            completedTiers: profile.completed_tiers ?? []
+                            completedTiers: profile.completed_tiers ?? [],
+
+                            // Let the RPC logic below handle rank
                         });
-                        console.log('🔄 Profile refreshed from DB:', profile);
+
+                        console.log('🔄 Profile Refreshed (Dynamic):', {
+                            credits: profile.credits,
+                            provinceScores: Object.keys(newProvinceScores).length
+                        });
 
                         // Fetch Rank
                         const { data: rank, error: rankError } = await supabase.rpc('get_user_rank');
@@ -715,45 +852,8 @@ export const useUserStore = create<UserState>()(
                             set({ globalRank: rank });
                         }
 
-                        // Fetch Total Missions Count
-                        const { count: missionsCount, error: missionsError } = await supabase
-                            .from('missions')
-                            .select('*', { count: 'exact', head: true });
-
-                        if (!missionsError && missionsCount !== null) {
-                            set({ totalMissions: missionsCount });
-                        }
-
-                        // Calculate Unlocked Missions Count (Hybrid: DB + Fallback)
-                        const unlockedProvinces = profile.unlocked_provinces ?? ['CB', 'IS', 'FG'];
-                        let calculatedTotal = 0;
-
-                        if (unlockedProvinces.length > 0) {
-                            const { data: dbMissions, error: unlockedError } = await supabase
-                                .from('missions')
-                                .select('province_id')
-                                .in('province_id', unlockedProvinces);
-
-                            if (!unlockedError && dbMissions) {
-                                const dbCounts: Record<string, number> = {};
-                                dbMissions.forEach(m => {
-                                    if (m.province_id) {
-                                        dbCounts[m.province_id] = (dbCounts[m.province_id] || 0) + 1;
-                                    }
-                                });
-
-                                unlockedProvinces.forEach(provId => {
-                                    const count = dbCounts[provId] || 0;
-                                    // If DB has missions, use that count. Otherwise assume 1 fallback mission.
-                                    calculatedTotal += (count > 0 ? count : 1);
-                                });
-                            } else {
-                                // Fallback if DB fetch fails: 1 per province
-                                calculatedTotal = unlockedProvinces.length;
-                            }
-                        }
-
-                        set({ unlockedMissionsCount: calculatedTotal });
+                        const { count: missionsCount } = await supabase.from('missions').select('*', { count: 'exact', head: true });
+                        if (missionsCount !== null) set({ totalMissions: missionsCount });
                     }
                 } catch (err) {
                     console.error('Unexpected error refreshing profile:', err);

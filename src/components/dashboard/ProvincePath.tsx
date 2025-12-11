@@ -26,12 +26,12 @@ const ProvincePath: React.FC<ProvincePathProps> = ({
 
     // Mastery Logic
     const percentage = maxScore > 0 ? (userScore / maxScore) * 100 : 0;
-    const isMastered = percentage === 100;
+    const isSafe = status === 'safe';
+    const isMastered = percentage === 100 || isSafe; // Force mastered if SAFE
     const isPassed = percentage >= 60;
 
     const isLocked = status === 'locked';
     const isUnlocked = status === 'unlocked';
-    const isSafe = status === 'safe';
 
     // In Region Mode (Level 2), we use standard individual highlighting
     // In Italy Mode (Level 1), we highlight if the Region is hovered
@@ -71,10 +71,9 @@ const ProvincePath: React.FC<ProvincePathProps> = ({
         if (isRegionHovered) return isMastered ? theme.mastered : theme.region;
         if (isRegionMode) return 'rgba(30, 41, 59, 0.8)'; // Dim others in region mode
 
-        // Default State Colors
         if (isMastered) return theme.mastered;
         if (isPassed) return theme.passed;
-        if (isUnlocked) return theme.unlocked;
+        if (isUnlocked || isSafe) return theme.unlocked; // Fallback for safe if not mastered? (Should be covered by isMastered line above)
 
         return 'rgba(0, 0, 0, 0.95)'; // Locked - Pitch Black / Void
     };

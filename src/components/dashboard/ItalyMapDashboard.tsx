@@ -57,6 +57,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
     const fetchRegionCosts = useUserStore(state => state.fetchRegionCosts);
     const regionCosts = useUserStore(state => state.regionCosts);
     const unlockRegion = useUserStore(state => state.unlockRegion);
+    const provinceMissionCounts = useUserStore(state => state.provinceMissionCounts);
 
     const [isProfileLoaded, setIsProfileLoaded] = useState(false);
     const { streak: currentStreak, showModal: showStreakModal, closeModal: closeStreakModal, previousStreak, isFrozen } = useDailyStreak(isProfileLoaded);
@@ -232,15 +233,39 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
             const scoreData = provinceScores[p.id] || { score: 0, maxScore: 10, isCompleted: false };
             const isUnlocked = unlockedProvinces.includes(p.id);
 
+            // Dynamic Progress Calculation
+            const dbCount = provinceMissionCounts[p.id] || 0;
+            // Use true maxScore from store if available (calculated by refreshProfile), otherwise fallback to dbCount * 10.
+            // Avoid division by zero by ensuring at least 10 if we have data, or default to 10 for safety.
+            const calculatedMaxScore = scoreData.maxScore > 0 ? scoreData.maxScore : (dbCount > 0 ? dbCount * 10 : 10);
+
+            // Calculate percentage
+            let calculatedProgress = 0;
+            if (scoreData.isCompleted) {
+                calculatedProgress = 100; // Force 100% if marked complete
+            } else {
+                calculatedProgress = Math.min(100, Math.round((scoreData.score / calculatedMaxScore) * 100));
+            }
+
+            // Determine Status Color
+            // Priority: Safe (Green/Completed) > Unlocked (Blue/In Progress) > Locked (Gray)
+            let status = 'locked';
+            if (scoreData.isCompleted || p.status === 'safe') {
+                status = 'safe';
+            } else if (isUnlocked) {
+                status = 'unlocked';
+            }
+
             return {
                 ...p,
-                status: isUnlocked ? 'unlocked' : (p.status === 'safe' ? 'safe' : 'locked'),
+                status: status, // Correctly mapped for color
                 userScore: scoreData.score,
-                maxScore: scoreData.maxScore,
-                isCompleted: scoreData.isCompleted
+                maxScore: calculatedMaxScore,
+                isCompleted: scoreData.isCompleted,
+                progress: calculatedProgress
             };
         }) as Province[];
-    }, [unlockedProvinces, provinceScores]);
+    }, [unlockedProvinces, provinceScores, provinceMissionCounts]);
 
     // Calculate initial Italy ViewBox based on all provinces
     const initialItalyViewBox = useMemo(() => {

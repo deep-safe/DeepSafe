@@ -22,6 +22,7 @@ SECURITY DEFINER
 AS $$
 DECLARE
   v_user_uuid UUID;
+  v_level_uuid UUID;
   v_nc_reward INT;
   v_new_credits INT;
 BEGIN
@@ -32,16 +33,28 @@ BEGIN
     RETURN json_build_object('success', FALSE, 'error', 'Invalid user_id format');
   END;
 
-  -- 1. Fetch Mission Reward
-  SELECT nc_reward INTO v_nc_reward
-  FROM public.missions
-  WHERE id = p_level_id;
+  -- 1. Safely Cast Level ID to UUID (Mission IDs are UUIDs, legacy might be slugs)
+  BEGIN
+    v_level_uuid := p_level_id::UUID;
+  EXCEPTION WHEN OTHERS THEN
+    v_level_uuid := NULL; -- It's a slug, not a UUID
+  END;
+
+  -- 2. Fetch Mission Reward (Only if it's a UUID)
+  v_nc_reward := 0;
+  IF v_level_uuid IS NOT NULL THEN
+    SELECT nc_reward INTO v_nc_reward
+    FROM public.missions
+    WHERE id = v_level_uuid;
+  END IF;
 
   IF v_nc_reward IS NULL THEN
     v_nc_reward := 0;
   END IF;
 
-  -- 2. Mark Mission/Level as Completed
+  -- 3. Mark Mission/Level as Completed
+  -- NOTE: user_progress.quiz_id is likely TEXT to support legacy slugs.
+  -- We insert p_level_id (TEXT) to be safe and compatible with both.
   INSERT INTO public.user_progress (user_id, quiz_id, score, status, completed_at)
   VALUES (v_user_uuid, p_level_id, p_score, 'completed', NOW())
   ON CONFLICT (user_id, quiz_id)
@@ -50,7 +63,7 @@ BEGIN
     status = 'completed',
     completed_at = NOW();
 
-  -- 3. Update User Profile Credits (NC)
+  -- 4. Update User Profile Credits (NC)
   IF v_nc_reward > 0 THEN
       UPDATE public.profiles
       SET credits = credits + v_nc_reward

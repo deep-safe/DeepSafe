@@ -95,14 +95,15 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                 {missions.map((mission) => {
                                     const mScore = missionScores[mission.id] || { score: 0, maxScore: 0, isCompleted: false };
                                     const isPerfect = mScore.score === mScore.maxScore && mScore.maxScore > 0;
-                                    const isPassed = mScore.isCompleted;
+                                    const isPassed = mScore.isCompleted || isPerfect;
 
                                     return (
                                         <button
                                             key={mission.id}
-                                            onClick={() => router.push(`/training?problemId=mission-1&provinceId=${province.id}&missionId=${mission.id}`)}
+                                            disabled={isPassed}
+                                            onClick={() => !isPassed && router.push(`/training?problemId=mission-1&provinceId=${province.id}&missionId=${mission.id}`)}
                                             className={`group relative flex items-center justify-between p-4 rounded-xl border transition-all duration-300 w-full text-left ${isPassed
-                                                ? 'bg-slate-900/80 border-slate-700 hover:border-emerald-500/50'
+                                                ? 'bg-emerald-950/20 border-emerald-900/30 opacity-70 cursor-not-allowed'
                                                 : mScore.score > 0
                                                     ? 'bg-amber-950/20 border-amber-900/50 hover:border-amber-500/50'
                                                     : 'bg-slate-900/50 border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900'
@@ -111,7 +112,7 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                             <div className="flex flex-col items-start gap-1">
                                                 <div className="flex items-center gap-2">
                                                     <span className={`text-sm font-bold transition-colors ${isPassed
-                                                        ? 'text-emerald-400'
+                                                        ? 'text-emerald-500/80'
                                                         : mScore.score > 0
                                                             ? 'text-amber-400'
                                                             : 'text-white group-hover:text-cyan-400'}`}>
@@ -122,7 +123,7 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                                             {[1, 2, 3].map((star) => (
                                                                 <Star
                                                                     key={star}
-                                                                    className={`w-3 h-3 ${isPerfect || (star < 3 && isPassed) ? 'text-amber-400 fill-amber-400' : 'text-slate-700'}`}
+                                                                    className={`w-3 h-3 ${isPerfect || (star < 3 && isPassed) ? 'text-amber-400/80 fill-amber-400/80' : 'text-slate-700'}`}
                                                                 />
                                                             ))}
                                                         </div>
@@ -134,25 +135,20 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                                         <span>⏱</span> {mission.estimatedTime}
                                                     </span>
                                                     {mission.ncReward && (
-                                                        <span className="flex items-center gap-1 text-yellow-500">
+                                                        <span className="flex items-center gap-1 text-yellow-500/80">
                                                             <span>🏆</span> {mission.ncReward} NC
-                                                        </span>
-                                                    )}
-                                                    {isPassed && !isPerfect && (
-                                                        <span className="text-cyan-500 flex items-center gap-1">
-                                                            <RotateCcw className="w-3 h-3" /> RETRY FOR PERFECT
                                                         </span>
                                                     )}
                                                 </div>
                                             </div>
                                             <div className={`px-3 py-1 rounded border text-[10px] font-mono transition-colors ${isPassed
-                                                ? 'bg-emerald-950/30 border-emerald-900/50 text-emerald-500'
+                                                ? 'bg-emerald-950/30 border-emerald-900/30 text-emerald-500/80'
                                                 : mScore.score > 0
                                                     ? 'bg-amber-950/30 border-amber-900/50 text-amber-500'
                                                     : 'bg-slate-950 border-slate-800 text-slate-400 group-hover:text-cyan-500 group-hover:border-cyan-900'
                                                 }`}>
                                                 {isPassed
-                                                    ? 'COMPLETED'
+                                                    ? 'COMPLETATA'
                                                     : mScore.score > 0
                                                         ? `PROVATA: ${Math.round((mScore.score / (mScore.maxScore || 1)) * 100)}%`
                                                         : (mission.level || 'semplice')}
@@ -165,14 +161,16 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                             // Single Mission Action
                             (() => {
                                 const mScore = singleMission ? (missionScores[singleMission.id] || { score: 0, maxScore: 0, isCompleted: false }) : { score: 0, maxScore: 0, isCompleted: false };
-                                const isPassed = mScore.isCompleted;
+                                const isPerfect = mScore.score === mScore.maxScore && mScore.maxScore > 0;
+                                const isPassed = mScore.isCompleted || isPerfect;
                                 const isProvata = mScore.score > 0 && !isPassed;
 
                                 return (
                                     <button
-                                        onClick={() => router.push(`/training?problemId=mission-1&provinceId=${province.id}`)}
+                                        disabled={isPassed}
+                                        onClick={() => !isPassed && router.push(`/training?problemId=mission-1&provinceId=${province.id}`)}
                                         className={`w-full group relative overflow-hidden rounded-xl border p-6 transition-all duration-300 ${isPassed
-                                            ? 'bg-emerald-950/30 border-emerald-900/50 hover:bg-emerald-900/20 hover:border-emerald-500/50'
+                                            ? 'bg-emerald-950/20 border-emerald-900/30 opacity-70 cursor-not-allowed'
                                             : isProvata
                                                 ? 'bg-amber-950/20 border-amber-900/50 hover:bg-amber-900/20 hover:border-amber-500/50'
                                                 : 'bg-cyan-950/30 border-cyan-900/50 hover:bg-cyan-900/20 hover:border-cyan-500/50'
@@ -180,7 +178,7 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                     >
                                         <div className="flex items-center justify-between relative z-10">
                                             <div className="flex flex-col items-start">
-                                                <div className={`text-xs font-mono uppercase ${isPassed ? 'text-emerald-500' : isProvata ? 'text-amber-500' : 'text-cyber-gray'
+                                                <div className={`text-xs font-mono uppercase ${isPassed ? 'text-emerald-500/80' : isProvata ? 'text-amber-500' : 'text-cyber-gray'
                                                     }`}>
                                                     {isPassed
                                                         ? 'COMPLETATA'
@@ -188,23 +186,28 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                                             ? `PROVATA: ${Math.round((mScore.score / (mScore.maxScore || 1)) * 100)}%`
                                                             : (singleMission?.ncReward ? `BONUS ${singleMission.ncReward} NC` : 'BONUS NC')}
                                                 </div>
-                                                <span className={`text-lg font-bold ${isPassed ? 'text-emerald-100' : isProvata ? 'text-amber-100' : 'text-white'
+                                                <span className={`text-lg font-bold ${isPassed ? 'text-emerald-100/60' : isProvata ? 'text-amber-100' : 'text-white'
                                                     }`}>
-                                                    {isPassed ? 'RITENTA' : isProvata ? 'RITENTA MISSIONE' : 'AVVIA MISSIONE'}
+                                                    {isPassed ? 'MISSIONE COMPLETATA' : isProvata ? 'RITENTA MISSIONE' : 'AVVIA MISSIONE'}
                                                 </span>
                                             </div>
-                                            <div className={`h-10 w-10 rounded-full flex items-center justify-center transition-all ${isPassed
-                                                ? 'bg-emerald-500/10 group-hover:bg-emerald-500 group-hover:text-black text-emerald-500'
-                                                : isProvata
+                                            {!isPassed && (
+                                                <div className={`h-10 w-10 rounded-full flex items-center justify-center transition-all ${isProvata
                                                     ? 'bg-amber-500/10 group-hover:bg-amber-500 group-hover:text-black text-amber-500'
                                                     : 'bg-cyan-500/10 group-hover:bg-cyan-500 group-hover:text-black'
-                                                }`}>
-                                                <ChevronRight className="w-6 h-6" />
-                                            </div>
+                                                    }`}>
+                                                    <ChevronRight className="w-6 h-6" />
+                                                </div>
+                                            )}
+                                            {isPassed && (
+                                                <div className="h-10 w-10 rounded-full flex items-center justify-center bg-emerald-500/10 text-emerald-500">
+                                                    <Star className="w-6 h-6 fill-current" />
+                                                </div>
+                                            )}
                                         </div>
-                                        {/* Scanline effect */}
-                                        <div className={`absolute inset-0 bg-gradient-to-b from-transparent ${isPassed ? 'via-emerald-500/5' : isProvata ? 'via-amber-500/5' : 'via-cyan-500/5'
-                                            } to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000`} />
+                                        {/* Scanline effect only if not passed */}
+                                        {!isPassed && <div className={`absolute inset-0 bg-gradient-to-b from-transparent ${isProvata ? 'via-amber-500/5' : 'via-cyan-500/5'
+                                            } to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000`} />}
                                     </button>
                                 );
                             })()
@@ -231,7 +234,7 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-mono text-slate-500">PROGRESS:</span>
+                    <span className="text-[10px] font-mono text-slate-500">PROGRESSO:</span>
                     <div className="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden">
                         <div
                             className="h-full bg-cyan-500 transition-all duration-500"
