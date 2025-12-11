@@ -309,6 +309,16 @@ const DEFAULT_CONTENT_ID = 'cyber-basics';
 // --- Helper to get lesson for a province ---
 // Client is already initialized
 
+// Helper to map DB level string to TypeScript type
+const mapLevel = (level: string): TrainingLesson['level'] => {
+    if (!level) return undefined;
+    const upper = level.toUpperCase();
+    if (['TUTORIAL', 'SEMPLICE', 'MEDIO', 'DIFFICILE', 'BOSS'].includes(upper)) {
+        return upper as TrainingLesson['level'];
+    }
+    return 'SEMPLICE'; // Fallback
+};
+
 export const getLessonsForProvince = async (provinceId: string, region: string): Promise<TrainingLesson[]> => {
     // 1. Try to fetch specific missions for this province from Supabase
     try {
@@ -340,7 +350,7 @@ export const getLessonsForProvince = async (provinceId: string, region: string):
                 })),
 
                 estimatedTime: mission.estimated_time,
-                level: mission.level,
+                level: mapLevel(mission.level),
                 description: mission.description || undefined,
                 ncReward: mission.nc_reward
             }));
@@ -401,7 +411,7 @@ export const getMissionById = async (missionId: string): Promise<TrainingLesson 
                 })),
 
                 estimatedTime: mission.estimated_time,
-                level: mission.level,
+                level: mapLevel(mission.level),
                 description: mission.description || undefined,
                 ncReward: mission.nc_reward
             };
