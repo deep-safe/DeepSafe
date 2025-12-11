@@ -240,9 +240,23 @@ export default function AdminMissionsPage() {
 
     // ... (existing render)
 
+    // Helper for robust string comparison (handles hyphens, apostrophes, and casing)
+    const normalizeString = (str: string | null | undefined) => {
+        if (!str) return '';
+        return str
+            .toLowerCase()
+            .replace(/[-'’]/g, ' ') // Replace hyphens and apostrophes with spaces
+            .replace(/\s+/g, ' ')   // Collapse multiple spaces
+            .trim();
+    };
+
     const filteredMissions = missions.filter(m => {
-        if (selectedRegion && m.region !== selectedRegion) return false;
-        if (selectedProvince && m.province_id !== selectedProvince) return false;
+        // Robust comparison for region
+        if (selectedRegion && normalizeString(m.region) !== normalizeString(selectedRegion)) return false;
+
+        // Robust comparison for province ID
+        if (selectedProvince && (m.province_id || '').toLowerCase() !== selectedProvince.toLowerCase()) return false;
+
         if (selectedLevel && m.level !== selectedLevel) return false;
         if (selectedTier && m.tier !== selectedTier) return false;
         if (searchQuery && !m.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
