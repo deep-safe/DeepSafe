@@ -5,6 +5,14 @@ import { Database } from '@/types/supabase';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
+export interface AgentStats {
+    mission_completion_rate: number;
+    accuracy: number;
+    global_rank: number;
+    total_missions: number;
+    completed_missions: number;
+}
+
 interface UserState {
     credits: number; // NeuroCredits
     streak: number;
@@ -19,6 +27,7 @@ interface UserState {
         isCompleted: boolean;
         missions?: Record<string, { score: number; maxScore: number; isCompleted: boolean }>;
     }>;
+    agentStats: AgentStats | null;
     lastLoginDate: string | null; // ISO Date string YYYY-MM-DD
     lastStreakDate: string | null; // Dedicated date for streak tracking
     earnedBadges: { id: string; earned_at: string }[];
@@ -136,6 +145,7 @@ export const useUserStore = create<UserState>()(
             },
             unlockedProvinces: ['CB', 'IS'], // Molise (CB, IS) unlocked by default
             provinceScores: {},
+            agentStats: null,
             lastLoginDate: null,
             lastStreakDate: null,
             earnedBadges: [],
@@ -863,6 +873,12 @@ export const useUserStore = create<UserState>()(
 
                         const { count: missionsCount } = await supabase.from('missions').select('*', { count: 'exact', head: true });
                         if (missionsCount !== null) set({ totalMissions: missionsCount });
+
+                        // Fetch Agent Stats (RPC)
+                        const { data: statsData, error: statsError } = await (supabase.rpc as any)('get_agent_stats');
+                        if (!statsError && statsData) {
+                            set({ agentStats: statsData as AgentStats });
+                        }
                     }
                 } catch (err) {
                     console.error('Unexpected error refreshing profile:', err);

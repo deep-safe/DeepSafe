@@ -98,6 +98,19 @@ function SettingsToggle({ checked, onChange, color = 'blue' }: { checked: boolea
     );
 }
 
+// ... (imports remain)
+// ... (other imports)
+
+// ...
+
+interface AgentStats {
+    mission_completion_rate: number;
+    accuracy: number;
+    global_rank: number;
+    total_missions: number;
+    completed_missions: number;
+}
+
 export default function ProfilePage() {
     const router = useRouter();
     const { earnedBadges, refreshProfile, settings, updateSettings, inventory, ownedAvatars, isPremium } = useUserStore();
@@ -127,6 +140,13 @@ export default function ProfilePage() {
     // -- State Management --
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<Profile | null>(null);
+    const [agentStats, setAgentStats] = useState<AgentStats>({
+        mission_completion_rate: 0,
+        accuracy: 0,
+        global_rank: 0,
+        total_missions: 0,
+        completed_missions: 0
+    });
 
     // Enforce Mobile-Only Settings (Clear persisted state on Web)
     useEffect(() => {
@@ -201,16 +221,22 @@ export default function ProfilePage() {
 
             if (error) throw error;
 
-            // Fetch Rank
-            const { data: rank, error: rankError } = await supabase.rpc('get_user_rank');
+            // Fetch Agent Stats (Server-Side)
+            const { data: statsData, error: statsError } = await supabase.rpc('get_agent_stats');
 
-            if (rankError) {
-                console.error('❌ Error fetching user rank:', rankError);
+            if (statsError) {
+                console.error('❌ Error fetching agent stats:', statsError);
             } else {
-                console.log('✅ User Rank:', rank);
+                console.log('✅ Agent Stats:', statsData);
+                if (statsData) {
+                    setAgentStats(statsData as AgentStats);
+                }
             }
 
-            const fullProfile = { ...data, rank: rank || 0 } as any;
+            // Legacy Rank Fetch (keep for cache compatibility if needed, but statsData has it now)
+            // We can use statsData.global_rank for display.
+
+            const fullProfile = { ...data, rank: statsData?.global_rank || 0 } as any;
 
             setProfile(fullProfile);
             setEditName(data.username || '');
@@ -452,15 +478,17 @@ export default function ProfilePage() {
             </div>
 
             {/* Section A.5: Medagliere */}
-            {profile && (
-                <MedagliereSection
-                    rubies={profile.rubies || 0}
-                    emeralds={profile.emeralds || 0}
-                />
-            )}
+            {
+                profile && (
+                    <MedagliereSection
+                        rubies={profile.rubies || 0}
+                        emeralds={profile.emeralds || 0}
+                    />
+                )
+            }
 
             {/* Section B: Premium Statistics */}
-            <StatisticsSection isPremium={isPremium} globalRank={profile?.rank || 0} />
+            <StatisticsSection isPremium={isPremium} stats={agentStats} />
 
             {/* Section C: Settings */}
             <div className="bg-black/40 border border-cyber-gray/30 rounded-xl p-6 space-y-6 relative overflow-hidden">

@@ -8,51 +8,31 @@ import { PremiumModal } from './PremiumModal';
 import { ComingSoonModal } from '../common/ComingSoonModal';
 import { useUserStore } from '@/store/useUserStore';
 
-interface StatisticsSectionProps {
-    isPremium: boolean;
-    globalRank?: number;
+interface AgentStats {
+    mission_completion_rate: number;
+    accuracy: number;
+    global_rank: number;
+    total_missions: number;
+    completed_missions: number;
 }
 
-export const StatisticsSection: React.FC<StatisticsSectionProps> = ({ isPremium, globalRank: propRank }) => {
+interface StatisticsSectionProps {
+    isPremium: boolean;
+    stats: AgentStats;
+}
+
+export const StatisticsSection: React.FC<StatisticsSectionProps> = ({ isPremium, stats }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
-    // const setPremium = useUserStore(state => state.setPremium); // REMOVED: Insecure client-side update
-    const router = useRouter();
-    const provinceScores = useUserStore(state => state.provinceScores);
-    const storeRank = useUserStore(state => state.globalRank) || 0;
 
-    // Prefer prop rank if available, else store rank
-    const globalRank = propRank !== undefined ? propRank : storeRank;
-
-    const totalMissions = useUserStore(state => state.totalMissions) || 0;
-    const unlockedMissionsCount = useUserStore(state => state.unlockedMissionsCount) || 0;
-
-    // Calculate Completed Missions from user progress
-    const completedMissions = Object.values(provinceScores).reduce((acc, p) => {
-        return acc + (p.missions ? Object.values(p.missions).filter(m => m.isCompleted).length : 0);
-    }, 0);
-
-    // Use unlockedMissionsCount as the denominator
-    // Ensure we don't divide by zero and handle edge cases where completed > unlocked (shouldn't happen but safe to handle)
-    const effectiveTotal = Math.max(unlockedMissionsCount, completedMissions);
-    const missionCompletionRate = effectiveTotal > 0 ? Math.round((completedMissions / effectiveTotal) * 100) : 0;
-
-    // Calculate Accuracy
-    let totalScore = 0;
-    let totalMaxScore = 0;
-    Object.values(provinceScores).forEach(p => {
-        totalScore += p.score;
-        totalMaxScore += p.maxScore;
-        if (p.missions) {
-            Object.values(p.missions).forEach(m => {
-                totalScore += m.score;
-                totalMaxScore += m.maxScore;
-            });
-        }
-    });
-    const accuracy = totalMaxScore > 0 ? Math.min(100, Math.round((totalScore / totalMaxScore) * 100)) : 0;
-
-
+    // Deconstruct Stats
+    const {
+        mission_completion_rate = 0,
+        accuracy = 0,
+        global_rank = 0,
+        total_missions = 0,
+        completed_missions = 0
+    } = stats || {};
 
     const handleUpgrade = async () => {
         // await setPremium(true); // REMOVED: Premium is activated via Stripe Webhook
@@ -85,8 +65,8 @@ export const StatisticsSection: React.FC<StatisticsSectionProps> = ({ isPremium,
                     <StatItem
                         icon={<Target className="w-5 h-5" />}
                         label="COMPLETAMENTO MISSIONI"
-                        value={`${missionCompletionRate}%`}
-                        subtext={`${completedMissions}/${effectiveTotal} Completate`}
+                        value={`${mission_completion_rate}%`}
+                        subtext={`${completed_missions}/${total_missions} Completate`}
                         color="emerald"
                     />
 
@@ -103,18 +83,9 @@ export const StatisticsSection: React.FC<StatisticsSectionProps> = ({ isPremium,
                     <StatItem
                         icon={<Trophy className="w-5 h-5" />}
                         label="RANK GLOBALE"
-                        value={`#${globalRank}`}
+                        value={`#${global_rank}`}
                         subtext="Top 15% Agenti"
                         color="amber"
-                    />
-
-                    {/* Stat Item 4: Playstyle */}
-                    <StatItem
-                        icon={<Zap className="w-5 h-5" />}
-                        label="STILE DI GIOCO"
-                        value="TATTICO"
-                        subtext="Focus: Strategia e Analisi"
-                        color="purple"
                     />
                 </div>
 
