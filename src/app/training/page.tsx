@@ -225,7 +225,7 @@ export default function TrainingPillPage() {
             />
 
             {/* Top Bar (Map Progress) */}
-            <TopBar progress={unlockedCount} total={totalProvinces} className="!fixed z-40 top-14" />
+            <TopBar progress={unlockedCount} total={totalProvinces} className="!fixed z-40 top-14 left-0" />
 
             {/* Header */}
             <header className="fixed top-32 left-0 w-full p-4 z-30 flex items-center justify-between pointer-events-none">

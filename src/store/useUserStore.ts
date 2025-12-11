@@ -807,7 +807,8 @@ export const useUserStore = create<UserState>()(
                         Object.keys(newProvinceScores).forEach(provId => {
                             const data = newProvinceScores[provId];
                             const totalMissions = provinceMissionCounts[provId] || 0;
-                            const completedMissionsCount = Object.keys(data.missions).length;
+                            // FIX: Only count missions that are actually completed
+                            const completedMissionsCount = Object.values(data.missions).filter((m: any) => m.completed).length;
 
                             // A province is completed ONLY if ALL missions are completed
                             if (totalMissions > 0 && completedMissionsCount >= totalMissions) {
@@ -815,8 +816,7 @@ export const useUserStore = create<UserState>()(
                             } else {
                                 data.isCompleted = false;
                             }
-                            // Ensure maxScore covers all missions
-                            data.maxScore = totalMissions * 10;
+                            // REMOVED overwrite of data.maxScore to keep robust sum logic
                         });
 
                         // Set Store

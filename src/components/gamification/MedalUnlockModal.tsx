@@ -44,15 +44,25 @@ export function MedalUnlockModal({ isOpen, onClose, emeralds, rubies }: MedalUnl
 
     const isRuby = rubies > 0;
     const isEmerald = emeralds > 0;
+    const isBoth = isRuby && isEmerald;
 
     // Determine content based on highest reward (Ruby > Emerald)
-    // If both, show Ruby (Region Completion is bigger)
+    // If both, show Combined Message
 
-    const title = isRuby ? 'REGIONE COMPLETATA!' : 'PROVINCIA COMPLETATA!';
+    const title = isBoth ? 'REGIONE COMPLETATA!' : (isRuby ? 'REGIONE COMPLETATA!' : 'PROVINCIA COMPLETATA!');
+
+    let rewardText = '';
+    if (isBoth) rewardText = '+1 RUBINO & +1 SMERALDO';
+    else if (isRuby) rewardText = '+1 MEDAGLIA RUBINO';
+    else rewardText = '+1 MEDAGLIA SMERALDO';
+
     const icon = isRuby ? <Gem className="w-full h-full p-4 text-red-500" /> : <Gem className="w-full h-full p-4 text-emerald-500 text-shadow-glow" />;
     const color = isRuby ? 'red' : 'green';
-    const rewardText = isRuby ? '+1 MEDAGLIA RUBINO' : '+1 MEDAGLIA SMERALDO';
-    const description = isRuby ? 'Hai dominato l\'intera regione! Continua così, Legend.' : 'Hai conquistato una nuova provincia! Un altro passo verso il dominio.';
+
+    let description = '';
+    if (isBoth) description = 'Hai conquistato l\'ultima provincia e dominato l\'intera regione! Doppia ricompensa assegnata.';
+    else if (isRuby) description = 'Hai dominato l\'intera regione! Continua così, Legend.';
+    else description = 'Hai conquistato una nuova provincia! Un altro passo verso il dominio.';
 
     return (
         <CyberModal
@@ -86,8 +96,8 @@ export function MedalUnlockModal({ isOpen, onClose, emeralds, rubies }: MedalUnl
                 <button
                     onClick={onClose}
                     className={`w-full py-3 text-white font-bold rounded-lg transition-all font-orbitron tracking-widest hover:scale-[1.02] active:scale-[0.98] ${isRuby
-                            ? 'bg-red-600 hover:bg-red-500 shadow-[0_0_20px_rgba(220,38,38,0.4)]'
-                            : 'bg-emerald-600 hover:bg-emerald-500 shadow-[0_0_20px_rgba(5,150,105,0.4)]'
+                        ? 'bg-red-600 hover:bg-red-500 shadow-[0_0_20px_rgba(220,38,38,0.4)]'
+                        : 'bg-emerald-600 hover:bg-emerald-500 shadow-[0_0_20px_rgba(5,150,105,0.4)]'
                         }`}
                 >
                     CONTINUA
