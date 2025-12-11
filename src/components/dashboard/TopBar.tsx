@@ -17,7 +17,7 @@ const TopBar: React.FC<TopBarProps> = ({ progress, total, className = "" }) => {
 
     const percentage = Math.round((progress / total) * 100) || 0;
 
-    const positionClasses = className.includes('fixed') || className.includes('sticky')
+    const positionClasses = className.includes('fixed') || className.includes('sticky') || className.includes('relative')
         ? ''
         : 'absolute top-0 left-0';
 
@@ -25,12 +25,12 @@ const TopBar: React.FC<TopBarProps> = ({ progress, total, className = "" }) => {
         <div className={`w-full p-4 z-30 flex flex-col gap-3 pointer-events-none ${positionClasses} ${className}`}>
 
             {/* Main Stats Bar */}
-            <div className="flex justify-center w-full">
+            <div className="flex justify-center w-full overflow-x-auto no-scrollbar pb-2 pt-[env(safe-area-inset-top)]">
                 <motion.div
                     initial={{ y: -20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="relative flex items-center gap-2 pointer-events-auto backdrop-blur-xl rounded-2xl p-1.5 pr-6 shadow-2xl"
+                    className="relative flex items-center gap-2 pointer-events-auto backdrop-blur-xl rounded-2xl p-1.5 pr-6 shadow-2xl shrink-0 mx-auto"
                 >
                     {/* Unified Background & Border Layer */}
                     <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none z-0">

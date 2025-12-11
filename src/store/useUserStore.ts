@@ -43,6 +43,12 @@ interface UserState {
     mapTier: 'level_1' | 'level_2' | 'level_3';
     completedTiers: string[];
     regionCosts: Record<string, number>;
+    missionCache: {
+        timestamp: number;
+        data: Map<string, { provinceId: string; maxScore: number }>;
+        provinceMaxScores: Record<string, number>;
+        provinceMissionCounts: Record<string, number>;
+    } | null;
     settings: {
         notifications: boolean;
         sound: boolean;
@@ -162,6 +168,7 @@ export const useUserStore = create<UserState>()(
             completedTiers: [],
             regionCosts: {},
             lastBadgeCheck: null,
+            missionCache: null,
             settings: {
                 notifications: false,
                 sound: true,
@@ -251,11 +258,9 @@ export const useUserStore = create<UserState>()(
                         } catch (e) { console.warn('Could not resolve province ID', e); }
                     }
 
-                    // Capture 'Before' State from the Store (which should be relatively fresh)
+                    // Capture 'Before' State from the Store
                     const prevScoreData = targetProvinceId ? state.provinceScores[targetProvinceId] : null;
                     const wasCompleted = prevScoreData?.isCompleted || false;
-
-                    console.log('🚀 Completing Level/Mission:', { levelId, score, provinceId: targetProvinceId, wasCompleted });
 
                     // 2. Call RPC to Process Reward (NC) and Log Completion in DB
                     // 'status' determines if it counts as fully completed or just an attempt.
@@ -272,7 +277,7 @@ export const useUserStore = create<UserState>()(
                     }
 
                     const responseData = data as any;
-                    console.log('📦 RPC Response:', responseData);
+
 
                     if (responseData && responseData.success === false) {
                         console.error('❌ Database Error completing level:', responseData.error);
@@ -295,9 +300,6 @@ export const useUserStore = create<UserState>()(
                         const isNowCompleted = newScoreData?.isCompleted || false;
 
                         if (!wasCompleted && isNowCompleted) {
-                            console.log('🎉 Province Newly Completed! Awarding Emerald.');
-                            addEmeralds = 1;
-
                             // Check Region Completion (Rubies)
                             try {
                                 const { provincesData } = await import('@/data/provincesData');
@@ -422,7 +424,7 @@ export const useUserStore = create<UserState>()(
                     }
 
                     const result = data as any;
-                    console.log('🛒 Purchase RPC Result:', result);
+
 
                     if (result && result.success) {
                         // Refresh profile to get updated state (credits, inventory, etc.)
@@ -712,37 +714,52 @@ export const useUserStore = create<UserState>()(
                     }
 
                     if (profile) {
-                        // 2. Fetch ALL Missions to build a map (MissionID -> ProvinceID)
-                        // Fetching count of questions to dynamically set maxScore (1 question = 1 point)
-                        const { data: allMissions, error: missionsError } = await supabase
-                            .from('missions')
-                            .select('id, province_id, mission_questions(count)');
+                        // 2. Fetch Missions (Cached)
+                        const state = get();
+                        let missionMap: Map<string, { provinceId: string; maxScore: number }>;
+                        let provinceMaxScores: Record<string, number>;
+                        let provinceMissionCounts: Record<string, number>;
 
-                        const missionMap = new Map<string, { provinceId: string; maxScore: number }>();
-                        const provinceMaxScores: Record<string, number> = {};
-                        const provinceMissionCounts: Record<string, number> = {};
+                        const CACHE_DURATION = 1000 * 60 * 60; // 1 Hour
 
-                        if (allMissions && !missionsError) {
-                            allMissions.forEach((m: any) => {
-                                if (m.province_id) {
-                                    // Parse question count
-                                    let qCount = 10; // Default fallback
-                                    if (m.mission_questions && Array.isArray(m.mission_questions) && m.mission_questions.length > 0) {
-                                        qCount = m.mission_questions[0].count || 0;
+                        if (state.missionCache && (Date.now() - state.missionCache.timestamp < CACHE_DURATION)) {
+                            // USE CACHE
+                            missionMap = state.missionCache.data;
+                            provinceMaxScores = state.missionCache.provinceMaxScores;
+                            provinceMissionCounts = state.missionCache.provinceMissionCounts;
+                        } else {
+                            // FETCH FROM DB
+                            const { data: allMissions, error: missionsError } = await supabase
+                                .from('missions')
+                                .select('id, province_id, mission_questions(count)');
+
+                            missionMap = new Map();
+                            provinceMaxScores = {};
+                            provinceMissionCounts = {};
+
+                            if (allMissions && !missionsError) {
+                                allMissions.forEach((m: any) => {
+                                    if (m.province_id) {
+                                        let qCount = 10;
+                                        if (m.mission_questions && Array.isArray(m.mission_questions) && m.mission_questions.length > 0) {
+                                            qCount = m.mission_questions[0].count || 0;
+                                        }
+                                        const finalMaxScore = qCount > 0 ? qCount : 10;
+
+                                        missionMap.set(m.id, { provinceId: m.province_id, maxScore: finalMaxScore });
+                                        provinceMaxScores[m.province_id] = (provinceMaxScores[m.province_id] || 0) + finalMaxScore;
+                                        provinceMissionCounts[m.province_id] = (provinceMissionCounts[m.province_id] || 0) + 1;
                                     }
+                                });
+                            }
 
-                                    // If qCount is 0 (e.g. no questions linked yet), keep 10 to avoid division by zero, 
-                                    // OR set to 1 if we prefer. But 10 is a safe "legacy" default.
-                                    // actually if it has 5 questions, maxScore should be 5.
-                                    const finalMaxScore = qCount > 0 ? qCount : 10;
-
-                                    missionMap.set(m.id, { provinceId: m.province_id, maxScore: finalMaxScore });
-
-                                    // Sum Max Score per province (Robust Metric)
-                                    provinceMaxScores[m.province_id] = (provinceMaxScores[m.province_id] || 0) + finalMaxScore;
-
-                                    // Count missions per province (Keep for compatibility/dashboard usage if needed)
-                                    provinceMissionCounts[m.province_id] = (provinceMissionCounts[m.province_id] || 0) + 1;
+                            // Update Cache
+                            set({
+                                missionCache: {
+                                    timestamp: Date.now(),
+                                    data: missionMap,
+                                    provinceMaxScores,
+                                    provinceMissionCounts
                                 }
                             });
                         }
@@ -830,6 +847,7 @@ export const useUserStore = create<UserState>()(
                         });
 
                         // Set Store
+                        // Set Store
                         set({
                             credits: profile.credits ?? 100,
                             lives: profile.current_hearts ?? 5,
@@ -858,11 +876,6 @@ export const useUserStore = create<UserState>()(
                             completedTiers: profile.completed_tiers ?? [],
 
                             // Let the RPC logic below handle rank
-                        });
-
-                        console.log('🔄 Profile Refreshed (Dynamic):', {
-                            credits: profile.credits,
-                            provinceScores: Object.keys(newProvinceScores).length
                         });
 
                         // Fetch Rank

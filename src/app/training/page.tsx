@@ -187,7 +187,8 @@ export default function TrainingPillPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-cyan-500/30 overflow-y-auto">
+
+        <div className="h-[100dvh] bg-slate-950 text-slate-200 font-sans selection:bg-cyan-500/30 overflow-y-auto flex flex-col">
             <GameOverModal
                 isOpen={showGameOver}
                 onWatchAd={handleWatchAd}
@@ -226,10 +227,10 @@ export default function TrainingPillPage() {
             />
 
             {/* Top Bar (Map Progress) */}
-            <TopBar progress={unlockedCount} total={totalProvinces} className="!fixed z-40 top-14 left-0" />
+            <TopBar progress={unlockedCount} total={totalProvinces} className="sticky top-0 w-full z-50 px-4 bg-slate-950/90 backdrop-blur-sm" />
 
             {/* Header */}
-            <header className="fixed top-32 left-0 w-full p-4 z-30 flex items-center justify-between pointer-events-none">
+            <header className="sticky top-14 w-full px-4 z-40 flex items-center justify-between pointer-events-none bg-slate-950/90 backdrop-blur-sm py-4">
                 <button onClick={handleExit} className="pointer-events-auto p-2 rounded-full bg-slate-900/50 hover:bg-slate-800 transition-colors backdrop-blur-md border border-slate-700">
                     <ArrowLeft className="w-5 h-5 text-slate-400" />
                 </button>
@@ -240,7 +241,7 @@ export default function TrainingPillPage() {
                 <div className="w-9" />
             </header>
 
-            <main className="pt-40 pb-12 px-4 max-w-2xl mx-auto">
+            <main className="px-4 w-full max-w-2xl mx-auto">
                 <AnimatePresence mode="wait">
                     {mode === 'LESSON' && (
                         <motion.div
@@ -327,33 +328,32 @@ export default function TrainingPillPage() {
                                         );
                                     })}
                                 </div>
-                            </div>
+                                {/* Explanation & Next Button */}
+                                <AnimatePresence>
+                                    {isAnswerChecked && (
+                                        <QuizActionPanel
+                                            isCorrect={selectedOption === lesson.questions[currentQuestionIndex].correctAnswer}
+                                            correctAnswerText={lesson.questions[currentQuestionIndex].options[lesson.questions[currentQuestionIndex].correctAnswer]}
+                                            explanation={lesson.questions[currentQuestionIndex].explanation}
+                                            onNext={handleNextQuestion}
+                                            isLastQuestion={currentQuestionIndex === lesson.questions.length - 1}
+                                        />
+                                    )}
+                                </AnimatePresence>
 
-                            {/* Explanation & Next Button */}
-                            <AnimatePresence>
-                                {isAnswerChecked && (
-                                    <QuizActionPanel
-                                        isCorrect={selectedOption === lesson.questions[currentQuestionIndex].correctAnswer}
-                                        correctAnswerText={lesson.questions[currentQuestionIndex].options[lesson.questions[currentQuestionIndex].correctAnswer]}
-                                        explanation={lesson.questions[currentQuestionIndex].explanation}
-                                        onNext={handleNextQuestion}
-                                        isLastQuestion={currentQuestionIndex === lesson.questions.length - 1}
-                                    />
+                                {!isAnswerChecked && (
+                                    <button
+                                        onClick={handleCheckAnswer}
+                                        disabled={selectedOption === null}
+                                        className={`w-full py-4 rounded-lg font-bold font-orbitron tracking-wider transition-all mt-6 ${selectedOption !== null
+                                            ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg'
+                                            : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                                            }`}
+                                    >
+                                        CONFERMA RISPOSTA
+                                    </button>
                                 )}
-                            </AnimatePresence>
-
-                            {!isAnswerChecked && (
-                                <button
-                                    onClick={handleCheckAnswer}
-                                    disabled={selectedOption === null}
-                                    className={`w-full py-4 rounded-lg font-bold font-orbitron tracking-wider transition-all ${selectedOption !== null
-                                        ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg'
-                                        : 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                                        }`}
-                                >
-                                    CONFERMA RISPOSTA
-                                </button>
-                            )}
+                            </div>
                         </motion.div>
                     )}
 
@@ -398,7 +398,7 @@ export default function TrainingPillPage() {
                     )}
                 </AnimatePresence>
             </main>
-        </div>
+        </div >
     );
 }
 

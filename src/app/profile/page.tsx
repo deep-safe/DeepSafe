@@ -222,7 +222,7 @@ export default function ProfilePage() {
             if (error) throw error;
 
             // Fetch Agent Stats (Server-Side)
-            const { data: statsData, error: statsError } = await supabase.rpc('get_agent_stats');
+            const { data: statsData, error: statsError } = await (supabase.rpc as any)('get_agent_stats');
 
             if (statsError) {
                 console.error('❌ Error fetching agent stats:', statsError);

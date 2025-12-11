@@ -75,7 +75,7 @@ export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <BiometricGuard>
-            <div className={`min-h-screen flex flex-col relative overflow-hidden ${isAdmin ? 'w-full' : 'max-w-md mx-auto pt-24 pb-24'}`}>
+            <div className={`min-h-screen flex flex-col relative overflow-hidden ${isAdmin ? 'w-full' : 'w-full md:max-w-md mx-auto pt-24 pb-24'}`}>
                 {!isAdmin && <Header />}
                 <main className={`flex-1 z-10 ${isAdmin ? 'p-0' : 'p-4'}`}>
                     {children}

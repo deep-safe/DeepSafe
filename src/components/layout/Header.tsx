@@ -8,7 +8,7 @@ export function Header() {
     const { lives, streak } = useUserStore();
 
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
+        <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 pt-[env(safe-area-inset-top)]">
             <div className="max-w-md mx-auto h-14 flex items-center justify-between px-4">
                 <div className="flex items-center space-x-4">
                     <Link href="/" className="flex items-center gap-2 group">
