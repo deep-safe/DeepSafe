@@ -11,7 +11,9 @@ import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 // Stripe is handled via API redirect, no need to load it here
 // import { loadStripe } from '@stripe/stripe-js';
+// import { loadStripe } from '@stripe/stripe-js';
 import dynamic from 'next/dynamic';
+import { FeatureNotImplementedModal } from '@/components/ui/FeatureNotImplementedModal';
 
 const MysteryBoxModal = dynamic(() => import('@/components/shop/MysteryBoxModal').then(mod => mod.MysteryBoxModal), { ssr: false });
 const PurchaseConfirmationModal = dynamic(() => import('@/components/shop/PurchaseConfirmationModal').then(mod => mod.PurchaseConfirmationModal), { ssr: false });
@@ -41,6 +43,9 @@ function ShopContent() {
     // Confirmation Modal State
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
     const [itemToBuy, setItemToBuy] = useState<ShopItem | null>(null);
+
+    // Feature Not Implemented Modal
+    const [showFeatureModal, setShowFeatureModal] = useState(false);
 
     // Auth Guard State
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -92,6 +97,11 @@ function ShopContent() {
     };
 
     const handleBuyCredits = async (pack: 'small' | 'medium' | 'large') => {
+        // TEMPORARY: Show "Coming Soon" modal instead of Stripe flow
+        setShowFeatureModal(true);
+        return;
+
+        /*
         if (!(await checkAuth())) return;
 
         try {
@@ -143,6 +153,7 @@ function ShopContent() {
             console.error('Checkout error:', error);
             setFeedback({ type: 'error', message: 'Errore durante il checkout.' });
         }
+        */
     };
 
     const buyMysteryItem = async (itemId: string, itemCost: number) => {
@@ -416,6 +427,11 @@ function ShopContent() {
                             isProcessing={!!isBuying}
                         />
 
+                        <FeatureNotImplementedModal
+                            isOpen={showFeatureModal}
+                            onClose={() => setShowFeatureModal(false)}
+                        />
+
                         <AuthGuardModal
                             isOpen={isAuthModalOpen}
                             onClose={() => setIsAuthModalOpen(false)}
@@ -470,7 +486,7 @@ function ShopContent() {
                 )}
 
             </main>
-        </div>
+        </div >
     );
 }
 

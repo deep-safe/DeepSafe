@@ -175,7 +175,7 @@ export interface Database {
                     id: string
                     title: string
                     content: string
-                    xp_reward: number
+                    nc_reward: number
                     estimated_time: string
                     region: string | null
                     province_id: string | null
@@ -189,7 +189,7 @@ export interface Database {
                     id?: string
                     title: string
                     content?: string
-                    xp_reward?: number
+                    nc_reward?: number
                     estimated_time?: string
                     region?: string | null
                     province_id?: string | null
@@ -203,7 +203,7 @@ export interface Database {
                     id?: string
                     title?: string
                     content?: string
-                    xp_reward?: number
+                    nc_reward?: number
                     estimated_time?: string
                     region?: string | null
                     province_id?: string | null

@@ -280,15 +280,22 @@ export const useUserStore = create<UserState>()(
                     // actually, better to just call 'complete_level' and let IT handle it? No, we decided Client logic is easier for Regions.
                     // So we call update_rank_counters explicitly if there are gains.
 
+                    console.log('🚀 Calling complete_level with:', { p_user_id: user.id, p_level_id: levelId, p_score: score });
                     const { data, error } = await supabase.rpc('complete_level', {
                         p_user_id: user.id,
                         p_level_id: levelId,
                         p_score: score
                     });
+                    console.log('🏁 complete_level Result:', { data, error });
 
                     if (error) {
                         console.error('Error completing level:', JSON.stringify(error, null, 2));
                         return { success: false, earnedEmeralds: 0, earnedRubies: 0 };
+                    }
+
+                    // UPDATE LOCAL STORE IMMEDIATELY
+                    if (data && typeof data.new_credits === 'number') {
+                        set({ credits: data.new_credits });
                     }
 
                     if (addEmeralds > 0 || addRubies > 0) {

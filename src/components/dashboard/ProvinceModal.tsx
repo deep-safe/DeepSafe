@@ -133,6 +133,11 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                                     <span className="flex items-center gap-1">
                                                         <span>⏱</span> {mission.estimatedTime}
                                                     </span>
+                                                    {mission.ncReward && (
+                                                        <span className="flex items-center gap-1 text-yellow-500">
+                                                            <span>🏆</span> {mission.ncReward} NC
+                                                        </span>
+                                                    )}
                                                     {isPassed && !isPerfect && (
                                                         <span className="text-cyan-500 flex items-center gap-1">
                                                             <RotateCcw className="w-3 h-3" /> RETRY FOR PERFECT
@@ -150,7 +155,7 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                                     ? 'COMPLETED'
                                                     : mScore.score > 0
                                                         ? `PROVATA: ${Math.round((mScore.score / (mScore.maxScore || 1)) * 100)}%`
-                                                        : (mission.level || 'SEMPLICE')}
+                                                        : (mission.level || 'semplice')}
                                             </div>
                                         </button>
                                     );
@@ -181,7 +186,7 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                                         ? 'COMPLETATA'
                                                         : isProvata
                                                             ? `PROVATA: ${Math.round((mScore.score / (mScore.maxScore || 1)) * 100)}%`
-                                                            : 'BONUS NC'}
+                                                            : (singleMission?.ncReward ? `BONUS ${singleMission.ncReward} NC` : 'BONUS NC')}
                                                 </div>
                                                 <span className={`text-lg font-bold ${isPassed ? 'text-emerald-100' : isProvata ? 'text-amber-100' : 'text-white'
                                                     }`}>

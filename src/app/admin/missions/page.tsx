@@ -38,9 +38,9 @@ export default function AdminMissionsPage() {
     const [formData, setFormData] = useState<Partial<Mission>>({
         title: '',
         content: '',
-        xp_reward: 100,
+        nc_reward: 100,
         estimated_time: '5 min',
-        level: 'SEMPLICE',
+        level: 'semplice' as any,
         region: '',
         province_id: '',
         description: '',
@@ -90,9 +90,9 @@ export default function AdminMissionsPage() {
             setFormData({
                 title: '',
                 content: '',
-                xp_reward: 100,
+                nc_reward: 100,
                 estimated_time: '5 min',
-                level: 'SEMPLICE',
+                level: 'semplice' as any,
                 region: '',
                 province_id: '',
                 description: '',
@@ -182,7 +182,7 @@ export default function AdminMissionsPage() {
                     .update({
                         title: formData.title,
                         content: formData.content,
-                        xp_reward: formData.xp_reward,
+                        nc_reward: formData.nc_reward,
                         estimated_time: formData.estimated_time,
                         level: formData.level,
                         region: formData.region,
@@ -198,7 +198,7 @@ export default function AdminMissionsPage() {
                     .insert([{
                         title: formData.title,
                         content: formData.content,
-                        xp_reward: formData.xp_reward,
+                        nc_reward: formData.nc_reward,
                         estimated_time: formData.estimated_time,
                         level: formData.level,
                         region: formData.region,
@@ -328,9 +328,10 @@ export default function AdminMissionsPage() {
                     className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-cyan-500 outline-none text-slate-300"
                 >
                     <option value="">All Levels</option>
-                    <option value="SEMPLICE">SEMPLICE</option>
-                    <option value="DIFFICILE">DIFFICILE</option>
-                    <option value="BOSS">BOSS</option>
+                    <option value="semplice">Semplice</option>
+                    <option value="medio">Medio</option>
+                    <option value="difficile">Difficile</option>
+                    <option value="speciale">Speciale</option>
                 </select>
 
                 <select
@@ -367,7 +368,7 @@ export default function AdminMissionsPage() {
                                 <h3 className="font-bold text-white text-lg">{mission.title}</h3>
                             </div>
                             <div className="flex items-center gap-4 text-sm text-slate-500 font-mono">
-                                <span className="flex items-center gap-1"><Award className="w-4 h-4 text-yellow-500" /> {mission.xp_reward} NC</span>
+                                <span className="flex items-center gap-1"><Award className="w-4 h-4 text-yellow-500" /> {mission.nc_reward} NC</span>
                                 <span className="flex items-center gap-1"><Clock className="w-4 h-4 text-cyan-500" /> {mission.estimated_time}</span>
                             </div>
                         </div>
@@ -461,8 +462,8 @@ export default function AdminMissionsPage() {
                                             <label className="block text-xs font-mono text-slate-500 mb-1">NC Reward</label>
                                             <input
                                                 type="number"
-                                                value={formData.xp_reward}
-                                                onChange={e => setFormData({ ...formData, xp_reward: parseInt(e.target.value) })}
+                                                value={formData.nc_reward}
+                                                onChange={e => setFormData({ ...formData, nc_reward: parseInt(e.target.value) })}
                                                 className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm focus:border-cyan-500 outline-none"
                                             />
                                         </div>
@@ -472,14 +473,14 @@ export default function AdminMissionsPage() {
                                         <div>
                                             <label className="block text-xs font-mono text-slate-500 mb-1">Difficulty Level</label>
                                             <select
-                                                value={formData.level || 'SEMPLICE'}
+                                                value={formData.level || 'semplice'}
                                                 onChange={e => setFormData({ ...formData, level: e.target.value as any })}
                                                 className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm focus:border-cyan-500 outline-none"
                                             >
-                                                <option value="TUTORIAL">TUTORIAL</option>
-                                                <option value="SEMPLICE">SEMPLICE</option>
-                                                <option value="DIFFICILE">DIFFICILE</option>
-                                                <option value="BOSS">BOSS</option>
+                                                <option value="semplice">semplice</option>
+                                                <option value="medio">medio</option>
+                                                <option value="difficile">difficile</option>
+                                                <option value="speciale">speciale</option>
                                             </select>
                                         </div>
                                         <div>

@@ -396,6 +396,13 @@ export default function TrainingPillPage() {
                                     <span className="text-xs text-slate-500 uppercase block mb-1">Punteggio</span>
                                     <span className="text-2xl font-bold text-cyan-400">{score}/{lesson.questions.length}</span>
                                 </div>
+                                <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800">
+                                    <span className="text-xs text-slate-500 uppercase block mb-1">Ricompensa</span>
+                                    <span className="text-2xl font-bold text-yellow-500 flex items-center justify-center gap-1">
+                                        <span>{score === lesson.questions.length ? (lesson.ncReward || 100) : 0}</span>
+                                        <span className="text-base">NC</span>
+                                    </span>
+                                </div>
                             </div>
 
                             <button
