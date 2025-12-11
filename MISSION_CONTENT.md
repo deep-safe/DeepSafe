@@ -65,6 +65,15 @@ This document tracks the regions, topics, and provinces that have been populated
 - **PR** (Parma): Ready for Import (Privacy, Infotainment & Companion App)
 - **RN** (Rimini): Ready for Import (GPS Spoofing, Jamming & Map Poisoning)
 
+## Toscana (Digital Renaissance)
+**Argomento:** Rinascimento Digitale: Arte, Banche e Giochi
+**Provinces:**
+- **FI** (Firenze): Ready for Import (NFT, Rug Pulls & Smart Contracts)
+- **SI** (Siena): Ready for Import (Banking Security, SWIFT & Skimmers)
+- **LU** (Lucca): Ready for Import (Gaming Security, Stealers & Doxxing)
+- **PI** (Pisa): Ready for Import (Research, Open Source & Legacy Code)
+- **LI** (Livorno): Ready for Import (Maritime Security, Container Tracking & AIS)
+
 ## Veneto
 **Argomento:** Ingegneria Sociale & Psicologia dell'Hacker ("L'Arte dell'Inganno")
 **Provinces:**
