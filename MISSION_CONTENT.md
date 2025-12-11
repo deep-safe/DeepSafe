@@ -31,6 +31,22 @@ This document tracks the regions, topics, and provinces that have been populated
 - **TN** (Trento): Ready for Import (Smart Home & Domotica)
 - **BZ** (Bolzano): Ready for Import (Wearables & Mobile)
 
+## Friuli Venezia Giulia
+**Argomento:** La Frontiera Digitale (Network Security & Perimeter)
+**Provinces:**
+- **TS** (Trieste): Ready for Import (Wi-Fi Pubblico & VPN)
+- **UD** (Udine): Ready for Import (Malware, Antivirus & EDR)
+- **PN** (Pordenone): Ready for Import (Updates, Zero-Day & EOL)
+- **GO** (Gorizia): Ready for Import (Cloud Security & Shadow IT)
+
+## Liguria
+**Argomento:** Il Porto Digitale (Supply Chain & Future Threats)
+**Provinces:**
+- **GE** (Genova): Ready for Import (Supply Chain & Dependency Confusion)
+- **SP** (La Spezia): Ready for Import (OT, Industrial IoT & Air Gap)
+- **SV** (Savona): Ready for Import (APT, Living off the Land & Lateral Move)
+- **IM** (Imperia): Ready for Import (Quantum Security, Q-Day & PQC)
+
 ## Veneto
 **Argomento:** Ingegneria Sociale & Psicologia dell'Hacker ("L'Arte dell'Inganno")
 **Provinces:**
