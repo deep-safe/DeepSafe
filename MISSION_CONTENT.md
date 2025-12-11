@@ -56,6 +56,15 @@ This document tracks the regions, topics, and provinces that have been populated
 - **LT** (Latina): Ready for Import (Data Poisoning & Privacy)
 - **FR** (Frosinone): Ready for Import (Algorithmic Bias & Dark Patterns)
 
+## Emilia Romagna (Motor Valley)
+**Argomento:** Velocità & Sicurezza Automotive
+**Provinces:**
+- **MO** (Modena): Ready for Import (Car Hacking, CAN Bus & Tuning)
+- **BO** (Bologna): Ready for Import (V2X, OTA & Smart City)
+- **RE** (Reggio Emilia): Ready for Import (Industrial Espionage & Insider Threat)
+- **PR** (Parma): Ready for Import (Privacy, Infotainment & Companion App)
+- **RN** (Rimini): Ready for Import (GPS Spoofing, Jamming & Map Poisoning)
+
 ## Veneto
 **Argomento:** Ingegneria Sociale & Psicologia dell'Hacker ("L'Arte dell'Inganno")
 **Provinces:**
