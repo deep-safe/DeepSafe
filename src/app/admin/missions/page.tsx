@@ -240,14 +240,15 @@ export default function AdminMissionsPage() {
 
     // ... (existing render)
 
-    // Helper for robust string comparison (handles hyphens, apostrophes, and casing)
+    // Helper for robust string comparison
+    // Strips accents, lowercase, removes all non-alphanumeric chars
     const normalizeString = (str: string | null | undefined) => {
         if (!str) return '';
         return str
+            .normalize("NFD")                 // Decompose accents (è -> e + `)
+            .replace(/[\u0300-\u036f]/g, "") // Remove accent marks
             .toLowerCase()
-            .replace(/[-'’]/g, ' ') // Replace hyphens and apostrophes with spaces
-            .replace(/\s+/g, ' ')   // Collapse multiple spaces
-            .trim();
+            .replace(/[^a-z0-9]/g, '');      // Keep only letters and numbers (removes spaces, hyphens, etc)
     };
 
     const filteredMissions = missions.filter(m => {
