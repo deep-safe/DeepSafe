@@ -5,7 +5,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { quizData, TrainingLesson, getLessonsForProvince, getMissionById } from '@/data/quizData';
 import { provincesData } from '@/data/provincesData';
-import { ArrowLeft, CheckCircle, XCircle, Brain, ChevronRight, Heart } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, Heart } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useUserStore } from '@/store/useUserStore';
 import GameOverModal from '@/components/training/GameOverModal';
@@ -14,6 +14,7 @@ import TopBar from '@/components/dashboard/TopBar';
 import { PerfectScoreModal } from '@/components/gamification/PerfectScoreModal';
 import { BadgeUnlockModal } from '@/components/gamification/BadgeUnlockModal';
 import { MedalUnlockModal } from '@/components/gamification/MedalUnlockModal';
+import { QuizActionPanel } from '@/components/gamification/QuizActionPanel';
 
 export default function TrainingPillPage() {
     const params = useParams();
@@ -331,31 +332,13 @@ export default function TrainingPillPage() {
                             {/* Explanation & Next Button */}
                             <AnimatePresence>
                                 {isAnswerChecked && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        className="space-y-4"
-                                    >
-                                        <div className="p-4 rounded-lg bg-slate-900 border border-slate-700">
-                                            <div className="flex items-start gap-3">
-                                                <Brain className="w-5 h-5 text-cyan-400 mt-1" />
-                                                <div>
-                                                    <span className="text-xs font-bold text-cyan-400 uppercase block mb-1">Analisi Tattica</span>
-                                                    <p className="text-sm text-slate-300 leading-relaxed">
-                                                        {lesson.questions[currentQuestionIndex].explanation}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <button
-                                            onClick={handleNextQuestion}
-                                            className="w-full py-4 rounded-lg bg-white text-black font-bold font-orbitron tracking-wider hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
-                                        >
-                                            {currentQuestionIndex < lesson.questions.length - 1 ? 'PROSSIMA DOMANDA' : 'COMPLETA MISSIONE'}
-                                            <ChevronRight className="w-5 h-5" />
-                                        </button>
-                                    </motion.div>
+                                    <QuizActionPanel
+                                        isCorrect={selectedOption === lesson.questions[currentQuestionIndex].correctAnswer}
+                                        correctAnswerText={lesson.questions[currentQuestionIndex].options[lesson.questions[currentQuestionIndex].correctAnswer]}
+                                        explanation={lesson.questions[currentQuestionIndex].explanation}
+                                        onNext={handleNextQuestion}
+                                        isLastQuestion={currentQuestionIndex === lesson.questions.length - 1}
+                                    />
                                 )}
                             </AnimatePresence>
 
