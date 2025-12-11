@@ -13,7 +13,7 @@ type ShopItem = Database['public']['Tables']['shop_items']['Row'];
 
 const ITEM_TYPES = ['consumable', 'permanent', 'cosmetic'];
 const RARITIES = ['common', 'rare', 'epic', 'legendary'];
-const EFFECT_TYPES = ['streak_freeze', 'restore_lives', 'double_xp', 'mystery_box', 'none'];
+const EFFECT_TYPES = ['streak_freeze', 'restore_lives', 'mystery_box', 'none'];
 
 import { LootManagerModal } from '@/components/admin/shop/LootManagerModal';
 
