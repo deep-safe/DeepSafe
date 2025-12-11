@@ -294,8 +294,9 @@ export const useUserStore = create<UserState>()(
                     }
 
                     // UPDATE LOCAL STORE IMMEDIATELY
-                    if (data && typeof data.new_credits === 'number') {
-                        set({ credits: data.new_credits });
+                    const responseData = data as any;
+                    if (responseData && typeof responseData.new_credits === 'number') {
+                        set({ credits: responseData.new_credits });
                     }
 
                     if (addEmeralds > 0 || addRubies > 0) {

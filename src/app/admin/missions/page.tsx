@@ -328,10 +328,10 @@ export default function AdminMissionsPage() {
                     className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-cyan-500 outline-none text-slate-300"
                 >
                     <option value="">All Levels</option>
-                    <option value="semplice">Semplice</option>
-                    <option value="medio">Medio</option>
-                    <option value="difficile">Difficile</option>
-                    <option value="speciale">Speciale</option>
+                    <option value="SEMPLICE">SEMPLICE</option>
+                    <option value="DIFFICILE">DIFFICILE</option>
+                    <option value="BOSS">BOSS</option>
+                    <option value="TUTORIAL">TUTORIAL</option>
                 </select>
 
                 <select
@@ -473,14 +473,14 @@ export default function AdminMissionsPage() {
                                         <div>
                                             <label className="block text-xs font-mono text-slate-500 mb-1">Difficulty Level</label>
                                             <select
-                                                value={formData.level || 'semplice'}
+                                                value={formData.level || 'SEMPLICE'}
                                                 onChange={e => setFormData({ ...formData, level: e.target.value as any })}
                                                 className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm focus:border-cyan-500 outline-none"
                                             >
-                                                <option value="semplice">semplice</option>
-                                                <option value="medio">medio</option>
-                                                <option value="difficile">difficile</option>
-                                                <option value="speciale">speciale</option>
+                                                <option value="SEMPLICE">SEMPLICE (Green/Medio)</option>
+                                                <option value="DIFFICILE">DIFFICILE (Red/Hard)</option>
+                                                <option value="BOSS">BOSS (Special)</option>
+                                                <option value="TUTORIAL">TUTORIAL</option>
                                             </select>
                                         </div>
                                         <div>

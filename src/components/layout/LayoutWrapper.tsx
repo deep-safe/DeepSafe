@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase/client';
 import { BottomNav } from "@/components/layout/BottomNav";
 import { Header } from "@/components/layout/Header";
 import { CyberToast } from "@/components/ui/CyberToast";
@@ -35,13 +36,30 @@ export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
         updateLogin();
     }, []);
 
+    const router = useRouter();
+
     React.useEffect(() => {
+        // Handle Auth State Changes (including Token Refresh Errors)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'SIGNED_OUT') {
+                // Clear any local state if needed
+                router.push('/login');
+            } else if (event === 'TOKEN_REFRESHED') {
+                console.log('Token refreshed successfully');
+            }
+        });
+
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/custom-sw.js').then(
+            const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+            navigator.serviceWorker.register(`${basePath}/custom-sw.js`).then(
                 (registration) => console.log('Service Worker registered with scope:', registration.scope),
                 (error) => console.error('Service Worker registration failed:', error)
             );
         }
+
+        return () => {
+            subscription.unsubscribe();
+        };
     }, []);
 
     const isLandingPage = pathname === '/' || pathname === '/a' || pathname === '/s' || pathname === '/privacy-policy' || pathname === '/terms' || pathname === '/cookie-policy';

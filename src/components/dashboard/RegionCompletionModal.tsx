@@ -10,8 +10,10 @@ interface RegionCompletionModalProps {
     badge: {
         name: string;
         description: string;
+        category: string;
         icon: string;
-        xp_reward: number;
+        nc_reward: number;
+        rarity: string;
     } | null;
 }
 
@@ -47,6 +49,9 @@ export const RegionCompletionModal: React.FC<RegionCompletionModalProps> = ({ is
     }, [isOpen]);
 
     if (!isOpen) return null;
+
+    // @ts-ignore - Handle type mismatch during migration
+    const reward = badge?.nc_reward || badge?.xp_reward || 0;
 
     return (
         <AnimatePresence>
@@ -108,10 +113,12 @@ export const RegionCompletionModal: React.FC<RegionCompletionModalProps> = ({ is
 
                         {/* Rewards */}
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-                                <div className="text-xs text-slate-500 font-mono mb-1">XP GUADAGNATI</div>
-                                <div className="text-2xl font-bold text-yellow-400">+{badge?.xp_reward || 0}</div>
-                            </div>
+                            {reward !== 0 && (
+                                <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                                    <div className="text-xs text-slate-500 font-mono mb-1">NC REWARD</div>
+                                    <div className="text-2xl font-bold text-yellow-400">+{reward}</div>
+                                </div>
+                            )}
                             <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
                                 <div className="text-xs text-slate-500 font-mono mb-1">GRADO</div>
                                 <div className="text-xl font-bold text-cyan-400">LEGGENDA</div>

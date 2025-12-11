@@ -11,7 +11,7 @@ export interface SagaLevel {
     day_number: number;
     title: string;
     is_boss_level: boolean;
-    xp_reward: number;
+    nc_reward: number;
     module_title: string;
     theme_color: string | null;
     order_index: number;
@@ -141,9 +141,9 @@ export function SagaPath({ levels }: SagaPathProps) {
                                                 </h4>
                                                 <p className="text-xs text-gray-400 line-clamp-1">{level.title}</p>
                                             </div>
-                                            {level.xp_reward > 0 && (
-                                                <span className="text-xs font-mono text-cyber-purple font-bold">
-                                                    +{level.xp_reward} XP
+                                            {level.nc_reward > 0 && (
+                                                <span className="text-xs font-mono text-cyan-400 font-bold">
+                                                    +{level.nc_reward} NC
                                                 </span>
                                             )}
                                         </div>
