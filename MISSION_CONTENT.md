@@ -25,6 +25,23 @@ This document tracks the regions, topics, and provinces that have been populated
 - **IS** (Isernia): Implementato (Fake News Basis)
 - **CB** (Campobasso): *Pending*
 
+## Trentino Alto Adige
+**Argomento:** IoT, Domotica & Wearable Security
+**Provinces:**
+- **TN** (Trento): Ready for Import (Smart Home & Domotica)
+- **BZ** (Bolzano): Ready for Import (Wearables & Mobile)
+
+## Veneto
+**Argomento:** Ingegneria Sociale & Psicologia dell'Hacker ("L'Arte dell'Inganno")
+**Provinces:**
+- **VE** (Venezia): Ready for Import (Phishing & Typosquatting)
+- **VR** (Verona): Ready for Import (Romance Scams & Sextortion)
+- **PD** (Padova): Ready for Import (OSINT & Digital Footprint)
+- **VI** (Vicenza): Ready for Import (Baiting & Physical Security)
+- **TV** (Treviso): Ready for Import (Pretexting & Tech Support Scam)
+- **RO** (Rovigo): Ready for Import (Deepfakes & AI Threats)
+- **BL** (Belluno): Ready for Import (Tailgating & Clean Desk)
+
 ## Lombardia
 **Argomento:** Cyber-Crime & Sicurezza Finanziaria ("The Wolf of DeepSafe")
 **Provinces:**
