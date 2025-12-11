@@ -32,7 +32,7 @@ export function QuizActionPanel({
                     exit={{ scale: 0.9, opacity: 0 }}
                     transition={{ type: "spring", damping: 25, stiffness: 300 }}
                     className={cn(
-                        "w-full max-w-md rounded-3xl border backdrop-blur-xl shadow-2xl relative overflow-hidden",
+                        "w-full max-w-md rounded-3xl border backdrop-blur-xl shadow-2xl relative overflow-hidden max-h-[90vh] flex flex-col",
                         isCorrect
                             ? "bg-[#0B0C10] border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.3)]"
                             : "bg-[#0B0C10] border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.3)]"
@@ -40,11 +40,11 @@ export function QuizActionPanel({
                 >
                     {/* Top Glow */}
                     <div className={cn(
-                        "absolute top-0 left-0 right-0 h-32 opacity-20 bg-gradient-to-b",
+                        "absolute top-0 left-0 right-0 h-32 opacity-20 bg-gradient-to-b shrink-0",
                         isCorrect ? "from-emerald-500 to-transparent" : "from-red-500 to-transparent"
                     )} />
 
-                    <div className="p-8 space-y-8 relative z-10">
+                    <div className="p-8 space-y-8 relative z-10 overflow-y-auto custom-scrollbar">
                         {/* Header */}
                         <div className="flex flex-col items-center text-center gap-4">
                             <div className={cn(
