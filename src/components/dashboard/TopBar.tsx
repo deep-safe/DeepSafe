@@ -17,8 +17,12 @@ const TopBar: React.FC<TopBarProps> = ({ progress, total, className = "" }) => {
 
     const percentage = Math.round((progress / total) * 100) || 0;
 
+    const positionClasses = className.includes('fixed') || className.includes('sticky')
+        ? ''
+        : 'absolute top-0 left-0';
+
     return (
-        <div className={`absolute top-0 left-0 w-full p-4 z-30 flex flex-col gap-3 pointer-events-none ${className}`}>
+        <div className={`w-full p-4 z-30 flex flex-col gap-3 pointer-events-none ${positionClasses} ${className}`}>
 
             {/* Main Stats Bar */}
             <div className="flex justify-center w-full">

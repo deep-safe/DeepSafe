@@ -44,7 +44,7 @@ interface UserState {
     completeTutorial: () => void;
     updateSettings: (settings: Partial<{ notifications: boolean; sound: boolean; haptics: boolean }>) => Promise<void>;
     claimMission: (missionId: string) => Promise<boolean>;
-    completeLevel: (levelId: string, score: number, provinceId?: string) => Promise<{ success: boolean; earnedEmeralds: number; earnedRubies: number }>;
+    completeLevel: (levelId: string, score: number, provinceId?: string, status?: 'completed' | 'attempted') => Promise<{ success: boolean; earnedEmeralds: number; earnedRubies: number }>;
     addCredits: (amount: number) => Promise<void>;
     spendCredits: (amount: number) => Promise<boolean>;
     buyItem: (itemId: string, cost: number) => Promise<{ success: boolean; message?: string; reward?: any }>;
@@ -222,11 +222,11 @@ export const useUserStore = create<UserState>()(
                 }
             },
 
-            completeLevel: async (levelId, score, provinceId) => {
-                try {
-                    const { data: { user } } = await supabase.auth.getUser();
-                    if (!user) return { success: false, earnedEmeralds: 0, earnedRubies: 0 };
+            completeLevel: async (levelId, score, provinceId, status = 'completed') => {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) return { success: false, earnedEmeralds: 0, earnedRubies: 0 };
 
+                try {
                     const state = get();
 
                     // 1. Identify Target Province (Robustly)
@@ -248,10 +248,12 @@ export const useUserStore = create<UserState>()(
                     console.log('🚀 Completing Level/Mission:', { levelId, score, provinceId: targetProvinceId, wasCompleted });
 
                     // 2. Call RPC to Process Reward (NC) and Log Completion in DB
+                    // 'status' determines if it counts as fully completed or just an attempt.
                     const { data, error } = await supabase.rpc('complete_level', {
                         p_user_id: user.id,
                         p_level_id: levelId,
-                        p_score: score
+                        p_score: score,
+                        p_status: status // Passed from function argument
                     });
 
                     if (error) {
@@ -775,9 +777,16 @@ export const useUserStore = create<UserState>()(
                                     // Track individual mission completion
                                     // Treat as completed if status is 'completed' OR if score equals maxScore (100%)
                                     const isScorePerfect = up.score >= missionInfo.maxScore && missionInfo.maxScore > 0;
-                                    if (up.status === 'completed' || isScorePerfect) {
-                                        provData.missions[up.quiz_id] = { completed: true, score: up.score, maxScore: missionInfo.maxScore };
-                                    }
+                                    const isCompleted = up.status === 'completed' || isScorePerfect;
+
+                                    // Always store the mission data (for attempts too)
+                                    // If it's already recorded as completed in our local map (from a previous iteration?), keep it.
+                                    // But since we iterate once per unique quiz_id (assumption from Supabase query), direct assignment is fine.
+                                    provData.missions[up.quiz_id] = {
+                                        completed: isCompleted,
+                                        score: up.score,
+                                        maxScore: missionInfo.maxScore
+                                    };
                                 } else {
                                     if (up.quiz_id === '5a4b3c2d-1e0f-9a8b-7c6d-5e4f3a2b1c0d') {
                                         console.error('❌ Tracce in Montagna ID found in progress but NOT in mission map!');

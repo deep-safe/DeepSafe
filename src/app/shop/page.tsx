@@ -282,9 +282,9 @@ function ShopContent() {
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-cyan-500/30 pb-24">
             {/* Top Bar */}
-            <TopBar progress={unlockedCount} total={totalProvinces} className="!fixed z-40 top-14" />
+            <TopBar progress={unlockedCount} total={totalProvinces} className="sticky top-0 z-50" />
 
-            <main className="pt-32 md:pt-36 px-4 max-w-2xl mx-auto space-y-8">
+            <main className="pt-6 md:pt-8 px-4 max-w-2xl mx-auto space-y-8">
                 {/* Header */}
                 <header className="flex items-center justify-between mb-2">
                     <div className="flex flex-col">

@@ -165,9 +165,9 @@ export default function TrainingPillPage() {
                 setMode('COMPLETE');
             } else {
                 // Imperfect Score - Show Modal
-                // NEW: Save score even if not completed so we can show "Provata" status
+                // NEW: Save score using completeLevel with 'attempted' status
                 if (provinceId) {
-                    updateMissionScore(provinceId, lesson.id, score, lesson.questions.length, false);
+                    await completeLevel(lesson.id, score, provinceId, 'attempted');
                 }
                 setShowPerfectScoreModal(true);
             }

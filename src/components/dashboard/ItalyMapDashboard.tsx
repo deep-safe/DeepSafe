@@ -629,7 +629,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
             <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-amber-900/10 rounded-full blur-[120px] pointer-events-none" />
 
             {/* HUD Elements */}
-            <TopBar progress={completedCount} total={totalProvinces} />
+            <TopBar progress={unlockedProvinces.length} total={totalProvinces} />
 
             {/* Back Button (Only in Regional View) */}
             <AnimatePresence>
