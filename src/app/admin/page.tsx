@@ -478,117 +478,151 @@ export default function AdminPage() {
             </div>
 
 
-            <div className="bg-slate-900/30 border border-slate-800 rounded-xl overflow-hidden">
-                <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
-                    <h2 className="text-lg font-bold text-white font-orbitron">USER DATABASE</h2>
-                    <div className="relative">
-                        <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                        <input
-                            type="text"
-                            placeholder="Search UUID or Username..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="bg-slate-950 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-cyan-500 w-64"
-                        />
-                    </div>
-                </div>
+            {/* User Database - Minimal & Functional */}
+            <div className="mt-12 mb-4 flex items-center justify-between">
+                <h2 className="text-xl font-bold text-white font-orbitron tracking-wider flex items-center gap-2">
+                    <Users className="w-5 h-5 text-cyan-500" />
+                    USER DATABASE
+                </h2>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-slate-950 text-slate-500 text-xs font-mono uppercase tracking-wider">
-                                <th className="p-4 border-b border-slate-800">User</th>
-                                <th className="p-4 border-b border-slate-800">Status</th>
-                                <th className="p-4 border-b border-slate-800">Lifetime NC</th>
-                                <th className="p-4 border-b border-slate-800">Credits</th>
-                                <th className="p-4 border-b border-slate-800">Streak</th>
-                                <th className="p-4 border-b border-slate-800">Last Login</th>
-                                <th className="p-4 border-b border-slate-800 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="text-sm divide-y divide-slate-800">
-                            {filteredUsers.map(user => (
-                                <tr key={user.id} className="hover:bg-slate-800/30 transition-colors">
-                                    <td className="p-4">
-                                        <div className="font-bold text-white flex items-center gap-2">
+                <div className="relative group">
+                    <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 group-focus-within:text-cyan-500 transition-colors" />
+                    <input
+                        type="text"
+                        placeholder="Search UUID or Username..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="bg-slate-900/50 border border-slate-800 rounded-full pl-10 pr-4 py-2 text-sm text-slate-300 placeholder:text-slate-600 focus:outline-none focus:border-cyan-500/50 focus:bg-slate-900 transition-all w-64 hover:border-slate-700"
+                    />
+                </div>
+            </div>
+
+            <div className="overflow-hidden rounded-xl border border-slate-800/50 bg-slate-900/20 backdrop-blur-sm">
+                <table className="w-full text-left border-collapse">
+                    <thead>
+                        <tr className="border-b border-slate-800/50 text-xs font-mono text-slate-500 uppercase tracking-widest">
+                            <th className="p-4 pl-6 font-medium">User Details</th>
+                            <th className="p-4 font-medium text-center">Status</th>
+                            <th className="p-4 font-medium text-right">Credits</th>
+                            <th className="p-4 font-medium text-right">Streak</th>
+                            <th className="p-4 font-medium text-right">Last Login</th>
+                            <th className="p-4 pr-6 font-medium text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/30 text-sm">
+                        {filteredUsers.map(user => (
+                            <tr key={user.id} className="group hover:bg-white/[0.02] transition-colors">
+                                <td className="p-4 pl-6">
+                                    <div className="flex flex-col">
+                                        <div className="font-bold text-slate-200 flex items-center gap-2 group-hover:text-cyan-400 transition-colors">
                                             {user.username || 'Anonymous'}
                                             {user.is_admin && <Shield className="w-3 h-3 text-cyan-500" />}
                                         </div>
-                                        <div className="text-xs text-slate-500 font-mono">{user.id}</div>
-                                    </td>
-                                    <td className="p-4">
-                                        <button
-                                            onClick={() => handleTogglePremium(user)}
-                                            className={`p-1 rounded ${user.is_premium ? 'text-amber-400 bg-amber-900/20' : 'text-slate-600 hover:text-slate-400'}`}
-                                            title="Toggle Premium"
-                                        >
-                                            <Crown className="w-4 h-4" />
-                                        </button>
-                                    </td>
+                                        <div className="text-[10px] text-slate-600 font-mono tracking-tight group-hover:text-slate-500 transition-colors">
+                                            {user.id}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <button
+                                        onClick={() => handleTogglePremium(user)}
+                                        className={`p-1.5 rounded-lg transition-all ${user.is_premium
+                                            ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]'
+                                            : 'bg-slate-800/50 text-slate-600 border border-slate-700/50 hover:bg-slate-800 hover:text-slate-400'
+                                            }`}
+                                        title={user.is_premium ? "Premium Active" : "No Premium"}
+                                    >
+                                        <Crown className="w-4 h-4" />
+                                    </button>
+                                </td>
 
-                                    <td className="p-4 font-mono">
-                                        {editingId === user.id ? (
-                                            <input
-                                                type="number"
-                                                value={editForm.credits || 0}
-                                                onChange={(e) => setEditForm({ ...editForm, credits: parseInt(e.target.value) })}
-                                                className="bg-slate-950 border border-slate-700 rounded px-2 py-1 w-20"
-                                            />
-                                        ) : (
-                                            <span className="text-yellow-400">{user.credits}</span>
-                                        )}
-                                    </td>
-                                    <td className="p-4 font-mono">
-                                        {editingId === user.id ? (
-                                            <input
-                                                type="number"
-                                                value={editForm.highest_streak || 0}
-                                                onChange={(e) => setEditForm({ ...editForm, highest_streak: parseInt(e.target.value) })}
-                                                className="bg-slate-950 border border-slate-700 rounded px-2 py-1 w-16"
-                                            />
-                                        ) : (
-                                            <span className="text-orange-400">{user.highest_streak} 🔥</span>
-                                        )}
-                                    </td>
-                                    <td className="p-4 text-slate-400">
-                                        {user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Never'}
-                                    </td>
-                                    <td className="p-4 text-right">
-                                        {editingId === user.id ? (
-                                            <div className="flex justify-end gap-2">
-                                                <button onClick={() => handleSave(user.id)} className="p-1.5 bg-green-900/50 text-green-400 rounded hover:bg-green-900">
-                                                    <Save className="w-4 h-4" />
-                                                </button>
-                                                <button onClick={() => setEditingId(null)} className="p-1.5 bg-slate-800 text-slate-400 rounded hover:bg-slate-700">
-                                                    X
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div className="flex justify-end gap-2">
-                                                <button onClick={() => openInventoryModal(user)} className="p-1.5 hover:bg-slate-800 rounded text-blue-400 transition-colors" title="Inventory">
-                                                    <Package className="w-4 h-4" />
-                                                </button>
-                                                <button onClick={() => openBadgeModal(user)} className="p-1.5 hover:bg-slate-800 rounded text-purple-400 transition-colors" title="Badges">
-                                                    <Medal className="w-4 h-4" />
-                                                </button>
-                                                <div className="w-px h-4 bg-slate-800 mx-1 self-center" />
-                                                <button onClick={() => handleEdit(user)} className="p-1.5 hover:bg-slate-800 rounded text-cyan-400 transition-colors">
-                                                    Edit
-                                                </button>
-                                                <button onClick={() => handleBan(user.id)} className="p-1.5 hover:bg-orange-900/30 rounded text-orange-500 transition-colors" title="Reset User">
-                                                    <Ban className="w-4 h-4" />
-                                                </button>
-                                                <button onClick={() => handleDeleteUser(user.id)} className="p-1.5 hover:bg-red-900/30 rounded text-red-500 transition-colors" title="Delete User Permanently">
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                                <td className="p-4 text-right font-mono">
+                                    {editingId === user.id ? (
+                                        <input
+                                            type="number"
+                                            value={editForm.credits || 0}
+                                            onChange={(e) => setEditForm({ ...editForm, credits: parseInt(e.target.value) })}
+                                            className="bg-slate-950 border border-cyan-500/50 rounded px-2 py-1 w-20 text-right outline-none text-cyan-400"
+                                            autoFocus
+                                        />
+                                    ) : (
+                                        <span className="text-yellow-500/90 font-medium group-hover:text-yellow-400 transition-colors">
+                                            {user.credits?.toLocaleString()}
+                                            <span className="text-yellow-500/50 text-xs ml-1">NC</span>
+                                        </span>
+                                    )}
+                                </td>
+
+                                <td className="p-4 text-right font-mono">
+                                    {editingId === user.id ? (
+                                        <input
+                                            type="number"
+                                            value={editForm.highest_streak || 0}
+                                            onChange={(e) => setEditForm({ ...editForm, highest_streak: parseInt(e.target.value) })}
+                                            className="bg-slate-950 border border-cyan-500/50 rounded px-2 py-1 w-16 text-right outline-none text-cyan-400"
+                                        />
+                                    ) : (
+                                        <span className={`font-medium group-hover:brightness-125 transition-colors ${(user.highest_streak || 0) > 0 ? 'text-orange-500' : 'text-slate-600'
+                                            }`}>
+                                            {user.highest_streak} <span className="text-sm">🔥</span>
+                                        </span>
+                                    )}
+                                </td>
+
+                                <td className="p-4 text-right text-slate-500 font-mono text-xs">
+                                    {user.last_login
+                                        ? <span>{new Date(user.last_login).toLocaleDateString()}</span>
+                                        : <span className="opacity-30">Never</span>
+                                    }
+                                </td>
+
+                                <td className="p-4 pr-6 text-right">
+                                    {editingId === user.id ? (
+                                        <div className="flex justify-end gap-2">
+                                            <button onClick={() => handleSave(user.id)} className="p-1.5 bg-green-500/20 text-green-400 rounded-md hover:bg-green-500/30 transition-colors">
+                                                <Save className="w-4 h-4" />
+                                            </button>
+                                            <button onClick={() => setEditingId(null)} className="p-1.5 bg-slate-800 text-slate-400 rounded-md hover:bg-slate-700 transition-colors">
+                                                <X className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                            <button onClick={() => openInventoryModal(user)} className="p-2 hover:bg-blue-500/10 rounded-md text-slate-500 hover:text-blue-400 transition-colors" title="Inventory">
+                                                <Package className="w-4 h-4" />
+                                            </button>
+                                            <button onClick={() => openBadgeModal(user)} className="p-2 hover:bg-purple-500/10 rounded-md text-slate-500 hover:text-purple-400 transition-colors" title="Badges">
+                                                <Medal className="w-4 h-4" />
+                                            </button>
+
+                                            <div className="w-px h-4 bg-slate-800 mx-1 self-center" />
+
+                                            <button onClick={() => handleEdit(user)} className="p-2 hover:bg-cyan-500/10 rounded-md text-slate-500 hover:text-cyan-400 transition-colors" title="Quick Edit">
+                                                <Zap className="w-4 h-4" />
+                                            </button>
+
+                                            <button onClick={() => handleBan(user.id)} className="p-2 hover:bg-orange-500/10 rounded-md text-slate-500 hover:text-orange-500 transition-colors" title="Reset (Soft Ban)">
+                                                <Ban className="w-4 h-4" />
+                                            </button>
+
+                                            <button onClick={() => handleDeleteUser(user.id)} className="p-2 hover:bg-red-500/10 rounded-md text-slate-500 hover:text-red-500 transition-colors" title="DELETE PERMANENTLY">
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+
+                        {filteredUsers.length === 0 && (
+                            <tr>
+                                <td colSpan={6} className="p-12 text-center text-slate-600 font-mono">
+                                    NO USERS FOUND
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
             </div>
 
             {/* Inventory Modal */}
