@@ -166,11 +166,14 @@ export default function TrainingPillPage() {
                 setMode('COMPLETE');
             } else {
                 // Imperfect Score - Show Modal
-                // NEW: Save score using completeLevel with 'attempted' status
-                if (provinceId) {
-                    await completeLevel(lesson.id, score, provinceId, 'attempted');
-                }
+                // Optimize UX: Update UI immediately, then save in background
+                setIsAnswerChecked(false);
                 setShowPerfectScoreModal(true);
+
+                if (provinceId) {
+                    completeLevel(lesson.id, score, provinceId, 'attempted')
+                        .catch(err => console.error('Background save failed:', err));
+                }
             }
         }
     };

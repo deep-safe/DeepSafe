@@ -37,7 +37,7 @@ export default function StreakRewardModal({ isOpen, streak, previousStreak, onCl
     const title = isFrozen ? "SERIE CONGELATA" : "SISTEMA SINCRONIZZATO";
     const description = isFrozen
         ? "Hai usato un Congelamento Serie per salvare i tuoi progressi!"
-        : "Torna domani per mantenere attiva la serie e guadagnare bonus XP.";
+        : "Torna domani per mantenere attiva la serie e guadagnare bonus esclusivi.";
     const color = isFrozen ? "cyan" : "orange";
     const icon = isFrozen ? <Snowflake className="w-full h-full p-2" /> : <Flame className="w-full h-full p-2" />;
     const btnColor = isFrozen ? "from-cyan-600 to-blue-600" : "from-orange-600 to-red-600";
