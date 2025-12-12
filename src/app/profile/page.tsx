@@ -54,9 +54,11 @@ import { MedagliereSection } from '@/components/profile/MedagliereSection';
 import { CyberLoading } from '@/components/ui/CyberLoading';
 import { FeedbackModal } from '@/components/profile/FeedbackModal';
 import { DeleteAccountModal } from '@/components/profile/DeleteAccountModal';
+import { LogoutModal } from '@/components/profile/LogoutModal';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useLocalNotifications } from '@/hooks/useLocalNotifications';
 import { useBiometrics } from '@/hooks/useBiometrics';
+
 
 type ToggleColor = 'blue' | 'purple' | 'orange';
 
@@ -165,9 +167,11 @@ export default function ProfilePage() {
     // Edit Form State
     const [editName, setEditName] = useState('');
     const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
     // Compute Badges with Unlock Status
     const badges = BADGES_DATA.map(badgeDef => {
+
         const earned = earnedBadges.find(b => b.id === badgeDef.id);
         return {
             id: badgeDef.id,
@@ -299,10 +303,10 @@ export default function ProfilePage() {
     };
 
     const handleLogout = async () => {
-        await supabase.auth.signOut();
+        setIsLogoutModalOpen(false);
         localStorage.removeItem('user_profile_cache'); // Clear cache
+        await supabase.auth.signOut();
         router.push('/login');
-        router.refresh();
     };
 
     const handleSaveProfile = async () => {
@@ -611,12 +615,13 @@ export default function ProfilePage() {
 
                     {/* Logout Button */}
                     <button
-                        onClick={handleLogout}
+                        onClick={() => setIsLogoutModalOpen(true)}
                         className="w-full mt-4 py-3 rounded-lg border border-red-500/30 bg-red-500/10 text-red-500 font-bold font-orbitron tracking-widest hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2 group"
                     >
                         <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                         DISCONNETTI SISTEMA
                     </button>
+
 
                     {/* Danger Zone */}
                     <div className="pt-6 border-t border-white/5 space-y-4">
@@ -727,6 +732,13 @@ export default function ProfilePage() {
                 onConfirm={handleDeleteAccount}
                 isDeleting={isDeleting}
             />
+
+            <LogoutModal
+                isOpen={isLogoutModalOpen}
+                onClose={() => setIsLogoutModalOpen(false)}
+                onConfirm={handleLogout}
+            />
         </div >
+
     );
 }

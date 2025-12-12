@@ -22,28 +22,36 @@ export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
 
     // Sync Last Login Date
     const { setLastLoginDate } = useUserStore();
+    const router = useRouter();
+
+    const isLandingPage = pathname === '/' || pathname === '/a' || pathname === '/s' || pathname === '/privacy-policy' || pathname === '/terms' || pathname === '/cookie-policy';
 
     React.useEffect(() => {
+        if (isLandingPage) return;
+
         const updateLogin = async () => {
             try {
-                // Update Last Login to now
-                await setLastLoginDate(new Date().toISOString());
+                // Check if we have a session first to avoid "Refresh Token Not Found" error on public pages
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    await setLastLoginDate(new Date().toISOString());
+                }
             } catch (error) {
                 console.error('Failed to update last login:', error);
             }
         };
 
         updateLogin();
-    }, []);
-
-    const router = useRouter();
+    }, [isLandingPage, setLastLoginDate]);
 
     React.useEffect(() => {
         // Handle Auth State Changes (including Token Refresh Errors)
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
             if (event === 'SIGNED_OUT') {
                 // Clear any local state if needed
-                router.push('/login');
+                if (!isLandingPage) {
+                    router.push('/login');
+                }
             } else if (event === 'TOKEN_REFRESHED') {
                 console.log('Token refreshed successfully');
             }
@@ -60,9 +68,7 @@ export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
         return () => {
             subscription.unsubscribe();
         };
-    }, []);
-
-    const isLandingPage = pathname === '/' || pathname === '/a' || pathname === '/s' || pathname === '/privacy-policy' || pathname === '/terms' || pathname === '/cookie-policy';
+    }, [isLandingPage, router]);
 
     if (isLandingPage) {
         return (
