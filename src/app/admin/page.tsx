@@ -134,23 +134,39 @@ export default function AdminPage() {
     };
 
     const handleSave = async (id: string) => {
+        // Validation
+        const credits = editForm.credits;
+        const streak = editForm.highest_streak;
+
+        if (typeof credits !== 'number' || isNaN(credits)) {
+            alert('Invalid credits value');
+            return;
+        }
+        if (typeof streak !== 'number' || isNaN(streak)) {
+            alert('Invalid streak value');
+            return;
+        }
+
         askConfirmation(
             'Salva Modifiche',
             'Sei sicuro di voler salvare le modifiche a questo utente?',
             async () => {
+                // Use the existing v2 RPC which we know exists, but now with safe validated inputs
                 const { data, error } = await supabase.rpc('admin_update_profile_v2' as any, {
                     target_user_id: id,
-                    new_credits: editForm.credits,
-                    new_streak: editForm.highest_streak
+                    new_credits: credits,
+                    new_streak: streak
                 });
 
                 const response = data as any;
 
                 if (error || (response && !response.success)) {
-                    console.error('Update error:', error || response?.message);
-                    alert(`Error updating user: ${error?.message || response?.message}`);
+                    console.error('Update error details:', JSON.stringify(error || response, null, 2));
+                    alert(`Error updating user: ${error?.message || response?.message || 'Unknown error'}`);
                 } else {
-                    setUsers(users.map(u => u.id === id ? { ...u, ...editForm } : u));
+                    // Update local state optimistically
+                    setUsers(users.map(u => u.id === id ? { ...u, credits: credits, highest_streak: streak } : u));
+                    setFilteredUsers(filteredUsers.map(u => u.id === id ? { ...u, credits: credits, highest_streak: streak } : u)); // Also update filtered list
                     setEditingId(null);
                 }
             },
