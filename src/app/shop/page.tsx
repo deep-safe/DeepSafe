@@ -157,23 +157,23 @@ function ShopContent() {
     };
 
     const buyMysteryItem = async (itemId: string, itemCost: number) => {
-        console.log('🎁 Mystery Item Clicked:', itemId);
+
 
         if (credits < itemCost) {
-            console.log('❌ Insufficient credits');
+
             setFeedback({ type: 'error', message: 'Crediti insufficienti!' });
             setTimeout(() => setFeedback(null), 3000);
             return;
         }
 
-        console.log('🔓 Opening Mystery Box...');
+
         setIsBuying(itemId);
         setMysteryBoxOpen(true); // Open modal immediately
 
         try {
-            console.log('📡 Calling buyItem RPC...');
+
             const result = await buyItem(itemId, itemCost);
-            console.log('✅ RPC Result:', result);
+
 
             // Artificial delay for animation
             await new Promise(resolve => setTimeout(resolve, 2000));
@@ -181,7 +181,7 @@ function ShopContent() {
             setIsBuying(null);
 
             if (result.success && result.reward) {
-                console.log('🏆 Reward:', result.reward);
+
                 setMysteryReward(result.reward);
                 // Refresh shop items to update stock if limited
                 fetchShopItems();

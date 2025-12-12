@@ -34,7 +34,7 @@ export function FriendList({ friends, currentUserId, referralCode }: FriendListP
                     url: window.location.origin,
                 });
             } catch (err) {
-                console.log('Share cancelled');
+
             }
         } else {
             // Fallback

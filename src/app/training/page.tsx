@@ -144,7 +144,7 @@ export default function TrainingPillPage() {
                         // We need a way to show these. For now, log and maybe set a simple local state if we had a modal.
                         // But for now, let's just log. The user asked for a POPUP. 
                         // We will implement the popup state in the next step.
-                        console.log('🏆 New Badges:', newBadges);
+
                         setNewBadgeId(newBadges[0]);
                     }
 

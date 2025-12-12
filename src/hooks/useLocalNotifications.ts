@@ -57,7 +57,7 @@ export function useLocalNotifications() {
                     }
                 ]
             });
-            console.log('Daily reminder scheduled for:', scheduleTime);
+
         } catch (error) {
             console.error('Error scheduling notification:', error);
         }
@@ -89,7 +89,7 @@ export function useLocalNotifications() {
                     }
                 ]
             });
-            console.log('Gift notification scheduled for:', scheduleTime);
+
         } catch (error) {
             console.error('Error scheduling gift notification:', error);
         }

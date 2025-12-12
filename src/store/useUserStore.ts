@@ -315,7 +315,7 @@ export const useUserStore = create<UserState>()(
                                     });
 
                                     if (allOthersCompleted) {
-                                        console.log('🌟 Region Completed! Awarding Ruby.');
+
                                         addRubies = 1;
                                     }
                                 }

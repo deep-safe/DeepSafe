@@ -103,7 +103,7 @@ export default function AdminPage() {
             .eq('id', user.id)
             .single();
 
-        console.log('Admin Check:', { user: user.id, profile, error: profileError });
+
 
         if (!profile?.is_admin) {
             console.warn('Access Denied: User is not admin (DB check)');

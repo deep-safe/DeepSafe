@@ -253,7 +253,7 @@ export default function QuizPage() {
                         // -- DUEL MODE LOGIC --
                         if (mode === 'duel' && challengeId) {
                             submitDuelScore(challengeId, user.id, finalScore)
-                                .then(() => console.log('⚔️ Duel score submitted successfully.'))
+                                .then(() => { })
                                 .catch(err => console.error('❌ Error submitting duel score:', err));
 
                             posthog.capture('duel_completed', {
@@ -288,19 +288,19 @@ export default function QuizPage() {
                                 completed_at: new Date().toISOString()
                             }, { onConflict: 'user_id, quiz_id' });
                         } else {
-                            console.log('✅ Level completed successfully (Store)');
+
 
                             // 2. Check for new badges
                             const { newBadges } = await checkBadges(true);
                             if (newBadges && newBadges.length > 0) {
-                                console.log('🏆 New Badge Earned:', newBadges[0]);
+
                                 setNewBadgeId(newBadges[0]);
                             }
                         }
                     }
 
                     // No need to manually refresh profile here, store action does it.
-                    console.log('✅ Workflow complete, waiting for user input...');
+
 
                 } catch (error) {
                     console.error('❌ Unexpected error completing level:', error);

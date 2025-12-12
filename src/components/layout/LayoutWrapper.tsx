@@ -53,14 +53,14 @@ export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
                     router.push('/login');
                 }
             } else if (event === 'TOKEN_REFRESHED') {
-                console.log('Token refreshed successfully');
+
             }
         });
 
         if ('serviceWorker' in navigator) {
             const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
             navigator.serviceWorker.register(`${basePath}/custom-sw.js`).then(
-                (registration) => console.log('Service Worker registered with scope:', registration.scope),
+                (registration) => { },
                 (error) => console.error('Service Worker registration failed:', error)
             );
         }

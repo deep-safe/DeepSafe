@@ -231,7 +231,7 @@ export default function ProfilePage() {
             if (statsError) {
                 console.error('❌ Error fetching agent stats:', statsError);
             } else {
-                console.log('✅ Agent Stats:', statsData);
+
                 if (statsData) {
                     setAgentStats(statsData as AgentStats);
                 }

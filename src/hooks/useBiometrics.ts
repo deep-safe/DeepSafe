@@ -29,7 +29,7 @@ export function useBiometrics() {
                 // setBiometryType(result.biometryType); 
             }
         } catch (error) {
-            console.log('Biometrics not available:', error);
+
         }
     };
 
