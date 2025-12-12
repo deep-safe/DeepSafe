@@ -162,27 +162,24 @@ export default function AdminPage() {
     const handleBan = async (id: string) => {
         askConfirmation(
             'Reset Utente',
-            'Sei sicuro di voler resettare questo utente? Verranno azzerati XP, Crediti e Streak.',
+            'Sei sicuro di voler resettare questo utente? Verranno azzerati TUTTI I VALORI!',
             async () => {
-                // Soft ban / Reset
-                const { data, error } = await supabase.rpc('admin_update_profile_v2' as any, {
-                    target_user_id: id,
-                    new_credits: 0,
-                    new_streak: 0,
-                    new_unlocked_provinces: ['CB', 'IS']
+                // Hard Reset / Wipe Progress
+                const { data, error } = await supabase.rpc('admin_reset_user' as any, {
+                    target_user_id: id
                 });
 
                 const response = data as any;
 
                 if (error || (response && !response.success)) {
-                    console.error('Ban error:', error || response?.message);
+                    console.error('Reset error:', error || response?.message);
                     alert(`Error resetting user: ${error?.message || response?.message}`);
                 } else {
                     checkAdminAndFetchData();
                 }
             },
             'warning',
-            'Reset Utente'
+            'RESET TOTALMENTE (WIPE)'
         );
     };
 
