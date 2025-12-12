@@ -7,7 +7,7 @@ interface FeatureNotImplentedModalProps {
     onClose: () => void;
 }
 
-export function FeatureNotImplementedModal({ isOpen, onClose }: FeatureNotImplentedModalProps) {
+export function FeatureNotImplementedModal({ isOpen, onClose, zIndex }: FeatureNotImplentedModalProps & { zIndex?: number }) {
     return (
         <CyberModal
             isOpen={isOpen}
@@ -15,6 +15,7 @@ export function FeatureNotImplementedModal({ isOpen, onClose }: FeatureNotImplen
             title="COMING SOON"
             color="cyan"
             showCloseButton={true}
+            zIndex={zIndex}
         >
             <div className="flex flex-col items-center justify-center p-6 space-y-6 text-center">
                 <div className="w-16 h-16 rounded-full bg-cyan-900/30 flex items-center justify-center border border-cyan-500/30">

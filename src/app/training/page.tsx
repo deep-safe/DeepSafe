@@ -15,6 +15,7 @@ import { PerfectScoreModal } from '@/components/gamification/PerfectScoreModal';
 import { BadgeUnlockModal } from '@/components/gamification/BadgeUnlockModal';
 import { MedalUnlockModal } from '@/components/gamification/MedalUnlockModal';
 import { QuizActionPanel } from '@/components/gamification/QuizActionPanel';
+import { FeatureNotImplementedModal } from '@/components/ui/FeatureNotImplementedModal';
 
 export default function TrainingPillPage() {
     const params = useParams();
@@ -37,6 +38,7 @@ export default function TrainingPillPage() {
     const [showPerfectScoreModal, setShowPerfectScoreModal] = useState(false);
     const [newBadgeId, setNewBadgeId] = useState<string | null>(null);
     const [earnedMedals, setEarnedMedals] = useState({ emeralds: 0, rubies: 0 });
+    const [showFeatureModal, setShowFeatureModal] = useState(false);
 
     // Calculate Map Progress for TopBar
     const totalProvinces = provincesData.length;
@@ -88,10 +90,7 @@ export default function TrainingPillPage() {
     };
 
     const handleBuyHearts = async () => {
-        // Simulate Purchase
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        refillLives();
-        setShowGameOver(false);
+        setShowFeatureModal(true);
     };
 
     const handleGiveUp = () => {
@@ -197,6 +196,12 @@ export default function TrainingPillPage() {
                 onWatchAd={handleWatchAd}
                 onBuyHearts={handleBuyHearts}
                 onGiveUp={handleGiveUp}
+            />
+
+            <FeatureNotImplementedModal
+                isOpen={showFeatureModal}
+                onClose={() => setShowFeatureModal(false)}
+                zIndex={110}
             />
 
             <MockAdModal

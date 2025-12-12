@@ -15,6 +15,7 @@ interface CyberModalProps {
     className?: string;
     showCloseButton?: boolean;
     description?: string;
+    zIndex?: number;
 }
 
 export function CyberModal({
@@ -26,7 +27,8 @@ export function CyberModal({
     color = 'cyan',
     className,
     showCloseButton = true,
-    description
+    description,
+    zIndex = 50
 }: CyberModalProps) {
     if (!isOpen) return null;
 
@@ -84,7 +86,10 @@ export function CyberModal({
     const styles = colorStyles[color];
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div
+            className="fixed inset-0 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            style={{ zIndex }}
+        >
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
