@@ -138,7 +138,7 @@ export default function AdminPage() {
             'Salva Modifiche',
             'Sei sicuro di voler salvare le modifiche a questo utente?',
             async () => {
-                const { data, error } = await supabase.rpc('admin_update_user' as any, {
+                const { data, error } = await supabase.rpc('admin_update_profile_v2' as any, {
                     target_user_id: id,
                     new_credits: editForm.credits,
                     new_streak: editForm.highest_streak
@@ -165,7 +165,7 @@ export default function AdminPage() {
             'Sei sicuro di voler resettare questo utente? Verranno azzerati XP, Crediti e Streak.',
             async () => {
                 // Soft ban / Reset
-                const { data, error } = await supabase.rpc('admin_update_user' as any, {
+                const { data, error } = await supabase.rpc('admin_update_profile_v2' as any, {
                     target_user_id: id,
                     new_credits: 0,
                     new_streak: 0,
@@ -220,7 +220,7 @@ export default function AdminPage() {
             newStatus ? 'Attiva Premium' : 'Disattiva Premium',
             `Sei sicuro di voler ${newStatus ? 'attivare' : 'disattivare'} lo stato Premium per ${user.username}?`,
             async () => {
-                const { data, error } = await supabase.rpc('admin_update_user' as any, {
+                const { data, error } = await supabase.rpc('admin_update_profile_v2' as any, {
                     target_user_id: user.id,
                     new_is_premium: newStatus
                 });
@@ -250,7 +250,7 @@ export default function AdminPage() {
         const currentInventory = (selectedUser.inventory as string[]) || [];
         const newInventory = [...currentInventory, itemId];
 
-        const { data, error } = await supabase.rpc('admin_update_user' as any, {
+        const { data, error } = await supabase.rpc('admin_update_profile_v2' as any, {
             target_user_id: selectedUser.id,
             new_inventory: newInventory
         });
@@ -271,7 +271,7 @@ export default function AdminPage() {
         const newInventory = [...currentInventory];
         newInventory.splice(index, 1);
 
-        const { data, error } = await supabase.rpc('admin_update_user' as any, {
+        const { data, error } = await supabase.rpc('admin_update_profile_v2' as any, {
             target_user_id: selectedUser.id,
             new_inventory: newInventory
         });
@@ -304,7 +304,7 @@ export default function AdminPage() {
             newBadges = [...currentBadges, { id: badgeId, earned_at: new Date().toISOString() }];
         }
 
-        const { data, error } = await supabase.rpc('admin_update_user' as any, {
+        const { data, error } = await supabase.rpc('admin_update_profile_v2' as any, {
             target_user_id: selectedUser.id,
             new_earned_badges: newBadges
         });
