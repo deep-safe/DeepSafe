@@ -9,7 +9,6 @@ import { ArrowLeft, CheckCircle, XCircle, Heart } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useUserStore } from '@/store/useUserStore';
 import GameOverModal from '@/components/training/GameOverModal';
-import MockAdModal from '@/components/training/MockAdModal';
 import TopBar from '@/components/dashboard/TopBar';
 import { PerfectScoreModal } from '@/components/gamification/PerfectScoreModal';
 import { BadgeUnlockModal } from '@/components/gamification/BadgeUnlockModal';
@@ -34,7 +33,6 @@ export default function TrainingPillPage() {
     const [isAnswerChecked, setIsAnswerChecked] = useState(false);
     const [score, setScore] = useState(0);
     const [showGameOver, setShowGameOver] = useState(false);
-    const [showAdModal, setShowAdModal] = useState(false);
     const [showPerfectScoreModal, setShowPerfectScoreModal] = useState(false);
     const [newBadgeId, setNewBadgeId] = useState<string | null>(null);
     const [earnedMedals, setEarnedMedals] = useState({ emeralds: 0, rubies: 0 });
@@ -79,15 +77,6 @@ export default function TrainingPillPage() {
         }
     }, [lives]);
 
-    const handleWatchAd = async () => {
-        setShowGameOver(false);
-        setShowAdModal(true);
-    };
-
-    const handleAdReward = () => {
-        addHeart(1);
-        setShowAdModal(false);
-    };
 
     const handleBuyHearts = async () => {
         setShowFeatureModal(true);
@@ -193,7 +182,6 @@ export default function TrainingPillPage() {
         <div className="h-[100dvh] bg-slate-950 text-slate-200 font-sans selection:bg-cyan-500/30 overflow-y-auto flex flex-col">
             <GameOverModal
                 isOpen={showGameOver}
-                onWatchAd={handleWatchAd}
                 onBuyHearts={handleBuyHearts}
                 onGiveUp={handleGiveUp}
             />
@@ -204,11 +192,7 @@ export default function TrainingPillPage() {
                 zIndex={110}
             />
 
-            <MockAdModal
-                isOpen={showAdModal}
-                onClose={() => setShowAdModal(false)}
-                onReward={handleAdReward}
-            />
+            {/* Removed MockAdModal */}
 
             {showPerfectScoreModal && (
                 <PerfectScoreModal

@@ -1,24 +1,20 @@
-'use client';
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Play, ShoppingCart, XCircle, AlertTriangle } from 'lucide-react';
+import { Heart, ShoppingCart, XCircle } from 'lucide-react';
 
 interface GameOverModalProps {
     isOpen: boolean;
-    onWatchAd: () => Promise<void>;
     onBuyHearts: () => Promise<void>;
     onGiveUp: () => void;
 }
 
-export default function GameOverModal({ isOpen, onWatchAd, onBuyHearts, onGiveUp }: GameOverModalProps) {
-    const [isLoading, setIsLoading] = useState<'AD' | 'BUY' | null>(null);
+export default function GameOverModal({ isOpen, onBuyHearts, onGiveUp }: GameOverModalProps) {
+    const [isLoading, setIsLoading] = useState<'BUY' | null>(null);
 
-    const handleAction = async (type: 'AD' | 'BUY') => {
-        setIsLoading(type);
+    const handleAction = async () => {
+        setIsLoading('BUY');
         try {
-            if (type === 'AD') await onWatchAd();
-            else await onBuyHearts();
+            await onBuyHearts();
         } finally {
             setIsLoading(null);
         }
@@ -63,27 +59,9 @@ export default function GameOverModal({ isOpen, onWatchAd, onBuyHearts, onGiveUp
                     </div>
 
                     <div className="w-full space-y-3 pt-4">
-                        {/* Watch Ad Button */}
-                        <button
-                            onClick={() => handleAction('AD')}
-                            disabled={isLoading !== null}
-                            className="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 border border-cyan-400/30 text-white font-orbitron font-bold tracking-wider shadow-lg hover:shadow-cyan-500/25 transition-all group relative overflow-hidden"
-                        >
-                            <div className="relative z-10 flex items-center justify-center gap-3">
-                                {isLoading === 'AD' ? (
-                                    <span className="animate-pulse">CARICAMENTO...</span>
-                                ) : (
-                                    <>
-                                        <Play className="w-5 h-5 fill-current" />
-                                        <span>GUARDA AD (+1 <Heart className="w-3 h-3 inline mb-1 fill-current" />)</span>
-                                    </>
-                                )}
-                            </div>
-                        </button>
-
                         {/* Buy Hearts Button */}
                         <button
-                            onClick={() => handleAction('BUY')}
+                            onClick={handleAction}
                             disabled={isLoading !== null}
                             className="w-full py-4 rounded-xl bg-slate-800 border border-slate-600 text-white font-orbitron font-bold tracking-wider hover:bg-slate-700 transition-all group"
                         >
