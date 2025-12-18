@@ -1,5 +1,5 @@
 -- Mission Seed for Marche (Theme: "L'Artigiano Digitale: Costruire Difese Solide")
--- Region: Marche
+-- Region: Marche (HARD / TRICKY EDITION)
 -- Provinces: Ancona (AN), Pesaro e Urbino (PU), Macerata (MC), Fermo (FM), Ascoli Piceno (AP)
 
 -- =================================================================================================
@@ -11,49 +11,50 @@ INSERT INTO public.missions (id, province_id, title, description, content, level
 VALUES (
     'b849959f-4871-55e5-a955-356478234001', 'AN', 'Biscotti Indigesti',
     'Non tutti i dolci fanno bene.',
-    E'# I Cookie\n\nI cookie sono piccoli file di testo che i siti salvano nel tuo browser.\n\n*   **Cookie Tecnici:** Servono a far funzionare il sito (es. tenere gli oggetti nel carrello).\n*   **Cookie di Profilazione:** Tracciano cosa guardi per venderti pubblicità.\n*   **Session Hijacking:** Se un hacker ruba il tuo "biscotto di sessione", può entrare nel tuo account senza password. Per questo il **LOGOUT** è importante sui PC pubblici.',
+    E'# I Cookie & Incognito\n\nI cookie sono utili, ma persistenti.\n\n*   **Persistenza:** Anche se chiudi la scheda, il cookie resta (se non scade).\n*   **Incognito:** La modalità in incognito NON ti rende invisibile al provider o al sito. Serve solo a non salvare la cronologia *locale* sul tuo PC.\n*   **Session Sharing:** Le schede in incognito condividono i cookie tra loro finché non le chiudi tutte.',
     'semplice', '5 min', 50, 'level_1', 'Marche', NOW()
 ) ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, content=EXCLUDED.content, nc_reward=EXCLUDED.nc_reward, level=EXCLUDED.level;
 
 INSERT INTO public.mission_questions (mission_id, text, type, options, correct_answer, explanation, image_url) VALUES
-('b849959f-4871-55e5-a955-356478234001', 'A cosa servono i cookie tecnici?', 'multiple_choice', '["A spiarti", "A far funzionare correttamente il sito (es. carrello, login)", "A riempire l''hard disk", "A nulla"]', 1, 'Sono indispensabili per l''uso normale del web moderno.', NULL),
-('b849959f-4871-55e5-a955-356478234001', 'Cosa succede se non fai Logout su un computer pubblico?', 'multiple_choice', '["Nulla, scade da solo subito", "Chi arriva dopo di te può usare il tuo cookie di sessione per entrare nel tuo profilo", "Il computer esplode", "Arriva la polizia"]', 1, 'Il cookie di sessione rimane valido finché non scade o viene revocato (logout).', NULL),
-('b849959f-4871-55e5-a955-356478234001', 'I cookie di terze parti (Third-Party) sono creati...', 'multiple_choice', '["Dal sito che visiti", "Da domini esterni (es. inserzionisti) per tracciarti attraverso più siti web", "Dal tuo mouse", "Dal governo"]', 1, 'Per questo vengono spesso bloccati dai browser moderni per privacy.', NULL),
-('b849959f-4871-55e5-a955-356478234001', 'Cancellare la cronologia cancella automaticamente anche i cookie?', 'true_false', '["Vero", "Falso"]', 1, 'Spesso sono opzioni separate nel browser ("Cancella dati di navigazione").', NULL),
-('b849959f-4871-55e5-a955-356478234001', 'È sicuro accettare cookie su un sito HTTP (non sicuro)?', 'image_true_false', '["Vero", "Falso"]', 1, 'Senza HTTPS, i cookie viaggiano in chiaro e possono essere intercettati facilmente.', 'https://placehold.co/600x400?text=Cookie+on+HTTP');
+('b849959f-4871-55e5-a955-356478234001', 'Apri una scheda in Incognito e fai login su Gmail. Poi apri una SECONDA scheda in Incognito. Sei loggato anche lì?', 'multiple_choice', '["No, ogni scheda è isolata", "Sì, le schede Incognito aperte contemporaneamente condividono la stessa sessione (cookie jar)", "Dipende dal meteo", "No, Google ti blocca"]', 1, 'Le schede Incognito condividono lo stato finché la sessione "Incognito" è attiva. Se ne chiudi una sola, l''altra resta loggata.', NULL),
+('b849959f-4871-55e5-a955-356478234001', 'Hai rifiutato tutti i cookie ("Reject All"). Il sito può comunque tracciarti?', 'multiple_choice', '["No, è illegale", "Sì, tramite Browser Fingerprinting (risoluzione schermo, font installati, versione driver)", "No, senza cookie sono ciechi", "Solo se accendi la webcam"]', 1, 'Il Fingerprinting identifica il tuo dispositivo in modo univoco anche senza salvare file sul tuo PC.', NULL),
+('b849959f-4871-55e5-a955-356478234001', 'Cosa succede se visiti un sito HTTP (non sicuro) e fai login?', 'multiple_choice', '["Il browser cripta la password in automatico", "La password viaggia in chiaro: chiunque sulla rete Wi-Fi può leggerla (Sniffing)", "Nulla, l''importante è che la password sia complessa", "Il sito ti blocca"]', 1, 'La complessità della password è inutile se viene urlata a tutti in chiaro.', NULL),
+('b849959f-4871-55e5-a955-356478234001', 'Il sito "Meteo" ha un cookie che scade nel 2099. Se cancelli la cronologia di "oggi", quel cookie sparisce?', 'true_false', '["Vero", "Falso"]', 1, 'Spesso cancellare "l''ultima ora" non elimina i cookie persistenti vecchi. Devi selezionare "Tutto il periodo".', NULL),
+('b849959f-4871-55e5-a955-356478234001', 'Il lucchetto nel browser garantisce che il sito rispetta la tua Privacy?', 'image_true_false', '["Vero", "Falso"]', 1, 'Falso. Garantisce solo che la connessione è cifrata. Il sito può comunque vendere i tuoi dati a tutti.', 'https://placehold.co/600x400?text=HTTPS+is+not+Privacy');
+
 
 -- Mission 2: Notifiche Trappola - Medio
 INSERT INTO public.missions (id, province_id, title, description, content, level, estimated_time, nc_reward, tier, region, created_at)
 VALUES (
     'b849959f-4871-55e5-a955-356478234002', 'AN', 'Notifiche Trappola',
-    'Dì di NO al robot che vuole parlarti.',
-    E'# Browser Notification Spam\n\nMolti siti malevoli usano un trucco: \n"Clicca su CONSENTI per confermare che non sei un robot".\n\nIn realtà, stai dando il permesso a inviarti notifiche desktop. Pochi minuti dopo, il tuo PC si riempie di pop-up falsi: "IL TUO PC È INFETTO! CLICCA QUI!".\nNon è un virus, è solo un permesso che hai dato per sbaglio.',
+    'Il nemico che lavora mentre dormi.',
+    E'# Service Workers\n\nQuando accetti le notifiche di un sito, il browser installa un piccolo programma ("Service Worker") che gira in background.\n\nAnche se chiudi il browser o visiti un altro sito, quel "lavoratore" è ancora lì, pronto a scaricare nuovi messaggi spam o script malevoli appena torni online.',
     'medio', '10 min', 75, 'level_2', 'Marche', NOW()
 ) ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, content=EXCLUDED.content, nc_reward=EXCLUDED.nc_reward, level=EXCLUDED.level;
 
 INSERT INTO public.mission_questions (mission_id, text, type, options, correct_answer, explanation, image_url) VALUES
-('b849959f-4871-55e5-a955-356478234002', 'Se vedi un pop-up "Hai vinto un iPhone" sul desktop, cosa è probabile che sia?', 'multiple_choice', '["Vero", "Una notifica spam del browser autorizzata per sbaglio", "Un regalo di Apple", "Un bug di Windows"]', 1, 'Spesso provengono da siti di streaming o download illegali a cui hai dato l''ok.', NULL),
-('b849959f-4871-55e5-a955-356478234002', 'Come si rimuovono queste notifiche?', 'multiple_choice', '["Formattando il  PC", "Comprando un antivirus", "Revocando i permessi di notifica nelle impostazioni del browser", "Cambiando schermo"]', 2, 'Basta togliere il sito dalla lista "Allowed" nelle impostazioni Privacy.', NULL),
-('b849959f-4871-55e5-a955-356478234002', 'Perché i siti usano il trucco "Clicca Allow per vedere il video"?', 'multiple_choice', '["Per gentilezza", "È un Dark Pattern (Inganno) per ottenere il permesso di inviarti spam", "Perché il video è pesante", "Per verificare l''età"]', 1, 'Ingannano la tua abitudine ai CAPTCHA.', NULL),
-('b849959f-4871-55e5-a955-356478234002', 'Queste notifiche possono scaricare virus da sole senza che tu clicchi.', 'true_false', '["Vero", "Falso"]', 1, 'No, la notifica in sé è testo. Il pericolo è se ci CLICCHI sopra e scarichi il software che propongono.', NULL),
-('b849959f-4871-55e5-a955-356478234002', 'Questa finestra di richiesta permessi è legittima?', 'image_true_false', '["Vero", "Falso"]', 0, 'Spesso imitano grafiche di sistema per sembrarti messaggi di Windows/macOS.', 'https://placehold.co/600x400?text=Fake+Allow+Prompt');
+('b849959f-4871-55e5-a955-356478234002', 'Hai chiuso Chrome/Edge. Puoi ancora ricevere notifiche spam da un sito malevolo?', 'multiple_choice', '["No, se il browser è chiuso è tutto spento", "Sì, i Service Workers possono girare in background o riattivarsi all''avvio del sistema", "Solo se hai un virus", "Solo su cellulare"]', 1, 'I browser moderni mantengono processi attivi per le notifiche push.', NULL),
+('b849959f-4871-55e5-a955-356478234002', 'Un sito ti chiede: "Vuoi scaricare questo file?". Tu clicchi "Blocca". Il sito può chiedertelo ancora all''infinito?', 'multiple_choice', '["Sì, per sfinimento", "No, i browser moderni bloccano le richieste ripetute dopo il primo o secondo rifiuto (Quiet UI)", "Dipende dal sito", "Sì, finché non paghi"]', 1, 'I browser cercano di mitigare lo spam delle richieste, ma i truffatori usano overlay grafici falsi per ingannarti.', NULL),
+('b849959f-4871-55e5-a955-356478234002', 'Se revochi il permesso di notifica a un sito, le notifiche già scaricate nel centro notifiche spariscono?', 'multiple_choice', '["Sì, magicamente", "No, quelle rimangono nella storia del sistema operativo finché non le cancelli tu", "Sì, il browser le cancella", "Diventano rosse"]', 1, 'La revoca ferma i *nuovi* arrivi, non cancella il passato.', NULL),
+('b849959f-4871-55e5-a955-356478234002', 'Cliccare sulla "X" di un pop-up pubblicitario è sempre sicuro.', 'true_false', '["Vero", "Falso"]', 1, 'Spesso la "X" è finta ed è parte dell''immagine cliccabile che apre la pubblicità. Si usa ALT+F4 o Gestione Attività.', NULL),
+('b849959f-4871-55e5-a955-356478234002', 'Questa finestra di aggiornamento Flash Player è necessaria nel 2025?', 'image_true_false', '["Vero", "Falso"]', 1, 'Flash Player è morto anni fa. Qualsiasi richiesta di aggiornarlo è malware al 100%.', 'https://placehold.co/600x400?text=Flash+Update+Fake');
 
 
 -- Mission 3: Il Plugin Traditore - Difficile
 INSERT INTO public.missions (id, province_id, title, description, content, level, estimated_time, nc_reward, tier, region, created_at)
 VALUES (
     'b849959f-4871-55e5-a955-356478234003', 'AN', 'Il Plugin Traditore',
-    'Quando l''aiutante diventa la spia.',
-    E'# Estensioni Malevole\n\nLe estensioni del browser (AdBlockers, Traduttori, Coupon Finders) hanno un potere enorme: possono **leggere e modificare tutti i dati sui siti che visiti**.\n\nUna estensione malevola può:\n1.  Leggere le password che digiti.\n2.  Cambiare l''indirizzo del portafoglio Crypto quando fai un copia-incolla.\n3.  Iniettare pubblicità ovunque.',
+    'Fidarsi è bene, controllare i permessi è meglio.',
+    E'# Permessi Estesi\n\nAttenzione alla differenza tra:\n*   `activeTab`: L''estensione legge solo la pagina che guardi ORA (più sicuro).\n*   `<all_urls>`: L''estensione legge TUTTO, sempre, ovunque (pericolosissimo).\n\nMolte estensioni chiedono "Tutto" per pigrizia degli sviluppatori o malizia.',
     'difficile', '15 min', 150, 'level_3', 'Marche', NOW()
 ) ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, content=EXCLUDED.content, nc_reward=EXCLUDED.nc_reward, level=EXCLUDED.level;
 
 INSERT INTO public.mission_questions (mission_id, text, type, options, correct_answer, explanation, image_url) VALUES
-('b849959f-4871-55e5-a955-356478234003', 'Quale permesso è più pericoloso per un''estensione?', 'multiple_choice', '["Leggere la cronologia", "Leggere e modificare tutti i dati sui siti visitati", "Gestire i download", "Cambiare il tema"]', 1, 'Equivale a dare le chiavi di casa. Possono vedere tutto ciò che vedi tu, incluse le banche.', NULL),
-('b849959f-4871-55e5-a955-356478234003', 'Cosa succede se un''estensione onesta viene venduta a un''azienda cattiva?', 'multiple_choice', '["Nulla", "L''estensione si aggiorna automaticamente e può diventare malevola (Malware Injection)", "Smette di funzionare", "Ti avvisa"]', 1, 'È successo spesso: estensioni popolari diventano spyware con un aggiornamento automatico.', NULL),
-('b849959f-4871-55e5-a955-356478234003', 'Come minimizzare il rischio?', 'multiple_choice', '["Installando tutto", "Installare solo estensioni strettamente necessarie, di sviluppatori fidati, e rimuoverle se non usate", "Usare due mouse", "Non usare internet"]', 1, 'Less is More. Ogni estensione è una potenziale porta d''ingresso.', NULL),
-('b849959f-4871-55e5-a955-356478234003', 'Le estensioni funzionano anche in Modalità Incognito/Privata di default.', 'true_false', '["Vero", "Falso"]', 1, 'Di solito i browser le disabilitano in Incognito per sicurezza, salvo tua autorizzazione esplicita.', NULL),
-('b849959f-4871-55e5-a955-356478234003', 'Un''estensione PDF Converter che chiede accesso alla tua fotocamera è sospetta?', 'image_true_false', '["Vero", "Falso"]', 0, 'Principio del minimo privilegio: perché un convertitore PDF dovrebbe vederti?', 'https://placehold.co/600x400?text=Suspicious+Permissions');
+('b849959f-4871-55e5-a955-356478234003', 'Un''estensione "Calcolatrice" chiede il permesso "Leggere e modificare i dati su tutti i siti web". È giustificato?', 'multiple_choice', '["Sì, deve calcolare i prezzi", "No, è un permesso eccessivo (Over-privileged), tipico di spyware", "Sì, le calcolatrici sono complesse", "Dipende dalla marca"]', 1, 'Una calcolatrice dovrebbe funzionare offline, non leggere la tua banca.', NULL),
+('b849959f-4871-55e5-a955-356478234003', 'Hai un Password Manager installato nel browser. Un''estensione malevola può rubare le password salvate lì?', 'multiple_choice', '["No, sono programmi diversi", "Sì, se l''estensione ha il permesso di leggere il DOM (pagina web), può intercettare i tasti che digiti (Keylogging) o leggere i campi che il Manager riempie", "Solo se è lunedì", "Microsoft protegge tutto"]', 1, 'Quando il Password Manager "riempie" il campo password, quel campo diventa leggibile per le altre estensioni attive nella pagina.', NULL),
+('b849959f-4871-55e5-a955-356478234003', 'La modalità "Sviluppatore" del browser è pericolosa per un utente normale?', 'multiple_choice', '["No, serve a creare siti", "Sì, permette di installare estensioni non verificate (Unpacked) che aggirano i controlli di sicurezza dello Store", "No, è solo grafica", "Rallenta il PC"]', 1, 'Spesso i tutorial per "avere funzioni gratis" vi fanno attivare questa modalità per installare malware.', NULL),
+('b849959f-4871-55e5-a955-356478234003', 'Disabilitare un''estensione è sicuro quanto disinstallarla.', 'true_false', '["Vero", "Falso"]', 0, 'Il codice rimane sul disco. Se c''è una vulnerabilità nel browser che attiva estensioni dormienti, sei a rischio. Meglio rimuovere.', NULL),
+('b849959f-4871-55e5-a955-356478234003', 'Un PDF Viewer online gratuito è sicuro per documenti riservati?', 'image_true_false', '["Vero", "Falso"]', 1, 'Stai caricando il tuo documento sul server di qualcun altro. Non hai controllo su chi lo legge.', 'https://placehold.co/600x400?text=Upload+Your+Passport');
 
 
 -- =================================================================================================
@@ -63,52 +64,52 @@ INSERT INTO public.mission_questions (mission_id, text, type, options, correct_a
 -- Mission 1: Torcia Ficcanaso - Facile
 INSERT INTO public.missions (id, province_id, title, description, content, level, estimated_time, nc_reward, tier, region, created_at)
 VALUES (
-    'b849959f-4871-55e5-a955-356478234004', 'PU', 'Torcia Ficcanaso',
-    'Perché la calcolatrice vuole sapere dove sei?',
-    E'# Permessi delle App\n\nQuando installi un''app, ti chiede dei permessi.\n\nSe un''app "Torcia" ti chiede accesso a:\n*   Posizione GPS\n*   Rubrica Contatti\n*   Microfono\n\n**C''è qualcosa che non va.** Sta raccogliendo dati per rivenderli. Usa sempre il principio del **"Least Privilege"**: dai solo i permessi indispensabili.',
+    'b849959f-4871-55e5-a955-356478234004', 'PU', 'Accessibilità Abusiva',
+    'Il permesso più pericoloso che nessuno conosce.',
+    E'# Servizi di Accessibilità\n\nSu Android, i "Servizi di Accessibilità" servono ad aiutare i non vedenti (leggono lo schermo).\n\nI malware bancari ("Bankers") richiedono questo permesso per:\n1.  Leggere cosa c''è scritto sullo schermo (es. saldo, OTP).\n2.  Cliccare bottoni al posto tuo (es. confermare bonifici).\n\nSe un''app strana ti chiede "Accessibilità", **NEGA SUBITO**.',
     'semplice', '5 min', 50, 'level_1', 'Marche', NOW()
 ) ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, content=EXCLUDED.content, nc_reward=EXCLUDED.nc_reward, level=EXCLUDED.level;
 
 INSERT INTO public.mission_questions (mission_id, text, type, options, correct_answer, explanation, image_url) VALUES
-('b849959f-4871-55e5-a955-356478234004', 'Cosa significa "Least Privilege"?', 'multiple_choice', '["Il privilegio di essere ultimi", "Dare a un''app o utente solo i permessi minimi necessari per funzionare", "Essere poveri", "Non usare password"]', 1, 'Riduce la superficie di attacco se l''app viene compromessa o è malevola.', NULL),
-('b849959f-4871-55e5-a955-356478234004', 'Perché un gioco gratuito potrebbe volere accesso al Microfono?', 'multiple_choice', '["Per sentirti urlare", "Per profilarti ascoltando l''ambiente (es. Tv) a fini pubblicitari", "Per migliorare la grafica", "Per sbaglio"]', 1, 'È una tecnica di profilazione avanzata (Cross-Device Tracking).', NULL),
-('b849959f-4871-55e5-a955-356478234004', 'Puoi revocare un permesso dopo averlo dato?', 'multiple_choice', '["No, è per sempre", "Sì, dalle impostazioni Privacy del telefono", "Solo formattando", "Solo pagando"]', 1, 'Controlla periodicamente i permessi delle tue app!', NULL),
-('b849959f-4871-55e5-a955-356478234004', 'Le app preinstallate sono sempre sicure.', 'true_false', '["Vero", "Falso"]', 1, 'Spesso contengono "Bloatware" che traccia gli utenti, anche se vengono dal produttore.', NULL),
-('b849959f-4871-55e5-a955-356478234004', 'Questa schermata di richiesta permessi è sospetta per un''app di Sfondi?', 'image_true_false', '["Vero", "Falso"]', 0, 'Chiede contatti e chiamate: assolutamente ingiustificato per dei wallpaper.', 'https://placehold.co/600x400?text=Suspicious+App+Permissions');
+('b849959f-4871-55e5-a955-356478234004', 'Perché un malware vuole i permessi di Accessibilità?', 'multiple_choice', '["Per cambiare i colori", "Perché gli permette di leggere il contenuto di ALTRE app (es. Banca) e simulare tocchi sullo schermo", "Per sentire meglio", "Per risparmiare batteria"]', 1, 'È il modo principale con cui i trojan aggirano la Sandbox di Android.', NULL),
+('b849959f-4871-55e5-a955-356478234004', 'Un''app "Pulizia Telefono" ti chiede di installare un "Profilo di Configurazione" (iOS) o "Certificato". Lo fai?', 'multiple_choice', '["Sì, pulisce meglio", "Assolutamente NO, un profilo MDM può prendere il controllo totale del dispositivo e intercettare il traffico HTTPS", "Sì, se è gratis", "Chiedo a Siri"]', 1, 'Mai installare profili o certificati root sconosciuti. È un attacco Man-in-the-Middle perfetto.', NULL),
+('b849959f-4871-55e5-a955-356478234004', 'Il "Pallino Verde" in alto a destra su Android/iOS significa...', 'multiple_choice', '["Che il telefono è carico", "Che un''app sta usando la fotocamera o il microfono in questo momento", "Che sei online", "Che hai un messaggio"]', 1, 'Se si accende mentre non stai facendo nulla, qualcuno ti ascolta.', NULL),
+('b849959f-4871-55e5-a955-356478234004', 'Disattivare il GPS impedisce totalmente al telefono di sapere dove sei.', 'true_false', '["Vero", "Falso"]', 1, 'Il telefono può triangolare la posizione usando le reti Wi-Fi vicine e le celle telefoniche, anche senza GPS satellitare.', NULL),
+('b849959f-4871-55e5-a955-356478234004', 'Questa app chiede di essere "Amministratore Dispositivo". È normale per un gioco?', 'image_true_false', '["Vero", "Falso"]', 1, 'I permessi Admin servono per reset remoti o policy aziendali, mai per un gioco. Serve a impedirti di disinstallarla.', 'https://placehold.co/600x400?text=Device+Admin+Request');
 
 
 -- Mission 2: APK & Sideloading - Medio
 INSERT INTO public.missions (id, province_id, title, description, content, level, estimated_time, nc_reward, tier, region, created_at)
 VALUES (
-    'b849959f-4871-55e5-a955-356478234005', 'PU', 'APK Moddati',
-    'Spotify Premium gratis? Il prezzo sei tu.',
-    E'# Sideloading\n\nInstallare app fuori dagli store ufficiali (APK su Android) si chiama **Sideloading**.\n\nScaricare "WhatsApp Gold" o "Spotify Cracked" da siti sconosciuti è il modo n.1 per infettare il telefono.\nSpesso queste app contengono il servizio vero (funzionano!) ma impacchettato insieme a uno **Spyware** che legge i tuoi SMS bancari.',
+    'b849959f-4871-55e5-a955-356478234005', 'PU', 'APK Fantasma',
+    'Sembra l''app vera, ma non lo è.',
+    E'# Overlay Attack\n\nHai scaricato un APK infetto.\nQuando apri la tua vera App della Banca, il malware se ne accorge e disegna **sopra** una finestra finta, identica a quella della banca.\n\nTu inserisci username e password nella finestra finta. Il malware li ruba e poi chiude la finestra finta, lasciandoti entrare in quella vera. Non ti accorgi di nulla.',
     'medio', '10 min', 75, 'level_2', 'Marche', NOW()
 ) ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, content=EXCLUDED.content, nc_reward=EXCLUDED.nc_reward, level=EXCLUDED.level;
 
 INSERT INTO public.mission_questions (mission_id, text, type, options, correct_answer, explanation, image_url) VALUES
-('b849959f-4871-55e5-a955-356478234005', 'Cos''è un APK?', 'multiple_choice', '["Un fucile", "Il formato dei file di installazione delle app Android", "Una marca di scarpe", "Un codice fiscale"]', 1, 'Android Package Kit.', NULL),
-('b849959f-4871-55e5-a955-356478234005', 'Qual è il rischio principale delle app "Cracked" o "Mod"?', 'multiple_choice', '["Smettono di funzionare", "Possono contenere malware (Trojan) nascosto nel codice", "Consumano troppa batteria", "Sono brutte"]', 1, 'Nessuno regala nulla. Se il servizio premium è gratis, c''è un trojan.', NULL),
-('b849959f-4871-55e5-a955-356478234005', 'Google Play Protect serve a...', 'multiple_choice', '["Giocare meglio", "Scansionare le app per cercare malware conosciuti", "Proteggere lo schermo", "Fare foto"]', 1, 'È l''antivirus integrato di Android, ma non è infallibile.', NULL),
-('b849959f-4871-55e5-a955-356478234005', 'Su iPhone (iOS) è facile installare app da fuori store come su Android?', 'true_false', '["Vero", "Falso"]', 1, 'Apple blocca il sideloading (Walled Garden), rendendolo molto difficile per l''utente medio.', NULL),
-('b849959f-4871-55e5-a955-356478234005', 'Scaricare app da questo sito è sicuro?', 'image_true_false', '["Vero", "Falso"]', 1, 'Siti pieni di pulsanti "Download" lampeggianti e pubblicità ingannevoli sono quasi sempre fonte di malware.', 'https://placehold.co/600x400?text=Shady+APK+Site');
+('b849959f-4871-55e5-a955-356478234005', 'Cos''è un attacco Overlay?', 'multiple_choice', '["Un''app che cambia lo sfondo", "Una finestra fake che si sovrappone all''app legittima per rubare le credenziali (Phishing locale)", "Un errore grafico", "Una notifica"]', 1, 'Tecnica classica dei Banking Trojan moderni (es. Cerberus, Anubis).', NULL),
+('b849959f-4871-55e5-a955-356478234005', 'Se provi ad aggiornare un''app di sistema con un APK avente firma digitale diversa, cosa succede?', 'multiple_choice', '["L''aggiornamento riesce", "Android blocca l''installazione per conflitto di firme", "Il telefono esplode", "Diventa blu"]', 1, 'La firma crittografica garantisce che l''aggiornamento venga dallo stesso autore dell''originale.', NULL),
+('b849959f-4871-55e5-a955-356478234005', 'Cosa si rischia abilitando "Origini Sconosciute" per sempre?', 'multiple_choice', '["Nulla", "Che un Drive-by Download installi app automaticamente senza chiederti conferma esplicita ogni volta", "Che il telefono vada più veloce", "Nessuno"]', 1, 'L''opzione va abilitata "solo per questa installazione" se proprio necessario, poi spenta.', NULL),
+('b849959f-4871-55e5-a955-356478234005', 'Un APK da 2MB che promette di essere "GTA V Mobile" (4GB) è probabilmente vero.', 'true_false', '["Vero", "Falso"]', 1, 'È tecnicamente impossibile. È sicuramente un downloader di malware.', NULL),
+('b849959f-4871-55e5-a955-356478234005', 'Se l''icona dell''app sparisce dopo l''installazione, è un buon segno?', 'image_true_false', '["Vero", "Falso"]', 1, 'Se l''icona sparisce dal drawer, il malware si è nascosto per non farsi disinstallare facilmente.', 'https://placehold.co/600x400?text=App+Icon+Disappeared');
 
 
 -- Mission 3: Jailbreak & Root - Difficile
 INSERT INTO public.missions (id, province_id, title, description, content, level, estimated_time, nc_reward, tier, region, created_at)
 VALUES (
-    'b849959f-4871-55e5-a955-356478234006', 'PU', 'Rompere le Gabbie',
-    'Essere amministratore del proprio telefono: libertà o rischio?',
-    E'# Rooting (Android) & Jailbreak (iOS)\n\nSignifica ottenere i privilegi di "Amministratore Totale" (Root) sul dispositivo, aggirando le restrizioni del produttore.\n\n*   **Pro:** Puoi disinstallare app di sistema, personalizzare tutto.\n*   **Contro:** Rompi la "Sandbox" di sicurezza. Un''app malevola ora può leggere i dati di TUTTE le altre app (es. rubare i token della banca).\n\nPer questo le app bancarie non funzionano su telefoni rootati.',
+    'b849959f-4871-55e5-a955-356478234006', 'PU', 'Root e Conseguenze',
+    'Amministratore o vittima?',
+    E'# Secure Enclave Compromessa\n\nI telefoni moderni hanno un chip di sicurezza separato (Secure Enclave / Titan M) per le password e i dati biometrici.\n\nIl Rooting/Jailbreak spesso compromette la "Catena di Fiducia" (Chain of Trust) tra il processore e questo chip.\nRisultato: Funzioni come Google Pay o Apple Pay smettono di funzionare per sempre su quel dispositivo, o diventano insicure.',
     'difficile', '15 min', 150, 'level_3', 'Marche', NOW()
 ) ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, content=EXCLUDED.content, nc_reward=EXCLUDED.nc_reward, level=EXCLUDED.level;
 
 INSERT INTO public.mission_questions (mission_id, text, type, options, correct_answer, explanation, image_url) VALUES
-('b849959f-4871-55e5-a955-356478234006', 'Cosa si intende per "Sandbox" in sicurezza mobile?', 'multiple_choice', '["Giocare con la sabbia", "Isolamento: ogni app vive in una scatola chiusa e non può toccare i dati delle altre", "Un deserto", "La spiaggia"]', 1, 'Il Rooting abbatte queste pareti.', NULL),
-('b849959f-4871-55e5-a955-356478234006', 'Perché le banche bloccano le loro app sui telefoni rootati?', 'multiple_choice', '["Per antipatia", "Perché non possono più garantire la sicurezza delle chiavi crittografiche salvate sul dispositivo", "Perché occupano troppa memoria", "Per errore"]', 1, 'In ambiente rootato, un malware può leggere la memoria RAM della banca.', NULL),
-('b849959f-4871-55e5-a955-356478234006', 'Il rooting invalida la garanzia del produttore?', 'multiple_choice', '["Mai", "Quasi sempre", "Solo di domenica", "No"]', 1, 'In genere sì, o è molto complicato ripristinarla.', NULL),
-('b849959f-4871-55e5-a955-356478234006', 'Una volta fatto il Root, gli aggiornamenti di sistema (OTA) funzionano sempre.', 'true_false', '["Vero", "Falso"]', 1, 'Spesso gli aggiornamenti ufficiali falliscono o rimuovono il root.', NULL),
-('b849959f-4871-55e5-a955-356478234006', 'Un telefono in queste condizioni è più vulnerabile?', 'image_true_false', '["Vero", "Falso"]', 0, 'Le schermate di bootloader sbloccato indicano che le verifiche di integrità all''avvio sono disabilitate.', 'https://placehold.co/600x400?text=Unlocked+Bootloader+Warning');
+('b849959f-4871-55e5-a955-356478234006', 'Fare un Factory Reset rimuove COMPLETAMENTE ogni traccia del Root?', 'multiple_choice', '["Sì, sempre", "Non necessariamente: se il malware si è installato nella partizione di Sistema (/system), sopravvive al reset", "No, devi buttare il telefono", "Dipende dalla cover"]', 1, 'Alcuni rootkit modificano l''immagine di avvio del telefono. Serve il "Reflashing" della ROM originale.', NULL),
+('b849959f-4871-55e5-a955-356478234006', 'Cos''è "Magisk Hide"?', 'multiple_choice', '["Un gioco di magia", "Un tool per nascondere il Root alle app bancarie", "Un virus", "Un antivirus"]', 1, 'È una corsa continua: Magisk nasconde il root, le banche aggiornano i controlli, Magisk si aggiorna...', NULL),
+('b849959f-4871-55e5-a955-356478234006', 'Un telefono con Bootloader sbloccato è vulnerabile a un "Evil Maid Attack"?', 'multiple_choice', '["No", "Sì, un attaccante con accesso fisico può flashare un kernel malevolo in pochi minuti", "Solo se ha la password", "Cos''è una Maid?"]', 1, 'Senza il blocco del Bootloader, chiunque abbia il cavo USB può modificare il sistema operativo.', NULL),
+('b849959f-4871-55e5-a955-356478234006', 'Il Jailbreak aumenta la sicurezza del dispositivo perché è open source.', 'true_false', '["Vero", "Falso"]', 1, 'Falso. Rimuove le protezioni (Sandbox, Code Signing) rendendo il dispositivo più permeabile agli attacchi.', NULL),
+('b849959f-4871-55e5-a955-356478234006', 'Questa schermata "Knox Warranty Void: 1" su Samsung è reversibile?', 'image_true_false', '["Vero", "Falso"]', 1, 'No. È un e-fuse fisico che si brucia quando modifichi il software. La garanzia e Samsung Pay sono persi per sempre.', 'https://placehold.co/600x400?text=Knox+Tripped+0x1');
 
 
 -- =================================================================================================
@@ -118,52 +119,52 @@ INSERT INTO public.mission_questions (mission_id, text, type, options, correct_a
 -- Mission 1: Il Cestino non basta - Facile
 INSERT INTO public.missions (id, province_id, title, description, content, level, estimated_time, nc_reward, tier, region, created_at)
 VALUES (
-    'b849959f-4871-55e5-a955-356478234007', 'MC', 'Il Cestino non basta',
-    'Cancellare un file non lo elimina davvero.',
-    E'# Cancellazione vs Sovrascrittura\n\nQuando svuoti il Cestino, il computer non cancella i dati (che sono "pesanti"). Si limita a segnare quello spazio come "libero". I dati sono ancora lì!\n\nChiunque con un software di recupero gratuito può rileggerli.\nPer eliminare davvero, serve il **Wiping** (o Secure Delete), che sovrascrive i dati con zeri e uni casuali più volte.',
+    'b849959f-4871-55e5-a955-356478234007', 'MC', 'SSD vs HDD',
+    'La memoria moderna ha regole diverse.',
+    E'# Il comando TRIM\n\nSugli **SSD** moderni, quando cancelli un file, il sistema operativo invia il comando **TRIM**.\nL''SSD "pulisce" davvero quelle celle poco dopo per ottimizzare le prestazioni.\n\nQuindi: Su un vecchio Hard Disk (HDD) recuperare dati cancellati è facile. Su un SSD moderno è molto più difficile (ma non impossibile per un esperto forense).',
     'semplice', '5 min', 50, 'level_1', 'Marche', NOW()
 ) ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, content=EXCLUDED.content, nc_reward=EXCLUDED.nc_reward, level=EXCLUDED.level;
 
 INSERT INTO public.mission_questions (mission_id, text, type, options, correct_answer, explanation, image_url) VALUES
-('b849959f-4871-55e5-a955-356478234007', 'Cosa fa realmente il comando "Svuota Cestino"?', 'multiple_choice', '["Brucia i file", "Rimuove solo l''indice del file, lasciando il contenuto sul disco finché non viene sovrascritto", "Formatta il PC", "Chiama la polizia"]', 1, 'Rende lo spazio disponibile, ma non pulito.', NULL),
-('b849959f-4871-55e5-a955-356478234007', 'Come posso recuperare un file cancellato per sbaglio?', 'multiple_choice', '["Non si può", "Usando software di Data Recovery (se non è stato sovrascritto)", "Pregando", "Scuotendo il PC"]', 1, 'Finché lo spazio non viene riutilizzato, il file è recuperabile.', NULL),
-('b849959f-4871-55e5-a955-356478234007', 'Cos''è il "Secure Wipe"?', 'multiple_choice', '["Una salvietta", "La sovrascrittura ripetuta dei dati per renderli irrecuperabili", "Un antivirus", "Un backup"]', 1, 'È l''unico modo software per essere sicuri.', NULL),
-('b849959f-4871-55e5-a955-356478234007', 'Formattare "velocemente" un disco cancella i dati definitivamente.', 'true_false', '["Vero", "Falso"]', 1, 'La formattazione veloce ricrea solo il file system, i dati restano sotto.', NULL),
-('b849959f-4871-55e5-a955-356478234007', 'In questa immagine, i dati cancellati sono ancora visibili?', 'image_true_false', '["Vero", "Falso"]', 0, 'Il software mostra chiaramente i file "eliminati" pronti al recupero.', 'https://placehold.co/600x400?text=Data+Recovery+Software');
+('b849959f-4871-55e5-a955-356478234007', 'Perché sugli SSD il recupero dati è più difficile che sugli HDD?', 'multiple_choice', '["Sono più piccoli", "Il Garbage Collection e il comando TRIM cancellano fisicamente i dati in background", "Sono magnetici", "Non è vero"]', 1, 'È una differenza architetturale fondamentale.', NULL),
+('b849959f-4871-55e5-a955-356478234007', 'Se vendi una chiavetta USB, basta formattarla?', 'multiple_choice', '["Sì", "No, le chiavette USB spesso non supportano TRIM, quindi i dati sono recuperabili facilmente", "Sì, se è Windows 11", "Dipende dal colore"]', 1, 'Per le memorie esterne, serve sempre un software di Wiping (sovrascrittura).', NULL),
+('b849959f-4871-55e5-a955-356478234007', 'La "Formattazione Basso Livello" moderna esiste?', 'multiple_choice', '["Sì, la fa Windows", "No, la vera formattazione a basso livello la fa solo la fabbrica. Oggi facciamo Zero-Fill", "Solo su Linux", "Boh"]', 1, 'Il termine è usato impropriamente oggi per indicare la sovrascrittura con zeri.', NULL),
+('b849959f-4871-55e5-a955-356478234007', 'Se cripti il disco, non serve fare il Wiping prima di venderlo.', 'true_false', '["Vero", "Falso"]', 0, 'In teoria vero (Crypto-Shredding), ma "Defense in Depth" suggerisce di fare comunque un wipe se possibile.', NULL),
+('b849959f-4871-55e5-a955-356478234007', 'Un software di recupero mostra nomi di file con caratteri strani. Cosa significa?', 'image_true_false', '["Vero", "Falso"]', 0, 'Significa che la Master File Table è parzialmente corrotta o sovrascritta, ma il contenuto del file potrebbe essere intatto.', 'https://placehold.co/600x400?text=Corrupted+File+Names');
 
 
 -- Mission 2: Rifiuti Preziosi (RAEE) - Medio
 INSERT INTO public.missions (id, province_id, title, description, content, level, estimated_time, nc_reward, tier, region, created_at)
 VALUES (
-    'b849959f-4871-55e5-a955-356478234008', 'MC', 'Rifiuti Preziosi',
-    'Cosa succede al tuo vecchio telefono?',
-    E'# Data Remanence nei RAEE\n\nI Rifiuti Elettronici (RAEE) sono miniere d''oro per i criminali. Comprano vecchi PC o telefoni usati per recuperare: \n*   Password salvate.\n*   Foto private.\n*   Documenti d''identità.\n\nPrima di vendere o buttare un dispositivo, devi assicurarti che sia vergine (**Factory Reset** + Wiping).',
+    'b849959f-4871-55e5-a955-356478234008', 'MC', 'Analisi Forense',
+    'Cosa può trovare la polizia (o un ladro) nel tuo telefono rotto?',
+    E'# Chip-Off Forensics\n\nSe il tuo telefono è caduto in mare o è stato investito, i dati sono persi? No.\n\nGli esperti possono dissaldare il chip di memoria (Chip-Off) e leggerlo con un lettore speciale.\nL''unica cosa che ferma questa tecnica è la **Crittografia**. Se i dati nel chip sono criptati, senza PIN sono inutili. Se non lo sono, si legge tutto.',
     'medio', '10 min', 75, 'level_2', 'Marche', NOW()
 ) ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, content=EXCLUDED.content, nc_reward=EXCLUDED.nc_reward, level=EXCLUDED.level;
 
 INSERT INTO public.mission_questions (mission_id, text, type, options, correct_answer, explanation, image_url) VALUES
-('b849959f-4871-55e5-a955-356478234008', 'Cosa fare PRIMA di vendere il tuo vecchio smartphone?', 'multiple_choice', '["Pulirlo con un panno", "Fare il logout dagli account, cifrare e poi fare un Factory Reset completo", "Togliere la cover", "Niente"]', 1, 'Solo il reset di fabbrica su memoria cifrata garantisce sicurezza.', NULL),
-('b849959f-4871-55e5-a955-356478234008', 'Rompere l''hard disk col martello è un metodo sicuro?', 'multiple_choice', '["No", "Sì, la distruzione fisica (Shredding) è il metodo più sicuro in assoluto", "Forse", "Solo se è lunedì"]', 1, 'Se il disco è polverizzato, i dati non si leggono. Metodo preferito dai militari.', NULL),
-('b849959f-4871-55e5-a955-356478234008', 'Le stampanti aziendali hanno un hard disk?', 'multiple_choice', '["No", "Sì, e spesso conserva copie di tutti i documenti stampati/scansionati", "Solo quelle laser", "Mai"]', 1, 'Le stampanti usate sono una fonte enorme di dati aziendali persi.', NULL),
-('b849959f-4871-55e5-a955-356478234008', 'La scheda SD va tolta prima di buttare il telefono.', 'true_false', '["Vero", "Falso"]', 0, 'Assolutamente. Il reset del telefono spesso NON cancella la SD esterna.', NULL),
-('b849959f-4871-55e5-a955-356478234008', 'Questo Hard Disk è sicuro da buttare?', 'image_true_false', '["Vero", "Falso"]', 1, 'Se è solo bucato col trapano in un punto, i piatti magnetici intatti contengono ancora gigabyte di dati leggibili con microscopi.', 'https://placehold.co/600x400?text=Drilled+HDD');
+('b849959f-4871-55e5-a955-356478234008', 'Un Factory Reset su un vecchio Android (es. versione 5.0) è sicuro?', 'multiple_choice', '["Sì", "No, nelle vecchie versioni la crittografia non era di default, quindi i dati cancellati sono recuperabili", "Dipende dalla batteria", "Sì, Google protegge tutto"]', 1, 'Sui vecchi dispositivi è fondamentale attivare la crittografia manualmente PRIMA di resettare.', NULL),
+('b849959f-4871-55e5-a955-356478234008', 'Perché le aziende distruggono fisicamente (tritano) gli hard disk?', 'multiple_choice', '["Per divertimento", "Perché è l''unico metodo certificato per dati Top Secret che costa meno del wiping certificato", "Per riciclare l''alluminio", "Per errore"]', 1, 'Il tempo tecnico per fare wiping di 1000 dischi costa più che tritarli.', NULL),
+('b849959f-4871-55e5-a955-356478234008', 'Cosa sono i metadati nelle foto recuperate?', 'multiple_choice', '["Il colore", "Informazioni nascoste (EXIF) come coordinate GPS, data e modello fotocamera", "Virus", "Pixel bruciati"]', 1, 'Recuperare una foto significa spesso recuperare anche DOVE abitava il proprietario.', NULL),
+('b849959f-4871-55e5-a955-356478234008', 'Le fotocopiatrici moderne salvano copia dei documenti su disco interno.', 'true_false', '["Vero", "Falso"]', 0, 'Sì! Molti scandali aziendali nascono da fotocopiatrici dismesse vendute all''asta con l''hard disk pieno.', NULL),
+('b849959f-4871-55e5-a955-356478234008', 'Un hard disk immerso in acqua salata perde i dati?', 'image_true_false', '["Vero", "Falso"]', 1, 'Falso. Se i piatti non sono corrosi o graffiati, i dati si recuperano (costosamente) in camera bianca.', 'https://placehold.co/600x400?text=Wet+Hard+Drive');
 
 
 -- Mission 3: Crypto-Shredding - Difficile
 INSERT INTO public.missions (id, province_id, title, description, content, level, estimated_time, nc_reward, tier, region, created_at)
 VALUES (
-    'b849959f-4871-55e5-a955-356478234009', 'MC', 'Crypto-Shredding',
-    'Perdesti la chiave, perdesti tutto (per fortuna).',
-    E'# Cifratura del Disco (Full Disk Encryption)\n\nSe usi BitLocker (Windows) o FileVault (Mac), tutti i dati sul disco sono cifrati.\n\nPer cancellare istantaneamente e sicuramente un disco da 10 TB, non serve sovrascriverlo tutto (ci vorrebbero ore). Basta **cancellare la chiave di decifrazione**.\nSenza chiave, i dati sono solo "rumore bianco" irrecuperabile. Si chiama **Crypto-Shredding**.',
+    'b849959f-4871-55e5-a955-356478234009', 'MC', 'Cold Boot Attack',
+    'La RAM dimentica, ma lentamente.',
+    E'# Cold Boot Attack\n\nLa crittografia protegge il disco a computer spento.\nMa quando il PC è acceso, la chiave di decifrazione è nella RAM.\n\nSe un attaccante spegne brutalmente il PC e congela i banchi di RAM (letteralmente, con spray ghiacciante), può leggerli su un altro PC prima che i dati svaniscano (remanence) e recuperare la chiave.\nSembra un film, ma è scienza.',
     'difficile', '15 min', 150, 'level_3', 'Marche', NOW()
 ) ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, content=EXCLUDED.content, nc_reward=EXCLUDED.nc_reward, level=EXCLUDED.level;
 
 INSERT INTO public.mission_questions (mission_id, text, type, options, correct_answer, explanation, image_url) VALUES
-('b849959f-4871-55e5-a955-356478234009', 'Qual è il vantaggio del Crypto-Shredding?', 'multiple_choice', '["È istantaneo e sicuro", "È divertente", "Costa meno", "Non serve computer"]', 0, 'Cancelli 32 byte (la chiave) e rendi illeggibili Terabyte di dati.', NULL),
-('b849959f-4871-55e5-a955-356478234009', 'Su iPhone/Android moderni, i dati sono cifrati di default?', 'multiple_choice', '["No", "Sì, la cifratura è hardware-based", "Solo se paghi", "Solo le foto"]', 1, 'Per questo il Factory Reset su mobile è così veloce: butta via la chiave.', NULL),
-('b849959f-4871-55e5-a955-356478234009', 'Se dimentichi la password di BitLocker e perdi la Recovery Key...', 'multiple_choice', '["Chiami Microsoft", "Puoi dire addio ai tuoi dati per sempre", "Usi un magnete", "Riavvii"]', 1, 'Non c''è backdoor. Senza chiave, non entri.', NULL),
-('b849959f-4871-55e5-a955-356478234009', 'La cifratura rallenta notevolmente i computer moderni.', 'true_false', '["Vero", "Falso"]', 1, 'I processori moderni (AES-NI) gestiscono la cifratura a velocità native senza rallentamenti percettibili.', NULL),
-('b849959f-4871-55e5-a955-356478234009', 'L''icona del lucchetto sul disco C: indica che BitLocker è attivo?', 'image_true_false', '["Vero", "Falso"]', 0, 'Sì, indica che il volume è protetto da cifratura.', 'https://placehold.co/600x400?text=BitLocker+Icon');
+('b849959f-4871-55e5-a955-356478234009', 'A cosa serve il TPM (Trusted Platform Module)?', 'multiple_choice', '["A velocizzare i giochi", "A custodire le chiavi crittografiche e verificare che il sistema non sia stato manomesso all''avvio", "A raffreddare la CPU", "A nulla"]', 1, 'BitLocker usa il TPM per non chiederti la password a ogni avvio, se il PC è integro.', NULL),
+('b849959f-4871-55e5-a955-356478234009', 'Se il tuo PC criptato va in "Sospensione" (Sleep), i dati sono al sicuro?', 'multiple_choice', '["Sì, come spento", "No, la chiave è ancora nella RAM alimentata. Meglio usare Ibernazione o Spegnimento", "Dipende dal mouse", "Sì, lo schermo è nero"]', 1, 'In Sleep Mode la RAM è attiva. Un attacco DMA (Direct Memory Access) può estrarre la chiave.', NULL),
+('b849959f-4871-55e5-a955-356478234009', 'L''ibernazione è più sicura della sospensione?', 'multiple_choice', '["Sì, perché la RAM viene svuotata su disco e il PC si spegne totalmente", "No, è uguale", "No, è peggio", "Solo in inverno"]', 0, 'Sì, richiedendo l''auth al riavvio (Pre-Boot Authentication) se configurata.', NULL),
+('b849959f-4871-55e5-a955-356478234009', 'Le password del BIOS proteggono i dati sull''hard disk.', 'true_false', '["Vero", "Falso"]', 1, 'Falso. Basta togliere l''hard disk e leggerlo su un altro PC. Solo la crittografia protegge i dati.', NULL),
+('b849959f-4871-55e5-a955-356478234009', 'Un chip TPM saldato sulla scheda madre rende impossibile leggere il disco su un altro PC?', 'image_true_false', '["Vero", "Falso"]', 0, 'Rende impossibile sbloccarlo *automaticamente*, ma se hai la Recovery Key numerica puoi sbloccarlo ovunque.', 'https://placehold.co/600x400?text=TPM+Chip');
 
 
 -- =================================================================================================
@@ -173,52 +174,52 @@ INSERT INTO public.mission_questions (mission_id, text, type, options, correct_a
 -- Mission 1: L'affare impossibile - Facile
 INSERT INTO public.missions (id, province_id, title, description, content, level, estimated_time, nc_reward, tier, region, created_at)
 VALUES (
-    'b849959f-4871-55e5-a955-356478234010', 'FM', 'L''affare impossibile',
-    'Scarpe firmate a 10 euro? Certo...',
-    E'# Scam E-commerce\n\nSe un prodotto costa l''80% in meno del prezzo di mercato, è una truffa.\nSegnali di pericolo:\n*   Timer ansiogeni ("L''offerta scade tra 2 minuti!").\n*   URL strano (es. `nike-scarpe-outlet-scontate.xyz`).\n*   Pagamento solo con Carta o Bonifico (niente PayPal).',
+    'b849959f-4871-55e5-a955-356478234010', 'FM', 'I Pattern del Falso',
+    'La bellezza sta nei dettagli (sbagliati).',
+    E'# Cybersquatting & Typosquatting\n\n*   **Typosquatting:** `goggle.com` invece di `google.com`. Sfrutta i tuoi errori di digitazione.\n*   **Homograph Attack:** Usare caratteri cirillici che sembrano latini (es. la "a" cirillica è identica alla "a" latina, ma per il computer sono diverse). Il sito sembra `apple.com` ma è un altro.\n\nControlla sempre il certificato!',
     'semplice', '5 min', 50, 'level_1', 'Marche', NOW()
 ) ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, content=EXCLUDED.content, nc_reward=EXCLUDED.nc_reward, level=EXCLUDED.level;
 
 INSERT INTO public.mission_questions (mission_id, text, type, options, correct_answer, explanation, image_url) VALUES
-('b849959f-4871-55e5-a955-356478234010', 'Quale metodo di pagamento è più sicuro online?', 'multiple_choice', '["Bonifico Bancario", "Ricarica Postepay", "PayPal o Carte Virtuali", "Contanti spediti per posta"]', 2, 'Offrono la protezione acquisti e non espongono il conto principale.', NULL),
-('b849959f-4871-55e5-a955-356478234010', 'A cosa servono i "Countdown" finti sui siti truffa?', 'multiple_choice', '["A dirti l''ora", "A creare urgenza (FOMO) per farti comprare senza ragionare", "A scadenzare il latte", "Sono veri"]', 1, 'Fear Of Missing Out. Se hai fretta, non controlli.', NULL),
-('b849959f-4871-55e5-a955-356478234010', 'Se compri merce contraffatta, rischi sanzioni?', 'multiple_choice', '["No, mai", "Sì, l''incauto acquisto o ricettazione possono essere reati", "Solo se sono rosse", "Dipende dalla marca"]', 1, 'Oltre a finanziare la criminalità, rischi multe alla dogana.', NULL),
-('b849959f-4871-55e5-a955-356478234010', 'Il lucchetto HTTPS garantisce che il sito non sia una truffa.', 'true_false', '["Vero", "Falso"]', 1, 'Falso! Anche i siti truffa usano HTTPS. Garantisce la cifratura, non l''onestà del venditore.', NULL),
-('b849959f-4871-55e5-a955-356478234010', 'Un sito con questo indirizzo è affidabile: "apple-iphone-discount-store.net"?', 'image_true_false', '["Vero", "Falso"]', 1, 'È un chiaro esempio di Cybersquatting/Typosquatting.', 'https://placehold.co/600x400?text=Fake+URL');
+('b849959f-4871-55e5-a955-356478234010', 'Un sito creato "Oggi" è affidabile?', 'multiple_choice', '["Sì, è nuovo e moderno", "Altamente sospetto. I siti di e-commerce legittimi hanno uno storico (Whois domain age)", "Sì, se ha belle foto", "No, serve un mese"]', 1, 'La "Domain Age" è un fattore chiave di trust.', NULL),
+('b849959f-4871-55e5-a955-356478234010', 'Se paghi con carta su un sito truffa, qual è il rischio oltre a perdere i soldi dell''acquisto?', 'multiple_choice', '["Nessuno", "Che clonino la carta per fare abbonamenti nascosti o prelievi futuri", "Che ti arrivi merce brutta", "Che la banca rida"]', 1, 'Spesso il "prodotto non spedito" è solo l''esca per avere il numero completo della tua carta (CC Fullz).', NULL),
+('b849959f-4871-55e5-a955-356478234010', 'Cos''è il "CVV" (le 3 cifre dietro la carta)?', 'multiple_choice', '["Il PIN", "Card Verification Value: prova che hai la carta fisica in mano. Non va mai salvato dai siti", "Il numero di serie", "La data"]', 1, 'Secondo gli standard PCI-DSS, i negozi non possono salvare il CVV nei loro database.', NULL),
+('b849959f-4871-55e5-a955-356478234010', 'Le carte prepagate sono inutili contro le truffe.', 'true_false', '["Vero", "Falso"]', 1, 'Limitano il danno al saldo disponibile, quindi sono utilissime.', NULL),
+('b849959f-4871-55e5-a955-356478234010', 'Questo indirizzo usa un Homograph Attack: "аmazon.com"?', 'image_true_false', '["Vero", "Falso"]', 0, 'La prima "a" è cirillica (U+0430). È un sito diverso da amazon.com.', 'https://placehold.co/600x400?text=Homograph+URL');
 
 
 -- Mission 2: Recensioni Fake - Medio
 INSERT INTO public.missions (id, province_id, title, description, content, level, estimated_time, nc_reward, tier, region, created_at)
 VALUES (
-    'b849959f-4871-55e5-a955-356478234011', 'FM', 'Recensioni Fake',
-    '5 stelle! Ottimo prodotto! (Scritto da un bot)',
-    E'# Astroturfing\n\nMolte recensioni su Amazon o TripAdvisor sono false, comprate dai venditori.\n\nCome riconoscerle:\n*   Tante recensioni a 5 stelle tutte nello stesso giorno.\n*   Linguaggio generico ("Bello", "Prodotto top").\n*   Foto che sembrano da catalogo.\nUsa strumenti come **Fakespot** per analizzarle.',
+    'b849959f-4871-55e5-a955-356478234011', 'FM', 'Testa di Ponte',
+    'La recensione vera di un prodotto diverso.',
+    E'# Review Hijacking (Bait and Switch)\n\nUn venditore vende un prodotto ottimo ed economico (es. cavo USB) che ottiene 1000 recensioni a 5 stelle.\nPoi **modifica** la pagina del prodotto: ora vende un PC costoso e scarso.\n\nLe recensioni vecchie restano! Tu vedi "PC Gaming - 5 Stelle" ma se leggi i commenti dicono "Ottimo cavo, ricarica veloce".\nLeggi sempre il TESTO, non guardare solo le stelle.',
     'medio', '10 min', 75, 'level_2', 'Marche', NOW()
 ) ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, content=EXCLUDED.content, nc_reward=EXCLUDED.nc_reward, level=EXCLUDED.level;
 
 INSERT INTO public.mission_questions (mission_id, text, type, options, correct_answer, explanation, image_url) VALUES
-('b849959f-4871-55e5-a955-356478234011', 'Cos''è l''Astroturfing?', 'multiple_choice', '["Giardinaggio", "Creare una falsa impressione di supporto popolare o soddisfazione clienti (recensioni fake)", "Vendere scarpe", "Andare nello spazio"]', 1, 'Simula un movimento "dal basso" (grassroots) che in realtà è artificiale (astro-turf).', NULL),
-('b849959f-4871-55e5-a955-356478234011', 'Quale pattern di recensioni è sospetto?', 'multiple_choice', '["Recensioni miste nel tempo", "100 recensioni a 5 stelle tutte il 14 Agosto", "Recensioni lunghe e dettagliate", "Nessuna recensione"]', 1, 'I picchi improvvisi indicano spesso una campagna acquistata.', NULL),
-('b849959f-4871-55e5-a955-356478234011', 'Le aziende oneste comprano recensioni?', 'multiple_choice', '["Sì, tutti lo fanno", "No, è contro i termini di servizio e l''etica", "Solo a Natale", "Dipende"]', 1, 'È una pratica vietata e punita dalle piattaforme.', NULL),
-('b849959f-4871-55e5-a955-356478234011', 'Se un prodotto ha solo 5 stelle e nessuna critica, è perfetto.', 'true_false', '["Vero", "Falso"]', 1, 'Probabilmente le recensioni negative vengono cancellate o quelle positive sono false. Nulla è perfetto.', NULL),
-('b849959f-4871-55e5-a955-356478234011', 'Un profilo utente che recensisce 50 prodotti al giorno è reale?', 'image_true_false', '["Vero", "Falso"]', 1, 'È un comportamento tipico di un bot o di un lavoratore di click-farm.', 'https://placehold.co/600x400?text=Bot+Reviewer+Profile');
+('b849959f-4871-55e5-a955-356478234011', 'Perché leggi "Ottime cuffie" sotto la foto di un Tostapane?', 'multiple_choice', '["La gente è pazza", "È un caso di Review Hijacking: la pagina è stata riciclata per mantenere le stelle alte", "Errore di Amazon", "Sono cuffie calde"]', 1, 'Trucco molto diffuso sui marketplace.', NULL),
+('b849959f-4871-55e5-a955-356478234011', 'L''etichetta "Acquisto Verificato" garantisce che la recensione sia onesta?', 'multiple_choice', '["Sì, al 100%", "No, i venditori rimborsano via PayPal gli utenti dopo l''acquisto in cambio di 5 stelle (Recensioni Incentivate)", "Solo se c''è scritto in verde", "Ni"]', 1, 'Il sistema vede un acquisto reale, ma non vede il rimborso sottobanco.', NULL),
+('b849959f-4871-55e5-a955-356478234011', 'Quale distribuzione di voti è più naturale?', 'multiple_choice', '["Tutte 5 stelle", "Una curva a J (molte 5, poche 4-3-2, qualche 1 per difetti reali)", "Tutte 1 stella", "Meta 5 metà 1"]', 1, 'La perfezione non esiste. Un prodotto vero ha sempre qualche recensione media o negativa.', NULL),
+('b849959f-4871-55e5-a955-356478234011', 'Un concorrente può comprare recensioni negative false contro un rivale?', 'true_false', '["Vero", "Falso"]', 0, 'Sì, "Negative SEO" o sabotaggio reputazionale.', NULL),
+('b849959f-4871-55e5-a955-356478234011', 'Il badge "Amazon''s Choice" significa che il prodotto è il migliore tecnicamente.', 'image_true_false', '["Vero", "Falso"]', 1, 'Significa solo che vende tanto e ha pochi resi, non che è tecnicamente superiore o sicuro.', 'https://placehold.co/600x400?text=Amazon+Choice+Badge');
 
 
 -- Mission 3: Grey Market & Dropshipping - Difficile
 INSERT INTO public.missions (id, province_id, title, description, content, level, estimated_time, nc_reward, tier, region, created_at)
 VALUES (
-    'b849959f-4871-55e5-a955-356478234012', 'FM', 'I Mercanti Grigi',
-    'Compri qui, arriva dalla Cina (forse).',
-    E'# Dropshipping & Grey Market\n\n*   **Dropshipping:** Il sito non ha la merce. Prende i tuoi soldi, ordina su AliExpress a metà prezzo e lo fa spedire a te. Rischi: tempi biblici, nessuna garanzia, i tuoi dati (indirizzo, telefono) finiscono a fornitori sconosciuti.\n*   **Grey Market:** Vendita di codici software (es. chiavi Windows a 2€) destinati ad altri mercati. Spesso vengono disattivate dopo mesi.',
+    'b849959f-4871-55e5-a955-356478234012', 'FM', 'La Triangolazione',
+    'Tu paghi, il truffatore paga... con la carta di un altro.',
+    E'# Truffa della Triangolazione\n\n1.  Tu compri un oggetto su un sito fake a 50€.\n2.  Il truffatore usa una carta di credito rubata per comprare davvero l''oggetto su Amazon (a 100€) e spedirtelo.\n3.  Tu ricevi l''oggetto e sei felice.\n4.  La polizia bussa alla TUA porta per ricettazione, perché risulta spedito a te pagato con carta rubata.',
     'difficile', '15 min', 150, 'level_3', 'Marche', NOW()
 ) ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, content=EXCLUDED.content, nc_reward=EXCLUDED.nc_reward, level=EXCLUDED.level;
 
 INSERT INTO public.mission_questions (mission_id, text, type, options, correct_answer, explanation, image_url) VALUES
-('b849959f-4871-55e5-a955-356478234012', 'Qual è il rischio privacy del Dropshipping?', 'multiple_choice', '["Il pacco arriva rotto", "I tuoi dati personali vengono girati a terze parti (fornitori esteri) senza il tuo controllo", "Costa troppo", "Nessuno"]', 1, 'Perdi il controllo su chi possiede il tuo indirizzo di casa.', NULL),
-('b849959f-4871-55e5-a955-356478234012', 'Perché una licenza Windows costa 2 euro sul Grey Market?', 'multiple_choice', '["Microsoft è generosa", "Spesso sono licenze rubate, o Volume License vendute illegalmente al dettaglio", "Sono usate", "Sono in bianco e nero"]', 1, 'Funzionano inizialmente, ma violano la licenza e possono essere revocate.', NULL),
-('b849959f-4871-55e5-a955-356478234012', 'Come riconosci un sito di Dropshipping?', 'multiple_choice', '["Tempi di spedizione molto lunghi (20-30 giorni) e immagini stock generiche", "Vende solo acqua", "È velocissimo", "Ha sede in Italia"]', 0, 'L''assenza di magazzino fisico è la chiave.', NULL),
-('b849959f-4871-55e5-a955-356478234012', 'Il Grey Market è illegale?', 'true_false', '["Vero", "Falso"]', 1, 'È una zona grigia (da cui il nome). Spesso legale l''acquisto, ma viola i contratti di distribuzione.', NULL),
-('b849959f-4871-55e5-a955-356478234012', 'Se la foto del prodotto è identica a quella su AliExpress, è Dropshipping?', 'image_true_false', '["Vero", "Falso"]', 0, 'Puoi verificarlo con "Cerca per immagine" su Google.', 'https://placehold.co/600x400?text=Reverse+Image+Search');
+('b849959f-4871-55e5-a955-356478234012', 'Nella Truffa della Triangolazione, chi ci rimette alla fine?', 'multiple_choice', '["Il truffatore", "Il titolare della carta rubata e TU (che vieni coinvolto nelle indagini)", "Amazon", "Il corriere"]', 1, 'Tu diventi il destinatario della "refurtiva", il truffatore intasca i tuoi soldi puliti e sparisce.', NULL),
+('b849959f-4871-55e5-a955-356478234012', 'Come difendersi dalla triangolazione?', 'multiple_choice', '["Non comprare online", "Diffidare di prezzi troppo bassi su siti sconosciuti che non accettano PayPal", "Aprire il pacco col guanto", "Pagare in Bitcoin"]', 1, 'Se è troppo bello per essere vero, è una triangolazione.', NULL),
+('b849959f-4871-55e5-a955-356478234012', 'Acquistare "Mystery Box" tech non reclamate è sicuro?', 'multiple_choice', '["Sì, si fanno affari", "No, sono quasi sempre fondi di magazzino senza valore o truffe totali", "Sì, ci sono iPhone", "Dipende"]', 1, 'È gioco d''azzardo non regolamentato, spesso truccato.', NULL),
+('b849959f-4871-55e5-a955-356478234012', 'Se compri una chiave software Volume (VLK) da un sito grey market, è legale per uso domestico?', 'true_false', '["Vero", "Falso"]', 1, 'No, le licenze Volume sono contrattualmente riservate alle aziende. Microsoft può disattivarle.', NULL),
+('b849959f-4871-55e5-a955-356478234012', 'Se il venditore chiede di pagare come "Amici e Familiari" su PayPal, fallo.', 'image_true_false', '["Vero", "Falso"]', 1, 'Mai! Quella modalità non ha protezione acquisti. Se non spedisce, hai perso i soldi.', 'https://placehold.co/600x400?text=PayPal+Friends+Family');
 
 
 -- =================================================================================================
@@ -228,49 +229,49 @@ INSERT INTO public.mission_questions (mission_id, text, type, options, correct_a
 -- Mission 1: Accedi con Google? - Facile
 INSERT INTO public.missions (id, province_id, title, description, content, level, estimated_time, nc_reward, tier, region, created_at)
 VALUES (
-    'b849959f-4871-55e5-a955-356478234013', 'AP', 'Accedi con Google?',
-    'Comodo, veloce, rischioso.',
-    E'# Social Login (OAuth)\n\n"Entra con Facebook" o "Entra con Google" è comodo: una password in meno da ricordare.\n\n**Ma il rischio è centralizzato:** Se un hacker viola il tuo account Google, entra automaticamente in TUTTI i siti dove hai usato Google per accedere (Spotify, Airbnb, Giornali, ecc.).\nÈ come avere una chiave che apre tutte le porte.',
+    'b849959f-4871-55e5-a955-356478234013', 'AP', 'Revoca Accessi',
+    'Lasciare le chiavi al vecchio inquilino.',
+    E'# Revoca dei Token\n\nQuando usi "Accedi con Google" su un''app (es. Gioco), crei un **Token** di accesso.\nSe disinstalli il gioco, il Token **resta valido**. L''azienda del gioco può continuare a leggere i dati del tuo profilo per anni.\n\nDevi andare nelle impostazioni del tuo Account Google -> "App con accesso al tuo account" e REVOCARE manualmente.',
     'semplice', '5 min', 50, 'level_1', 'Marche', NOW()
 ) ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, content=EXCLUDED.content, nc_reward=EXCLUDED.nc_reward, level=EXCLUDED.level;
 
 INSERT INTO public.mission_questions (mission_id, text, type, options, correct_answer, explanation, image_url) VALUES
-('b849959f-4871-55e5-a955-356478234013', 'Cos''è OAuth?', 'multiple_choice', '["Un''auto", "Un protocollo che permette di accedere a un servizio usando le credenziali di un altro (es. Google) senza dargli la password", "Un giuramento", "Un virus"]', 1, 'È la tecnologia dietro ai pulsanti "Log in with...".', NULL),
-('b849959f-4871-55e5-a955-356478234013', 'Qual è il pericolo del Social Login?', 'multiple_choice', '["È lento", "Single Point of Failure: se perdi l''account principale, perdi l''accesso a tutto", "Costa denaro", "Nessuno"]', 1, 'Stai mettendo tutte le uova nello stesso paniere.', NULL),
-('b849959f-4871-55e5-a955-356478234013', 'Usando "Accedi con Facebook", condividi i tuoi dati?', 'multiple_choice', '["No", "Sì, l''app riceve i dati del tuo profilo pubblico e spesso email/amici", "Solo il nome", "Mai"]', 1, 'Leggi sempre quali dati stai autorizzando a condividere.', NULL),
-('b849959f-4871-55e5-a955-356478234013', 'Devi avere una password diversa per ogni sito.', 'true_false', '["Vero", "Falso"]', 0, 'Assolutamente sì, per evitare il Credential Stuffing.', NULL),
-('b849959f-4871-55e5-a955-356478234013', 'Questa schermata ti dice cosa stai condividendo?', 'image_true_false', '["Vero", "Falso"]', 0, 'Le schermate di consenso OAuth mostrano sempre l''elenco dei permessi richiesti.', 'https://placehold.co/600x400?text=OAuth+Consent+Screen');
+('b849959f-4871-55e5-a955-356478234013', 'Disinstallare un''app dal telefono revoca il suo accesso OAuth (Login con Google/FB)?', 'multiple_choice', '["Sì, automatico", "No, l''accesso lato server rimane attivo finché non lo rimuovi dalle impostazioni dell''account provider", "Solo su iPhone", "Sì, se spegni il telefono"]', 1, 'Errore comune: disinstallare non scollega l''account.', NULL),
+('b849959f-4871-55e5-a955-356478234013', 'Cosa succede se revochi l''accesso a un sito dove ti eri registrato solo con Google?', 'multiple_choice', '["Nulla", "Non potrai più fare login su quel sito finché non lo riautorizzi", "Il sito viene cancellato", "Google ti multa"]', 1, 'Perdi la "chiave" per entrare.', NULL),
+('b849959f-4871-55e5-a955-356478234013', 'Se un sito OAuth viene hackerato, devi cambiare la tua password di Google?', 'multiple_choice', '["Sì, subito", "No, il sito aveva solo un Token, non la tua password. Basta revocare quel Token", "Sì, e anche quella della banca", "No, tanto è perso"]', 1, 'Questo è il vantaggio di OAuth: la password reale non viene mai condivisa col sito terzo.', NULL),
+('b849959f-4871-55e5-a955-356478234013', 'Un''app "Torcia" può chiedere accesso al tuo Google Drive via OAuth?', 'true_false', '["Vero", "Falso"]', 0, 'Tecnicamente può chiederlo. Se tu clicchi "Consenti" senza leggere, le dai accesso ai tuoi file.', NULL),
+('b849959f-4871-55e5-a955-356478234013', 'In questa lista, quale app è sospetta?', 'image_true_false', '["Vero", "Falso"]', 0, 'Un''app chiamata "System Update" con accesso completo all''account Google è sicuramente malware.', 'https://placehold.co/600x400?text=Suspicious+OAuth+App');
 
 
 -- Mission 2: Chi sei davvero? (2FA) - Medio
 INSERT INTO public.missions (id, province_id, title, description, content, level, estimated_time, nc_reward, tier, region, created_at)
 VALUES (
-    'b849959f-4871-55e5-a955-356478234014', 'AP', 'La Seconda Chiave',
-    'La password non basta più.',
-    E'# Multi-Factor Authentication (MFA)\n\nPer entrare serve:\n1.  **Qualcosa che sai:** Password.\n2.  **Qualcosa che hai:** Telefono (Codice SMS, App Authenticator) o Chiavetta Hardware.\n\n**Attenzione:** Gli SMS non sono sicuri (SIM Swapping). Meglio usare App come Google Authenticator o chiavi fisiche (YubiKey).',
+    'b849959f-4871-55e5-a955-356478234014', 'AP', 'MFA Fatigue',
+    'Se ti chiedono di entrare 100 volte, dirai di sì?',
+    E'# MFA Fatigue (Bombing)\n\nL''hacker ha la tua password. Ti manda una notifica sul telefono: "Sei tu? Clicca Sì".\nTu non clicchi.\nLui te ne manda altre 50 di fila alle 3 di notte.\n\nPer sfinimento o per sbaglio, clicchi "Sì" per far smettere al telefono di suonare.\n**Sei stato hackerato.**',
     'medio', '10 min', 75, 'level_2', 'Marche', NOW()
 ) ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, content=EXCLUDED.content, nc_reward=EXCLUDED.nc_reward, level=EXCLUDED.level;
 
 INSERT INTO public.mission_questions (mission_id, text, type, options, correct_answer, explanation, image_url) VALUES
-('b849959f-4871-55e5-a955-356478234014', 'Perché l''SMS è il metodo 2FA meno sicuro?', 'multiple_choice', '["Costa troppo", "È vulnerabile al SIM Swapping (clonazione della SIM) e intercettazione SS7", "È lento", "Non funziona all''estero"]', 1, 'Un hacker può "rubare" il tuo numero di telefono e ricevere i codici.', NULL),
-('b849959f-4871-55e5-a955-356478234014', 'Cos''è una OTP?', 'multiple_choice', '["One Time Password (Password usa e getta)", "Old Time Pizza", "On The Phone", "Un protocollo"]', 0, 'È il codice a 6 cifre che cambia ogni 30 secondi.', NULL),
-('b849959f-4871-55e5-a955-356478234014', 'Cos''è una YubiKey?', 'multiple_choice', '["Un giocattolo", "Una chiave di sicurezza hardware fisica per la 2FA", "Una chiavetta USB di memoria", "Un apribottiglie"]', 1, 'È il metodo più sicuro in assoluto (phishing-resistant).', NULL),
-('b849959f-4871-55e5-a955-356478234014', 'La biometria (FaceID) è un fattore "Che hai".', 'true_false', '["Vero", "Falso"]', 1, 'No, è un fattore "Che SEI" (Inerenza).', NULL),
-('b849959f-4871-55e5-a955-356478234014', 'Un codice Authenticator funziona anche senza internet?', 'image_true_false', '["Vero", "Falso"]', 0, 'Sì, è generato maticamente in base all''ora locale del dispositivo.', 'https://placehold.co/600x400?text=Authenticator+App');
+('b849959f-4871-55e5-a955-356478234014', 'Qual è la difesa migliore contro l''MFA Fatigue?', 'multiple_choice', '["Cliccare Sì", "Usare la modalità Number Matching (l''app ti chiede di inserire un numero mostrato sullo schermo del PC)", "Spegnere il telefono", "Disabilitare 2FA"]', 1, 'Il Number Matching obbliga ad avere davanti lo schermo del login, bloccando gli attacchi remoti.', NULL),
+('b849959f-4871-55e5-a955-356478234014', 'Cosa sono i "Codici di Backup" (Recovery Codes)?', 'multiple_choice', '["Codici sconto", "Codici statici da stampare e nascondere, vitali se perdi il telefono con l''Authenticator", "Codici per i giochi", "Password del Wi-Fi"]', 1, 'Senza quelli, se perdi il telefono, sei chiuso fuori dal tuo account per sempre.', NULL),
+('b849959f-4871-55e5-a955-356478234014', 'Se un hacker clona la tua SIM (SIM Swapping), ha accesso al tuo Google Authenticator?', 'multiple_choice', '["Sì, sempre", "No, Authenticator è legato al dispositivo hardware, non al numero di telefono", "Sì, se è Android", "Dipende dall''operatore"]', 1, 'Le App TOTP (Authenticator) sono immuni al SIM Swapping. Gli SMS no.', NULL),
+('b849959f-4871-55e5-a955-356478234014', 'L''email è un buon secondo fattore di autenticazione?', 'true_false', '["Vero", "Falso"]', 1, 'No, perché se l''hacker ha la password del sito, spesso ha violato anche la tua email (password reuse). Meglio un device separato.', NULL),
+('b849959f-4871-55e5-a955-356478234014', 'Questa notifica è un tentativo di MFA Fatigue?', 'image_true_false', '["Vero", "Falso"]', 0, 'Una raffica di notifiche push alle 4 del mattino è il segnale inequivocabile di un attacco in corso.', 'https://placehold.co/600x400?text=MFA+Spam+Notification');
 
 
 -- Mission 3: Password Manager - Difficile
 INSERT INTO public.missions (id, province_id, title, description, content, level, estimated_time, nc_reward, tier, region, created_at)
 VALUES (
-    'b849959f-4871-55e5-a955-356478234015', 'AP', 'Il Custode delle Chiavi',
-    'Ricordarne una per domarle tutte.',
-    E'# Password Manager\n\nNon puoi ricordare 100 password diverse e complesse (`Xy7#b9!m...`).\n\nUsa un **Password Manager** (Bitwarden, 1Password, Keepass).\nDevi ricordare solo UNA **Master Password** (che deve essere lunghissima e impossibile da indovinare). Il manager ricorda e compila le altre per te.',
+    'b849959f-4871-55e5-a955-356478234015', 'AP', 'L''Anello Debole',
+    'Dove tieni la chiave della cassaforte?',
+    E'# Recovery del Password Manager\n\nIl Password Manager è la tua cassaforte. Ma se dimentichi la Master Password?\n\nLa maggior parte dei servizi sicuri **NON ha il reset della password** via mail.\nSe la perdi, hai PERSO TUTTO.\n\nDevi impostare un "Contatto di Emergenza" o salvare la "Secret Part" su carta in cassaforte.',
     'difficile', '15 min', 150, 'level_3', 'Marche', NOW()
 ) ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, content=EXCLUDED.content, nc_reward=EXCLUDED.nc_reward, level=EXCLUDED.level;
 
 INSERT INTO public.mission_questions (mission_id, text, type, options, correct_answer, explanation, image_url) VALUES
-('b849959f-4871-55e5-a955-356478234015', 'Se perdi la Master Password del tuo Password Manager...', 'multiple_choice', '["Ti mandano una mail", "Perdi accesso a tutte le tue password per sempre (se è Zero Knowledge)", "Chiami Bill Gates", "Ne crei una nuova"]', 1, 'La sicurezza Zero Knowledge significa che nemmeno l''azienda può recuperare i tuoi dati.', NULL),
-('b849959f-4871-55e5-a955-356478234015', 'È meglio salvare le password nel browser o in un Manager dedicato?', 'multiple_choice', '["Nel browser è più comodo", "Manager dedicato: è più sicuro, portabile su più device e ha funzioni avanzate", "Scriverle su un post-it", "Nessuna delle due"]', 1, 'I browser sono target primari dei malware ("Stealers").', NULL),
-('b849959f-4871-55e5-a955-356478234015', 'Cos''è una Passphrase?', 'multiple_choice', '["Una frase magica", "Una password composta da più parole casuali (es. Cavallo-Batteria-Spilla-Corretto)", "Una password corta", "Un codice fiscale"]', 1, 'È più facile da ricordare per gli umani ma difficile per i computer (alta entropia).', NULL),
-('b849959f-4871-55e5-a955-356478234015', 'Il Password Manager può generare password sicure per te.', 'true_false', '["Vero", "Falso"]', 0, 'È una delle funzioni principali.', NULL),
-('b849959f-4871-55e5-a955-356478234015', 'Salvare le password in un file Excel "password.xlsx" è sicuro?', 'image_true_false', '["Vero", "Falso"]', 1, 'È la prima cosa che un hacker cerca nel tuo PC.', 'https://placehold.co/600x400?text=Passwords+Excel+File');
+('b849959f-4871-55e5-a955-356478234015', 'Cosa significa che un Password Manager è "Cloud-based"?', 'multiple_choice', '["Che piove", "Che le password cifrate sono sincronizzate sui server del fornitore per averle su tutti i device", "Che sono leggere", "Che sono gratis"]', 1, 'È comodo, ma devi fidarti della crittografia del fornitore (Zero Knowledge).', NULL),
+('b849959f-4871-55e5-a955-356478234015', 'Cos''è il "Salt" (Sale) in una password hash?', 'multiple_choice', '["Un condimento", "Dati casuali aggiunti alla password prima dell''hashing per proteggere contro le Rainbow Tables", "Un errore", "La lunghezza"]', 1, 'Rende unico l''hash anche se due utenti hanno la stessa password "123456".', NULL),
+('b849959f-4871-55e5-a955-356478234015', 'Perché dovresti disattivare il "Riempimento Automatico" (Autofill) del Password Manager?', 'multiple_choice', '["Perché è lento", "Perché script invisibili in una pagina web potrebbero chiedere le credenziali e il Manager le fornirebbe senza che tu te ne accorga", "Perché consuma batteria", "Non serve"]', 1, 'Meglio il "Click-to-fill" o drag & drop per evitare furti silenziosi.', NULL),
+('b849959f-4871-55e5-a955-356478234015', 'Il Clipboard (Copia-Incolla) è sicuro per le password?', 'true_false', '["Vero", "Falso"]', 1, 'No, altre app possono leggere la clipboard. I Manager buoni la svuotano dopo 30 secondi.', NULL),
+('b849959f-4871-55e5-a955-356478234015', 'Il browser ti chiede di salvare la password per la banca. Cosa fai?', 'image_true_false', '["Vero", "Falso"]', 1, 'Mai ("Mai per questo sito"). I browser store sono meno sicuri dei Manager dedicati.', 'https://placehold.co/600x400?text=Browser+Save+Password+Prompt');

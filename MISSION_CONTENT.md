@@ -115,3 +115,67 @@ This document tracks the regions, topics, and provinces that have been populated
 - **MC** (Macerata): Ready for Import (Device Lifecycle, Wiping & Encryption)
 - **FM** (Fermo): Ready for Import (Shopping, Fake Reviews & Dropshipping)
 - **AP** (Ascoli Piceno): Ready for Import (Identity, OAuth & Password Managers)
+
+## Abruzzo
+**Argomento:** La Rocca Digitale: Resilienza & Disaster Recovery
+**Provinces:**
+- **AQ** (L'Aquila): Ready for Import (Disaster Recovery, Backup 3-2-1 & Ransomware)
+- **TE** (Teramo): Ready for Import (Physical Security, Evil Maid & Cold Storage)
+- **PE** (Pescara): Ready for Import (Wi-Fi Attacks, Pineapple & SSL Stripping)
+- **CH** (Chieti): Ready for Import (Cloud Security, S3 Leaks & Shadow IT)
+
+## Campania
+**Argomento:** Il Golfo dei Pirati: Inganno e Strategia Avanzata (Napoli Final Boss)
+**Provinces:**
+- **BN** (Benevento): Ready for Import (Forensics, Metadata & Time Stomping)
+- **AV** (Avellino): Ready for Import (IoT, Botnet Mirai & Jamming)
+- **CE** (Caserta): Ready for Import (Supply Chain, Typosquatting & Dependency Confusion)
+- **SA** (Salerno): Ready for Import (Network Defense, Stealth Scan & Honeypot)
+- **NA** (Napoli): Ready for Import (BOSS FINALE: LOLBins, Zero-Click & BEC)
+
+## Puglia
+**Argomento:** La Muraglia Adriatica: Difesa Perimetrale e Industrial Security
+**Provinces:**
+- **BA** (Bari): Ready for Import (Egress Filtering, Stateful Inspection & SSL Decryption)
+- **LE** (Lecce): Ready for Import (IDS/IPS, Anomaly Detection & ETA)
+- **TA** (Taranto): Ready for Import (SCADA/OT, Modbus & Air Gap Myth)
+- **FG** (Foggia): Ready for Import (DDoS, Amplification & Slowloris)
+- **BR** (Brindisi): Ready for Import (VPN, Split Tunneling & Kill Switch)
+- **BT** (Barletta-Andria-Trani): Ready for Import (WAF, Virtual Patching & Rate Limiting)
+
+## Basilicata
+**Argomento:** Le Caverne Cifrate: Blockchain & Decentralizzazione
+**Provinces:**
+- **MT** (Matera): Ready for Import (Wallet Security, Seed Phishing & Infinite Approval)
+- **PZ** (Potenza): Ready for Import (DeFi Hacks, Flash Loans & MEV/Front-Running)
+
+## Calabria
+**Argomento:** Il Ponte verso il Futuro: La Minaccia Quantistica
+**Provinces:**
+- **RC** (Reggio Calabria): Ready for Import (Harvest Now Decrypt Later & Forward Secrecy)
+- **CS** (Cosenza): Ready for Import (Shor's Algorithm, RSA & ECC Vulnerability)
+- **CZ** (Catanzaro): Ready for Import (Post-Quantum Cryptography PQC & Hybrid Mode)
+- **KR** (Crotone): Ready for Import (Quantum Key Distribution QKD & No-Cloning)
+- **VV** (Vibo Valentia): Ready for Import (Qubits, Superposition & Entanglement)
+
+## Sicilia
+**Argomento:** Il Padrino del Deep Web: Darknet & Anonimato
+**Provinces:**
+- **PA** (Palermo): Ready for Import (Tor Network, Onion Routing & Hidden Services)
+- **CT** (Catania): Ready for Import (Dark Markets, Escrow & FE Scams)
+- **ME** (Messina): Ready for Import (Money Laundering, Mixing & Monero)
+- **AG** (Agrigento): Ready for Import (PGP Encryption, Key Exchange & 2FA)
+- **TP** (Trapani): Ready for Import (Deanonymization, Correlation & Fingerprinting)
+- **SR** (Siracusa): Ready for Import (I2P, Freenet & ZeroNet)
+- **RG** (Ragusa): Ready for Import (OpSec, Tails OS & Metadata Scrubbing)
+- **CL** (Caltanissetta): Ready for Import (Crime-as-a-Service, Ransomware & Doxxing)
+- **EN** (Enna): Ready for Import (Law Enforcement, Honeypots & Takedowns)
+
+## Sardegna
+**Argomento:** L'Isola Isolata: Hardware Hacking & Air Gap
+**Provinces:**
+- **CA** (Cagliari): Ready for Import (BadUSB, Rubber Ducky & Juice Jacking)
+- **SS** (Sassari): Ready for Import (Side-Channel, Power Analysis & Acoustic)
+- **NU** (Nuoro): Ready for Import (TEMPEST, Van Eck Phreaking & Cold Boot)
+- **OR** (Oristano): Ready for Import (RFID Cloning, NFC & Relay Attacks)
+- **SU** (Sud Sardegna): Ready for Import (Air Gap, Stuxnet & LED Exfiltration)
