@@ -34,11 +34,11 @@ export const LeaderboardSection: React.FC<LeaderboardSectionProps> = ({ variant 
                 "Network Professionale: competi con i colleghi",
                 "Monitoraggio dei progressi in tempo reale"
             ],
-            bgClass: "bg-slate-50",
-            textClass: "text-slate-900",
+            bgClass: "bg-slate-50/50",
+            textClass: "text-slate-900 tracking-tight",
             accentClass: "text-indigo-600",
             borderClass: "border-slate-200",
-            shadowClass: "shadow-xl",
+            shadowClass: "shadow-2xl ring-1 ring-slate-900/5",
             listIcon: "chart",
             headingShadow: "",
             reverse: true
@@ -51,11 +51,11 @@ export const LeaderboardSection: React.FC<LeaderboardSectionProps> = ({ variant 
                 "Scambiatevi consigli e aiuti",
                 "Imparare diventa un gioco di gruppo"
             ],
-            bgClass: "bg-emerald-50/30",
-            textClass: "text-emerald-950",
+            bgClass: "bg-emerald-50/50",
+            textClass: "text-emerald-950 font-medium",
             accentClass: "text-emerald-600",
-            borderClass: "border-white",
-            shadowClass: "shadow-xl",
+            borderClass: "border-white/80",
+            shadowClass: "shadow-2xl shadow-emerald-100/50",
             listIcon: "check",
             headingShadow: "",
             reverse: false

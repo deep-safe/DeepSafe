@@ -71,13 +71,15 @@ export default function AdultLandingPage() {
                 </nav>
 
                 {/* Hero Section */}
-                <header className="relative pt-20 pb-32 overflow-hidden bg-white">
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-50 via-white to-white opacity-70"></div>
+                {/* Hero Section */}
+                {/* Hero Section */}
+                <header className="relative pt-24 pb-32 lg:pt-32 lg:pb-40 overflow-hidden bg-white">
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-50/50 via-white to-white opacity-80"></div>
                     <div className="container mx-auto px-6 relative">
                         <div className="flex flex-col lg:flex-row items-center gap-16 md:gap-24">
                             <div className="flex-1 max-w-2xl text-center lg:text-left flex flex-col gap-10">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-sm font-medium">
-                                    <span className="flex h-2 w-2 rounded-full bg-indigo-600"></span>
+                                <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-8 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-sm font-semibold tracking-wide self-center lg:self-start">
+                                    <span className="flex h-2 w-2 rounded-full bg-indigo-600 animate-pulse"></span>
                                     Formazione Professionale
                                 </div>
                                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-slate-900 leading-[1.1]">
@@ -86,19 +88,20 @@ export default function AdultLandingPage() {
                                         per l'Era Moderna
                                     </span>
                                 </h1>
-                                <p className="text-xl md:text-2xl text-slate-600 leading-relaxed font-light">
+                                <p className="text-xl md:text-2xl text-slate-600 leading-relaxed font-light max-w-xl mx-auto lg:mx-0">
                                     Metti al sicuro la tua carriera e la tua identità digitale.
                                     Un percorso formativo avanzato, progettato per professionisti che non possono permettersi errori.
                                 </p>
 
                                 <Countdown targetDate="2025-12-24T12:00:00" variant="adult" />
 
-                                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                                    <a href="#waitlist" className="inline-flex items-center justify-center px-20 py-6 text-lg font-bold !text-white hover:text-white transition-all duration-200 bg-slate-900 rounded-full hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 shadow-xl hover:shadow-2xl hover:-translate-y-1">
+                                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
+                                    <a href="#waitlist" className="inline-flex items-center justify-center px-10 py-5 text-lg font-bold !text-white hover:text-white transition-all duration-300 bg-slate-900 rounded-xl hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 shadow-xl hover:shadow-2xl hover:-translate-y-1 group">
                                         Unisciti alla Waitlist
+                                        <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                                     </a>
                                 </div>
-                                <div className="mt-8 flex items-center justify-center lg:justify-start gap-8 text-sm text-slate-500 font-medium">
+                                <div className="mt-8 flex flex-wrap justify-center lg:justify-start gap-x-8 gap-y-4 text-sm text-slate-500 font-medium">
                                     <div className="flex items-center gap-2">
                                         <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                         Certificati Verificati
@@ -109,12 +112,12 @@ export default function AdultLandingPage() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex-1 w-full max-w-[600px] lg:max-w-none relative">
+                            <div className="flex-1 w-full max-w-[500px] lg:max-w-none relative mt-10 lg:mt-0">
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-indigo-600/5 rounded-full blur-3xl"></div>
                                 <img
                                     src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/app-screenshot-2.jpg`}
                                     alt="Professional Dashboard"
-                                    className="relative rounded-2xl shadow-2xl border border-indigo-50/50 w-full hover:scale-[1.02] transition-transform duration-500"
+                                    className="relative rounded-2xl shadow-2xl shadow-indigo-900/10 border border-slate-200/60 w-full hover:scale-[1.02] transition-transform duration-700 object-cover"
                                 />
                             </div>
                         </div>
@@ -122,46 +125,47 @@ export default function AdultLandingPage() {
                 </header>
 
                 {/* Ecosystem Grid Section */}
-                <section className="py-24 bg-slate-50">
+                <section className="py-32 bg-slate-50 border-y border-slate-200/60">
                     <div className="container mx-auto px-6">
-                        <div className="text-center max-w-3xl mx-auto mb-20">
-                            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">Protezione Digitale Completa</h2>
-                            <p className="text-lg text-slate-600">
+                        <div className="text-center max-w-3xl mx-auto mb-24">
+                            <span className="text-indigo-600 font-bold tracking-widest uppercase text-sm mb-4 block">Ecosistema Integrato</span>
+                            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight">Protezione Digitale Completa</h2>
+                            <p className="text-xl text-slate-600 font-light">
                                 Un ecosistema completo che ti prepara ad affrontare le minacce reali del web, dal phishing all'ingegneria sociale.
                             </p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
                             {/* Card 1 */}
-                            <div className="group bg-white rounded-2xl p-4 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100">
-                                <div className="rounded-xl overflow-hidden bg-slate-100 mb-6 border border-slate-200 aspect-[4/3] flex items-center justify-center relative">
-                                    <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/app-screenshot-shop.png`} alt="Marketplace" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <div className="group bg-white rounded-2xl p-6 shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-indigo-100 hover:-translate-y-1 h-full flex flex-col">
+                                <div className="rounded-xl overflow-hidden bg-slate-100 mb-8 border border-slate-200 aspect-[16/10] flex items-center justify-center relative shadow-inner">
+                                    <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/app-screenshot-shop.png`} alt="Marketplace" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                                 </div>
-                                <div className="px-2 pb-4">
-                                    <h3 className="text-xl font-bold text-slate-900 mb-2">Strumenti Difensivi</h3>
-                                    <p className="text-slate-600 text-sm leading-relaxed">Accedi a strumenti avanzati per monitorare e proteggere i tuoi account in tempo reale.</p>
+                                <div className="flex-1 flex flex-col">
+                                    <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-indigo-700 transition-colors">Strumenti Difensivi</h3>
+                                    <p className="text-slate-600 text-base leading-relaxed">Accedi a strumenti avanzati per monitorare e proteggere i tuoi account in tempo reale.</p>
                                 </div>
                             </div>
 
                             {/* Card 2 */}
-                            <div className="group bg-white rounded-2xl p-4 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100">
-                                <div className="rounded-xl overflow-hidden bg-slate-100 mb-6 border border-slate-200 aspect-[4/3] relative">
-                                    <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/app-screenshot-daily-streak.png`} alt="Daily Progress" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <div className="group bg-white rounded-2xl p-6 shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-indigo-100 hover:-translate-y-1 h-full flex flex-col">
+                                <div className="rounded-xl overflow-hidden bg-slate-100 mb-8 border border-slate-200 aspect-[16/10] relative shadow-inner">
+                                    <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/app-screenshot-daily-streak.png`} alt="Daily Progress" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                                 </div>
-                                <div className="px-2 pb-4">
-                                    <h3 className="text-xl font-bold text-slate-900 mb-2">Micro-Training Quotidiano</h3>
-                                    <p className="text-slate-600 text-sm leading-relaxed">Costruisci abitudini di sicurezza solide con brevi sessioni giornaliere (5 min) ad alto impatto.</p>
+                                <div className="flex-1 flex flex-col">
+                                    <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-indigo-700 transition-colors">Micro-Training Quotidiano</h3>
+                                    <p className="text-slate-600 text-base leading-relaxed">Costruisci abitudini di sicurezza solide con brevi sessioni giornaliere (5 min) ad alto impatto.</p>
                                 </div>
                             </div>
 
                             {/* Card 3 */}
-                            <div className="group bg-white rounded-2xl p-4 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100">
-                                <div className="rounded-xl overflow-hidden bg-slate-100 mb-6 border border-slate-200 aspect-[4/3] relative">
-                                    <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/app-screenshot-1.jpg`} alt="Real World Scenarios" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <div className="group bg-white rounded-2xl p-6 shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-indigo-100 hover:-translate-y-1 h-full flex flex-col">
+                                <div className="rounded-xl overflow-hidden bg-slate-100 mb-8 border border-slate-200 aspect-[16/10] relative shadow-inner">
+                                    <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/app-screenshot-1.jpg`} alt="Real World Scenarios" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                                 </div>
-                                <div className="px-2 pb-4">
-                                    <h3 className="text-xl font-bold text-slate-900 mb-2">Scenari del Mondo Reale</h3>
-                                    <p className="text-slate-600 text-sm leading-relaxed">Mettiti alla prova con scenari realistici ambientati nel contesto lavorativo italiano.</p>
+                                <div className="flex-1 flex flex-col">
+                                    <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-indigo-700 transition-colors">Scenari del Mondo Reale</h3>
+                                    <p className="text-slate-600 text-base leading-relaxed">Mettiti alla prova con scenari realistici ambientati nel contesto lavorativo italiano.</p>
                                 </div>
                             </div>
                         </div>

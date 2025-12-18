@@ -69,34 +69,39 @@ export default function SeniorLandingPage() {
                 </nav>
 
                 {/* Hero Section */}
-                <header className="hero section py-20 md:py-32 bg-gradient-to-b from-white to-emerald-50/30">
-                    <div className="container mx-auto px-4">
+                {/* Hero Section */}
+                <header className="hero section py-24 md:py-32 bg-gradient-to-b from-white to-emerald-50/50 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-100/40 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                    <div className="container mx-auto px-4 relative">
                         <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
-                            <div className="flex-1 min-w-[300px] flex flex-col gap-8">
+                            <div className="flex-1 min-w-[300px] flex flex-col gap-8 text-center md:text-left">
+                                <span className="inline-block px-4 py-2 bg-emerald-100 text-emerald-800 text-sm font-bold rounded-full self-center md:self-start mb-2 tracking-wide">
+                                    FACILE • SICURO • UTILE
+                                </span>
                                 <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold leading-tight text-emerald-950 tracking-tight">
-                                    La tecnologia semplice,<br /> <span className="text-emerald-600">per tutti.</span>
+                                    La tecnologia semplice,<br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">per tutti.</span>
                                 </h1>
-                                <p className="text-xl md:text-2xl text-gray-600 leading-relaxed font-light">
+                                <p className="text-xl md:text-2xl text-gray-600 leading-relaxed font-light max-w-xl mx-auto md:mx-0">
                                     Impara a riconoscere le truffe, proteggere i tuoi risparmi e navigare serenamente.
                                     Con <span className="font-semibold text-emerald-800">DeepSafe</span>, internet non fa più paura.
                                 </p>
 
                                 <Countdown targetDate="2025-12-24T12:00:00" variant="senior" />
 
-                                <div className="flex flex-col sm:flex-row gap-6">
-                                    <a href="#waitlist" className="btn-primary inline-flex justify-center items-center w-full sm:w-auto px-12 py-6 text-xl md:text-2xl font-bold bg-emerald-600 text-white rounded-full hover:bg-emerald-700 shadow-xl shadow-emerald-500/20 hover:shadow-2xl hover:shadow-emerald-500/30 hover:-translate-y-1 transition-all duration-300 tracking-wide">
+                                <div className="flex flex-col sm:flex-row gap-6 pt-4 justify-center md:justify-start">
+                                    <a href="#waitlist" className="btn-primary inline-flex justify-center items-center w-full sm:w-auto px-10 py-5 text-xl font-bold bg-emerald-600 text-white rounded-full hover:bg-emerald-700 shadow-xl shadow-emerald-600/20 hover:shadow-2xl hover:shadow-emerald-600/30 hover:-translate-y-1 transition-all duration-300 tracking-wide ring-offset-2 focus:ring-2 focus:ring-emerald-600">
                                         Inizia Ora - È Gratis
                                     </a>
                                 </div>
-                                <div className="mt-6 flex items-center gap-2 text-gray-500 text-base">
-                                    <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                                <div className="mt-6 flex items-center justify-center md:justify-start gap-3 text-gray-500 text-base font-medium">
+                                    <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-sm">✓</div>
                                     <span>Nessuna carta di credito richiesta</span>
                                 </div>
                             </div>
-                            <div className="flex-1 w-full min-w-[300px] text-center relative">
-                                <div className="absolute inset-0 bg-emerald-200 rounded-full blur-3xl opacity-20 transform translate-y-10"></div>
+                            <div className="flex-1 w-full min-w-[300px] relative">
+                                <div className="absolute inset-0 bg-emerald-200/30 rounded-full blur-[60px] transform translate-y-10 scale-90"></div>
                                 <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/app-screenshot-1.jpg`} alt="Applicazione Facile da Usare"
-                                    className="relative rounded-3xl shadow-2xl border-4 border-white max-w-[90%] mx-auto h-auto transform rotate-1 hover:rotate-0 transition-transform duration-500" />
+                                    className="relative rounded-[2rem] shadow-2xl shadow-emerald-900/10 border-4 border-white mx-auto w-full max-w-md h-auto hover:rotate-1 transition-transform duration-700 object-cover" />
                             </div>
                         </div>
                     </div>
@@ -105,32 +110,33 @@ export default function SeniorLandingPage() {
                 {/* Features Section */}
                 <section className="section py-24 bg-white">
                     <div className="container mx-auto px-4">
-                        <h2 className="text-center text-3xl md:text-5xl font-bold mb-16 text-emerald-950 tracking-tight">Cosa Imparerai</h2>
+                        <h2 className="text-center text-3xl md:text-5xl font-bold mb-4 text-emerald-950 tracking-tight">Cosa Imparerai</h2>
+                        <p className="text-center text-xl text-gray-500 mb-16 max-w-2xl mx-auto">Concetti complessi spiegati con parole semplici, pensati per te.</p>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
                             {/* Feature 1 */}
-                            <div className="group text-center p-8 bg-white rounded-3xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                                <div className="w-24 h-24 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:bg-red-100 transition-colors">
-                                    <span className="text-5xl">✉️</span>
+                            <div className="group text-center p-8 bg-white rounded-[2rem] border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-emerald-100/50 transition-all duration-300 hover:-translate-y-2">
+                                <div className="w-24 h-24 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:bg-red-100 transition-colors transform group-hover:scale-110 duration-300">
+                                    <span className="text-5xl drop-shadow-sm">✉️</span>
                                 </div>
                                 <h3 className="text-2xl font-bold mb-4 text-gray-900">Riconosci le Email Pericolose</h3>
-                                <p className="text-lg text-gray-600 leading-relaxed">Impara a distinguere una email vera da un tentativo di truffa che vuole rubare i tuoi dati o i tuoi soldi.</p>
+                                <p className="text-lg text-gray-600 leading-relaxed font-light">Impara a distinguere una email vera da un tentativo di truffa che vuole rubare i tuoi dati o i tuoi soldi.</p>
                             </div>
                             {/* Feature 2 */}
-                            <div className="group text-center p-8 bg-white rounded-3xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                                <div className="w-24 h-24 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:bg-emerald-100 transition-colors">
-                                    <span className="text-5xl">🔒</span>
+                            <div className="group text-center p-8 bg-white rounded-[2rem] border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-emerald-100/50 transition-all duration-300 hover:-translate-y-2">
+                                <div className="w-24 h-24 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:bg-emerald-100 transition-colors transform group-hover:scale-110 duration-300">
+                                    <span className="text-5xl drop-shadow-sm">🔒</span>
                                 </div>
                                 <h3 className="text-2xl font-bold mb-4 text-gray-900">Password Semplici e Sicure</h3>
-                                <p className="text-lg text-gray-600 leading-relaxed">Scopri come creare password impossibili da indovinare per gli altri, ma facili da ricordare per te.</p>
+                                <p className="text-lg text-gray-600 leading-relaxed font-light">Scopri come creare password impossibili da indovinare per gli altri, ma facili da ricordare per te.</p>
                             </div>
                             {/* Feature 3 */}
-                            <div className="group text-center p-8 bg-white rounded-3xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                                <div className="w-24 h-24 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:bg-blue-100 transition-colors">
-                                    <span className="text-5xl">📱</span>
+                            <div className="group text-center p-8 bg-white rounded-[2rem] border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-emerald-100/50 transition-all duration-300 hover:-translate-y-2">
+                                <div className="w-24 h-24 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:bg-blue-100 transition-colors transform group-hover:scale-110 duration-300">
+                                    <span className="text-5xl drop-shadow-sm">📱</span>
                                 </div>
                                 <h3 className="text-2xl font-bold mb-4 text-gray-900">Usa WhatsApp senza rischi</h3>
-                                <p className="text-lg text-gray-600 leading-relaxed">Comunica con figli e nipoti in sicurezza, evitando link sospetti e catene dannose o truffaldine.</p>
+                                <p className="text-lg text-gray-600 leading-relaxed font-light">Comunica con figli e nipoti in sicurezza, evitando link sospetti e catene dannose o truffaldine.</p>
                             </div>
                         </div>
                     </div>
@@ -242,30 +248,36 @@ export default function SeniorLandingPage() {
 
                 {/* Waitlist Section */}
                 <section id="waitlist" className="section py-24 bg-emerald-900 text-white relative overflow-hidden">
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+                    {/* Soft background glow */}
+                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-600/20 rounded-full blur-[100px] pointer-events-none"></div>
+
                     <div className="container mx-auto px-4 text-center relative z-10">
-                        <span className="text-emerald-300 font-bold tracking-widest uppercase text-sm mb-4 block">ACCESSO ANTICIPATO</span>
-                        <h2 className="text-4xl md:text-5xl font-bold mb-8">Unisciti alla Lista d'Attesa</h2>
-                        <p className="mb-12 text-xl md:text-2xl text-emerald-100 max-w-2xl mx-auto font-light">
+                        <span className="inline-block px-4 py-2 bg-emerald-800/50 border border-emerald-700 rounded-full text-emerald-200 font-bold tracking-widest uppercase text-sm mb-6">ACCESSO GRATUITO</span>
+                        <h2 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight">Unisciti alla Lista d'Attesa</h2>
+                        <p className="mb-12 text-xl md:text-2xl text-emerald-100 max-w-2xl mx-auto font-light leading-relaxed">
                             Lascia la tua email per sapere quando l'app sarà disponibile. <br className="hidden md:block" />
-                            È gratuito e senza impegno.
+                            È gratuito, senza impegno e facile da cancellare.
                         </p>
 
-                        <form className="waitlist-form max-w-lg mx-auto bg-white p-2 rounded-2xl shadow-2xl flex flex-col md:flex-row gap-2" onSubmit={handleWaitlistSubmit}>
+                        <form className="waitlist-form max-w-xl mx-auto bg-white p-3 rounded-[1.5rem] shadow-2xl flex flex-col md:flex-row gap-2 transition-all focus-within:ring-4 focus-within:ring-emerald-500/30" onSubmit={handleWaitlistSubmit}>
                             <input
                                 type="email"
                                 id="email"
-                                placeholder="Inserisci la tua email qui..."
+                                placeholder="Scrivi qui la tua email..."
                                 required
-                                className="flex-1 p-5 rounded-xl border-none text-gray-900 text-lg focus:ring-2 focus:ring-emerald-500 outline-none placeholder-gray-400"
+                                className="flex-1 p-5 rounded-xl border-2 border-transparent text-gray-900 text-lg md:text-xl focus:border-emerald-500 focus:outline-none placeholder-gray-400 bg-gray-50 focus:bg-white transition-colors"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
-                            <button type="submit" className="btn-primary w-full md:w-auto px-8 py-5 text-lg font-bold bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-70 whitespace-nowrap" disabled={isSubmitting}>
-                                {isSubmitting ? 'Wait...' : 'Avvisami!'}
+                            <button type="submit" className="btn-primary w-full md:w-auto px-10 py-5 text-lg font-bold bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-70 whitespace-nowrap shadow-lg">
+                                {isSubmitting ? 'Un attimo...' : 'Avvisami!'}
                             </button>
                         </form>
-                        <p className="mt-8 text-emerald-200/60 text-sm">Non invieremo spam. Solo notizie importanti.</p>
+                        <p className="mt-8 text-emerald-200/80 text-base flex justify-center items-center gap-2">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                            Promettiamo: niente pubblicità fastidiosa.
+                        </p>
                     </div>
                 </section>
 
