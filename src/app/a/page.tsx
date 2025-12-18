@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 
 import { WaitlistSuccessModal } from '@/components/landing/WaitlistSuccessModal';
+import Countdown from '@/components/landing/Countdown';
 
 export default function AdultLandingPage() {
     const [email, setEmail] = useState('');
@@ -73,21 +74,24 @@ export default function AdultLandingPage() {
                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-50 via-white to-white opacity-70"></div>
                     <div className="container mx-auto px-6 relative">
                         <div className="flex flex-col lg:flex-row items-center gap-16 md:gap-24">
-                            <div className="flex-1 max-w-2xl text-center lg:text-left">
+                            <div className="flex-1 max-w-2xl text-center lg:text-left flex flex-col gap-10">
                                 <div className="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-sm font-medium">
                                     <span className="flex h-2 w-2 rounded-full bg-indigo-600"></span>
                                     Formazione Professionale
                                 </div>
-                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-slate-900 mb-8 leading-[1.1]">
+                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-slate-900 leading-[1.1]">
                                     Cyber Security <br />
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600">
                                         per l'Era Moderna
                                     </span>
                                 </h1>
-                                <p className="text-xl md:text-2xl text-slate-600 mb-10 leading-relaxed font-light">
+                                <p className="text-xl md:text-2xl text-slate-600 leading-relaxed font-light">
                                     Metti al sicuro la tua carriera e la tua identità digitale.
                                     Un percorso formativo avanzato, progettato per professionisti che non possono permettersi errori.
                                 </p>
+
+                                <Countdown targetDate="2025-12-24T12:00:00" variant="adult" />
+
                                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                                     <a href="#waitlist" className="inline-flex items-center justify-center px-20 py-6 text-lg font-bold !text-white hover:text-white transition-all duration-200 bg-slate-900 rounded-full hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 shadow-xl hover:shadow-2xl hover:-translate-y-1">
                                         Unisciti alla Waitlist

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 
 import { WaitlistSuccessModal } from '@/components/landing/WaitlistSuccessModal';
+import Countdown from '@/components/landing/Countdown';
 
 export default function SeniorLandingPage() {
     const [email, setEmail] = useState('');
@@ -70,14 +71,17 @@ export default function SeniorLandingPage() {
                 <header className="hero section py-20 md:py-32 bg-gradient-to-b from-white to-emerald-50/30">
                     <div className="container mx-auto px-4">
                         <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
-                            <div className="flex-1 min-w-[300px]">
-                                <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-8 leading-tight text-emerald-950 tracking-tight">
+                            <div className="flex-1 min-w-[300px] flex flex-col gap-8">
+                                <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold leading-tight text-emerald-950 tracking-tight">
                                     La tecnologia semplice,<br /> <span className="text-emerald-600">per tutti.</span>
                                 </h1>
-                                <p className="text-xl md:text-2xl mb-10 text-gray-600 leading-relaxed font-light">
+                                <p className="text-xl md:text-2xl text-gray-600 leading-relaxed font-light">
                                     Impara a riconoscere le truffe, proteggere i tuoi risparmi e navigare serenamente.
                                     Con <span className="font-semibold text-emerald-800">DeepSafe</span>, internet non fa più paura.
                                 </p>
+
+                                <Countdown targetDate="2025-12-24T12:00:00" variant="senior" />
+
                                 <div className="flex flex-col sm:flex-row gap-6">
                                     <a href="#waitlist" className="btn-primary inline-flex justify-center items-center w-full sm:w-auto px-12 py-6 text-xl md:text-2xl font-bold bg-emerald-600 text-white rounded-full hover:bg-emerald-700 shadow-xl shadow-emerald-500/20 hover:shadow-2xl hover:shadow-emerald-500/30 hover:-translate-y-1 transition-all duration-300 tracking-wide">
                                         Inizia Ora - È Gratis
