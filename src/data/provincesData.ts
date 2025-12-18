@@ -175,7 +175,7 @@ export const provincesData: Province[] = [
   },
   {
     "id": "MB",
-    "name": "Monza e della Brianza",
+    "name": "Monza-Brianza",
     "region": "Lombardia",
     "status": "locked",
     "progress": 0, "userScore": 0, "maxScore": 10, "isCompleted": false,

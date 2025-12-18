@@ -282,7 +282,7 @@ function ShopContent() {
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-cyan-500/30 pb-24">
             {/* Top Bar */}
-            <TopBar progress={unlockedCount} total={totalProvinces} className="sticky top-0 z-50" />
+            <TopBar className="sticky top-0 z-50" />
 
             <main className="pt-6 md:pt-8 px-4 max-w-2xl mx-auto space-y-8">
                 {/* Header */}

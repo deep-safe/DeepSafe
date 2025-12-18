@@ -4,18 +4,22 @@ import { motion } from 'framer-motion';
 import { useUserStore } from '@/store/useUserStore';
 
 interface TopBarProps {
-    progress: number;
-    total: number;
+    progress?: number;
+    total?: number;
     className?: string;
 }
 
-const TopBar: React.FC<TopBarProps> = ({ progress, total, className = "" }) => {
+const TopBar: React.FC<TopBarProps> = ({ progress: propProgress, total: propTotal, className = "" }) => {
     const streak = useUserStore(state => state.streak);
     const lives = useUserStore(state => state.lives);
     const credits = useUserStore(state => state.credits);
     const globalRank = useUserStore(state => state.globalRank);
+    const agentStats = useUserStore(state => state.agentStats);
 
-    const percentage = Math.round((progress / total) * 100) || 0;
+    const progress = propProgress ?? agentStats?.completed_missions ?? 0;
+    const total = propTotal ?? agentStats?.total_missions ?? 0;
+
+    const percentage = total > 0 ? Math.round((progress / total) * 100) : 0;
 
     const positionClasses = className.includes('fixed') || className.includes('sticky') || className.includes('relative')
         ? ''

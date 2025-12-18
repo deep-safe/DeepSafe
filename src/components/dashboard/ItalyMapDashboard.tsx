@@ -629,10 +629,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
             <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-amber-900/10 rounded-full blur-[120px] pointer-events-none" />
 
             {/* HUD Elements */}
-            <TopBar
-                progress={useUserStore(state => state.agentStats?.completed_missions || 0)}
-                total={useUserStore(state => state.agentStats?.total_missions || 0)}
-            />
+            <TopBar />
 
             {/* Back Button (Only in Regional View) */}
             <AnimatePresence>

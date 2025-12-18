@@ -219,7 +219,7 @@ export default function TrainingPillPage() {
             />
 
             {/* Top Bar (Map Progress) */}
-            <TopBar progress={unlockedCount} total={totalProvinces} className="sticky top-0 w-full z-50 px-4 bg-slate-950/90 backdrop-blur-sm" />
+            <TopBar className="sticky top-0 w-full z-50 px-4 bg-slate-950/90 backdrop-blur-sm" />
 
             {/* Header */}
             <header className="sticky top-14 w-full px-4 z-40 flex items-center justify-between pointer-events-none bg-slate-950/90 backdrop-blur-sm py-4">
