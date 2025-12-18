@@ -72,7 +72,7 @@ export default function MissionSelectionPage() {
                 <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-cyber-purple/10 blur-[80px] rounded-full" />
             </div>
 
-            <TopBar progress={unlockedProvinces.length} total={provincesData.length} />
+            <TopBar />
 
             <main className="pt-40 px-4 max-w-md mx-auto space-y-8 relative z-10">
                 {/* Header */}

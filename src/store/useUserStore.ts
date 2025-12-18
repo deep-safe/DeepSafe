@@ -39,6 +39,8 @@ interface UserState {
     globalRank: number | null;
     totalMissions: number;
     unlockedMissionsCount: number;
+    completedProvincesCount: number;
+    totalProvincesCount: number;
     provinceMissionCounts: Record<string, number>; // Cache of total missions per province
     mapTier: 'level_1' | 'level_2' | 'level_3';
     completedTiers: string[];
@@ -163,6 +165,8 @@ export const useUserStore = create<UserState>()(
             globalRank: null,
             totalMissions: 0,
             unlockedMissionsCount: 0,
+            completedProvincesCount: 0,
+            totalProvincesCount: 107, // Default to known count
             provinceMissionCounts: {},
             mapTier: 'level_1',
             completedTiers: [],
@@ -846,6 +850,11 @@ export const useUserStore = create<UserState>()(
                             // REMOVED overwrite of data.maxScore to keep robust sum logic
                         });
 
+                        // Calculate Completed Provinces Count
+                        const completedProvincesCount = Object.values(newProvinceScores).filter((p: any) => p.isCompleted).length;
+                        const { provincesData } = await import('@/data/provincesData');
+                        const totalProvincesCount = provincesData.length;
+
                         // Set Store
                         // Set Store
                         set({
@@ -858,6 +867,8 @@ export const useUserStore = create<UserState>()(
                             provinceScores: newProvinceScores,
                             provinceMissionCounts: provinceMissionCounts,
                             unlockedMissionsCount: unlockedMissionsCount,
+                            completedProvincesCount: completedProvincesCount,
+                            totalProvincesCount: totalProvincesCount,
 
                             lastLoginDate: profile.last_login ?? null,
                             lastStreakDate: profile.last_streak_date ?? null,
@@ -1154,6 +1165,8 @@ export const useUserStore = create<UserState>()(
                 mapTier: state.mapTier,
                 completedTiers: state.completedTiers,
                 unlockedMissionsCount: state.unlockedMissionsCount,
+                completedProvincesCount: state.completedProvincesCount,
+                totalProvincesCount: state.totalProvincesCount,
 
                 lastRefillTime: state.lastRefillTime, // Persist this!
             })

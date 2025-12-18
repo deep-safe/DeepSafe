@@ -38,6 +38,10 @@ function LoginContent() {
                 setLocalError('Lo username deve essere di almeno 3 caratteri.');
                 return false;
             }
+            if (username.length > 15) {
+                setLocalError('Lo username non può superare i 15 caratteri.');
+                return false;
+            }
             if (!/^[a-zA-Z0-9_]+$/.test(username)) {
                 setLocalError('Lo username può contenere solo lettere, numeri e underscore.');
                 return false;
@@ -340,6 +344,7 @@ function LoginContent() {
                                         placeholder="Username Unico"
                                         value={username}
                                         onChange={(e) => setUsername(e.target.value)}
+                                        maxLength={15}
                                         className="w-full bg-[#1F2833] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder:text-zinc-600 focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/50 outline-none transition-all font-mono text-sm"
                                         disabled={loading}
                                     />

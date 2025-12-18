@@ -313,6 +313,11 @@ export default function ProfilePage() {
         try {
             if (!user) return;
 
+            if (editName.length > 15) {
+                alert("Il nome non può superare i 15 caratteri");
+                return;
+            }
+
             const { error } = await supabase
                 .from('profiles')
                 .update({
@@ -438,8 +443,10 @@ export default function ProfilePage() {
                                             <input
                                                 type="text"
                                                 value={editName}
+                                                maxLength={15}
                                                 onChange={(e) => setEditName(e.target.value)}
                                                 className="w-full bg-black/60 border border-cyber-green/50 rounded-lg p-3 text-cyber-green font-mono text-sm focus:outline-none focus:border-cyber-green focus:shadow-[0_0_15px_rgba(0,255,136,0.2)]"
+
                                             />
                                         </div>
                                     </div>

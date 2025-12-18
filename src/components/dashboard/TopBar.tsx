@@ -15,9 +15,11 @@ const TopBar: React.FC<TopBarProps> = ({ progress: propProgress, total: propTota
     const credits = useUserStore(state => state.credits);
     const globalRank = useUserStore(state => state.globalRank);
     const agentStats = useUserStore(state => state.agentStats);
+    const totalMissions = useUserStore(state => state.totalMissions);
 
+    // Default to Agent Stats Mission Completion
     const progress = propProgress ?? agentStats?.completed_missions ?? 0;
-    const total = propTotal ?? agentStats?.total_missions ?? 0;
+    const total = propTotal ?? agentStats?.total_missions ?? totalMissions ?? 0;
 
     const percentage = total > 0 ? Math.round((progress / total) * 100) : 0;
 
