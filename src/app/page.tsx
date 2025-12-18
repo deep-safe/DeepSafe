@@ -79,8 +79,10 @@ export default function LandingPage() {
                             L'Italia del Futuro <br /> <span className="text-[#00f3ff]">Ha Bisogno di Te</span>
                         </h1>
                         <p className="text-lg md:text-xl max-w-[600px] mx-auto opacity-90 text-gray-300 text-center">
-                            Il mondo digitale è sotto attacco. Hacker, deepfake e blackout minacciano il nostro paese.
-                            Hai le skills per salvarlo?
+                            La sicurezza digitale dell'Italia passa dalla consapevolezza di ognuno.
+                            Ogni giorno, nuove minacce mettono a rischio identità e risparmi.
+                            <br className="hidden md:block" />
+                            DeepSafe ti dà gli strumenti per difendere te stesso e il tuo futuro.
                         </p>
 
                         <Countdown targetDate="2025-12-24T12:00:00" />
