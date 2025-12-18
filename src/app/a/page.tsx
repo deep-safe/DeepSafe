@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 import { WaitlistSuccessModal } from '@/components/landing/WaitlistSuccessModal';
 import Countdown from '@/components/landing/Countdown';
+import LeaderboardSection from '@/components/landing/LeaderboardSection';
 
 export default function AdultLandingPage() {
     const [email, setEmail] = useState('');
@@ -166,6 +167,9 @@ export default function AdultLandingPage() {
                         </div>
                     </div>
                 </section>
+
+                {/* Leaderboard Section */}
+                <LeaderboardSection variant="adult" />
 
                 {/* Features List Section */}
                 <section className="section py-20 bg-white border-y border-slate-100">

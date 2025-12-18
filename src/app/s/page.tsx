@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 import { WaitlistSuccessModal } from '@/components/landing/WaitlistSuccessModal';
 import Countdown from '@/components/landing/Countdown';
+import LeaderboardSection from '@/components/landing/LeaderboardSection';
 
 export default function SeniorLandingPage() {
     const [email, setEmail] = useState('');
@@ -235,6 +236,9 @@ export default function SeniorLandingPage() {
                         </div>
                     </div>
                 </section>
+
+                {/* Leaderboard Section */}
+                <LeaderboardSection variant="senior" />
 
                 {/* Waitlist Section */}
                 <section id="waitlist" className="section py-24 bg-emerald-900 text-white relative overflow-hidden">

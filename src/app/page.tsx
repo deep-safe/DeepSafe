@@ -6,6 +6,7 @@ import Image from 'next/image';
 
 import { WaitlistSuccessModal } from '@/components/landing/WaitlistSuccessModal';
 import Countdown from '@/components/landing/Countdown';
+import LeaderboardSection from '@/components/landing/LeaderboardSection';
 
 export default function LandingPage() {
     const [email, setEmail] = useState('');
@@ -157,6 +158,9 @@ export default function LandingPage() {
                         </div>
                     </div>
                 </section>
+
+                {/* Leaderboard Section */}
+                <LeaderboardSection variant="youth" />
 
                 {/* Shop Section */}
                 <section className="section py-20 bg-[#161622]">
