@@ -79,7 +79,7 @@ interface UserState {
     unlockAvatar: (id: string) => Promise<void>;
     updateProvinceScore: (id: string, score: number, maxScore: number, isCompleted: boolean) => Promise<void>;
     updateMissionScore: (provinceId: string, missionId: string, score: number, maxScore: number, isCompleted: boolean) => Promise<void>;
-    refreshProfile: () => Promise<void>;
+    refreshProfile: (forceRefetchMissions?: boolean) => Promise<void>;
     checkBadges: (force?: boolean) => Promise<{ newBadges: string[] }>;
     lastBadgeCheck: number | null;
     // setPremium: (isPremium: boolean) => Promise<void>; // REMOVED: Managed by server
@@ -304,6 +304,9 @@ export const useUserStore = create<UserState>()(
                         const isNowCompleted = newScoreData?.isCompleted || false;
 
                         if (!wasCompleted && isNowCompleted) {
+                            // Award Emerald for Province Completion
+                            addEmeralds = 1;
+
                             // Check Region Completion (Rubies)
                             try {
                                 const { provincesData } = await import('@/data/provincesData');
@@ -700,7 +703,7 @@ export const useUserStore = create<UserState>()(
                     console.error('Error syncing owned avatars:', err);
                 }
             },
-            refreshProfile: async () => {
+            refreshProfile: async (forceRefetchMissions = false) => {
                 try {
                     const { data: { user } } = await supabase.auth.getUser();
                     if (!user) return;
@@ -724,9 +727,9 @@ export const useUserStore = create<UserState>()(
                         let provinceMaxScores: Record<string, number>;
                         let provinceMissionCounts: Record<string, number>;
 
-                        const CACHE_DURATION = 1000 * 60 * 60; // 1 Hour
+                        const CACHE_DURATION = 1000 * 60 * 5; // 5 Minutes (Reduced from 1 Hour to avoid stale content)
 
-                        if (state.missionCache && (Date.now() - state.missionCache.timestamp < CACHE_DURATION)) {
+                        if (!forceRefetchMissions && state.missionCache && (Date.now() - state.missionCache.timestamp < CACHE_DURATION)) {
                             // USE CACHE
                             missionMap = state.missionCache.data;
                             provinceMaxScores = state.missionCache.provinceMaxScores;
@@ -953,21 +956,38 @@ export const useUserStore = create<UserState>()(
                             break;
                         case 'region_master':
                             {
-                                // GENERIC LOGIC: Check if ANY region is fully completed
-                                // 1. Identify all unique regions
-                                const allRegions = Array.from(new Set(provincesData.map(p => p.region)));
+                                // Check if specific region (defined in condition_value) is fully completed
+                                const targetRegion = badge.condition_value;
 
-                                // 2. Check if any region is fully completed
-                                const anyRegionCompleted = allRegions.some(regionName => {
-                                    const regionProvinces = provincesData.filter(p => p.region === regionName);
-                                    return regionProvinces.every(p => {
-                                        const scoreData = state.provinceScores[p.id];
-                                        return scoreData && scoreData.isCompleted;
+                                if (targetRegion) {
+                                    // Specific region check (e.g., "Molise")
+                                    // Normalize to lowercase for comparison to avoid sensitivity issues
+                                    const regionProvinces = provincesData.filter(p =>
+                                        p.region.toLowerCase() === targetRegion.toLowerCase()
+                                    );
+
+                                    if (regionProvinces.length > 0) {
+                                        const allProvincesCompleted = regionProvinces.every(p => {
+                                            const scoreData = state.provinceScores[p.id];
+                                            return scoreData && scoreData.isCompleted;
+                                        });
+                                        if (allProvincesCompleted) {
+                                            unlocked = true;
+                                        }
+                                    }
+                                } else {
+                                    // Fallback: Check if ANY region is fully completed (legacy logic)
+                                    const allRegions = Array.from(new Set(provincesData.map(p => p.region)));
+                                    const anyRegionCompleted = allRegions.some(regionName => {
+                                        const regionProvinces = provincesData.filter(p => p.region === regionName);
+                                        return regionProvinces.every(p => {
+                                            const scoreData = state.provinceScores[p.id];
+                                            return scoreData && scoreData.isCompleted;
+                                        });
                                     });
-                                });
-
-                                if (anyRegionCompleted) {
-                                    unlocked = true;
+                                    if (anyRegionCompleted) {
+                                        unlocked = true;
+                                    }
                                 }
                             }
                             break;
