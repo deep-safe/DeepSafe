@@ -100,3 +100,18 @@ This document tracks the regions, topics, and provinces that have been populated
 - **CR** (Cremona): Implementato (Vishing & Spoofing Telefonico)
 - **LO** (Lodi): Implementato (Smishing Pacchi & SMS Spoofing)
 - **MN** (Mantova): Implementato (Marketplace Scams & Bancomat Fake)
+
+## Umbria
+**Argomento:** Codici Segreti & Privacy del Cuore Verde (Crittografia & GDPR)
+**Provinces:**
+- **PG** (Perugia): Ready for Import (Crittografia, Steganografia & Hashing)
+- **TR** (Terni): Ready for Import (Privacy, GDPR & Data Breach)
+
+## Marche
+**Argomento:** L'Artigiano Digitale: Costruire Difese Solide (Web, Mobile & Device)
+**Provinces:**
+- **AN** (Ancona): Ready for Import (Web Hygiene, Cookies & Extensions)
+- **PU** (Pesaro e Urbino): Ready for Import (Mobile Security, Permissions & Rooting)
+- **MC** (Macerata): Ready for Import (Device Lifecycle, Wiping & Encryption)
+- **FM** (Fermo): Ready for Import (Shopping, Fake Reviews & Dropshipping)
+- **AP** (Ascoli Piceno): Ready for Import (Identity, OAuth & Password Managers)
