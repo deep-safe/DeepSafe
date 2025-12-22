@@ -268,7 +268,8 @@ export const useUserStore = create<UserState>()(
 
                     // 2. Call RPC to Process Reward (NC) and Log Completion in DB
                     // 'status' determines if it counts as fully completed or just an attempt.
-                    const { data, error } = await supabase.rpc('complete_level', {
+                    // UPDATED to v4 to fix invalid UUID format if levelId is a slug
+                    const { data, error } = await supabase.rpc('complete_level_v4', {
                         p_user_id: user.id,
                         p_level_id: levelId,
                         p_score: score,

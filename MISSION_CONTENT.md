@@ -22,8 +22,8 @@ This document tracks the regions, topics, and provinces that have been populated
 ## Molise
 **Argomento:** Fake News & Fact-Checking
 **Provinces:**
-- **IS** (Isernia): Implementato (Fake News Basis)
-- **CB** (Campobasso): *Pending*
+- **IS** (Isernia): Implementato (DB: Disinformation Defense)
+- **CB** (Campobasso): *Pending* (Frontend Placeholder: Phishing)
 
 ## Trentino Alto Adige
 **Argomento:** IoT, Domotica & Wearable Security
