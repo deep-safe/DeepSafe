@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Target, Users, Zap, AlertTriangle, CheckCircle2, Lock } from 'lucide-react';
 import TopBar from '@/components/dashboard/TopBar';
 import { BottomNav } from '@/components/layout/BottomNav';
-import { missionsData } from '@/data/missionsData';
+import { getLessonsForProvince } from '@/data/quizData';
 import { provincesData } from '@/data/provincesData';
 import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
@@ -14,18 +14,73 @@ import { useSystemUI } from '@/context/SystemUIContext';
 
 import { useUserStore } from '@/store/useUserStore';
 
+interface Mission {
+    id: string;
+    title: string;
+    description: string;
+    problems: {
+        id: string;
+        title: string;
+        description: string;
+        character: string;
+        difficulty: 'Easy' | 'Medium' | 'Hard';
+    }[];
+}
+
 export default function MissionSelectionPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const provinceId = searchParams.get('provinceId') as string;
     const [selectedMissionId, setSelectedMissionId] = useState<string | null>(null);
+    const [missions, setMissions] = useState<Mission[]>([]);
+    const [loading, setLoading] = useState(true);
     const { unlockedProvinces } = useUserStore();
     const { openModal } = useSystemUI();
 
     // Client is already initialized
 
     const province = provincesData.find(p => p.id === provinceId);
-    const missions = missionsData[provinceId] || [];
+
+    useEffect(() => {
+        const fetchMissions = async () => {
+            if (!provinceId) return;
+
+            setLoading(true);
+            const region = province?.region || '';
+            const lessons = await getLessonsForProvince(provinceId, region);
+
+            // Adapt TrainingLesson[] to Mission[] structure
+            // We group these lessons into a single "Mission Group" for now, or map them 1:1 if they are distinct missions
+            // Based on the SQL, we have 3 distinct missions. The UI expects a list of "Missions" which contain "Problems".
+            // Since our DB structure is flat (Mission = Level), we can map each DB Mission to a "Problem" 
+            // and group them under a single "Mission Container" for the UI, OR 
+            // map each DB Mission to a top-level UI Mission with 1 Problem (which is itself).
+
+            // Better UX: Group by difficulty or just list them.
+            // Let's create a single "Operazioni Locali" mission group containing all the retrieved lessons as problems.
+
+            if (lessons.length > 0) {
+                const mappedMission: Mission = {
+                    id: `group_${provinceId}`,
+                    title: 'Operazioni Locali',
+                    description: `Missioni operative per la messa in sicurezza del settore ${province?.name}.`,
+                    problems: lessons.map(l => ({
+                        id: l.id,
+                        title: l.title,
+                        description: l.description || 'Nessuna descrizione disponibile.',
+                        character: 'Agente DeepSafe', // DB doesn't have character yet, default it
+                        difficulty: (l.level === 'SEMPLICE' ? 'Easy' : l.level === 'MEDIO' ? 'Medium' : 'Hard') as 'Easy' | 'Medium' | 'Hard'
+                    }))
+                };
+                setMissions([mappedMission]);
+            } else {
+                setMissions([]);
+            }
+            setLoading(false);
+        };
+
+        fetchMissions();
+    }, [provinceId, province]);
 
     if (!province) {
         return <div className="text-white p-8">Provincia non trovata.</div>;

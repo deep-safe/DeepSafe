@@ -1,8 +1,8 @@
 -- Migration to add Phishing Missions for Molise (Campobasso - CB)
+-- Topic: Phishing & Social Engineering
 
--- 1. Insert Missions (using UUIDs generated)
--- Note: 'nc_reward' column stores the NC (Credits) reward.
--- Levels: semplice, medio, difficile.
+-- 1. Insert Missions
+-- We use static UUIDs to allow idempotent updates (ON CONFLICT DO UPDATE).
 
 INSERT INTO public.missions (id, province_id, title, description, content, level, estimated_time, nc_reward, region, tier)
 VALUES 
@@ -50,135 +50,159 @@ SET title = EXCLUDED.title,
     nc_reward = EXCLUDED.nc_reward,
     level = EXCLUDED.level;
 
--- 2. Insert Questions
--- Mission 1 Questions
-INSERT INTO public.mission_questions (mission_id, text, options, correct_answer, explanation, type)
+-- 2. Cleanup old questions to ensure clean state for new 5-question sets
+DELETE FROM public.mission_questions WHERE mission_id IN (
+    '98644952-3836-4218-A626-C54885815C1C',
+    'C4B4FEF1-415B-4EC5-BCCA-61B0212047A2',
+    '9381035D-ED26-46A3-B789-12F5EFF3BA77'
+);
+
+-- 3. Insert Questions (Mix of MC, T/F)
+-- REMOVED Image questions as per user request
+
+-- Mission 1: Fondamenti del Phishing (Easy)
+INSERT INTO public.mission_questions (mission_id, text, options, correct_answer, explanation, type, image_url)
 VALUES
 (
     '98644952-3836-4218-A626-C54885815C1C',
-    'Ricevi una email da "supporto@goggle.com". Cosa noti?',
-    '["Sembra legittima", "C''è un errore di battitura nel dominio (goggle.com)", "È sicuramente sicura", "È un indirizzo premium"]'::jsonb,
+    'Ricevi un''email da "assistenza@paypaI.com" (con una ''i'' maiuscola al posto della ''l''). Cosa noti?',
+    '["È un indirizzo legittimo di PayPal", "È un tentativo di Typosquatting", "È un sottodominio ufficiale", "È un errore del server"]'::jsonb,
     1,
-    'I truffatori spesso usano domini che somigliano a quelli reali (Typosquatting). Controlla sempre lettera per lettera.',
-    'multiple_choice'
+    'I truffatori usano caratteri visivamente simili (come I al posto di l) per ingannare l''occhio. Questo si chiama Typosquatting.',
+    'multiple_choice',
+    NULL
 ),
 (
     '98644952-3836-4218-A626-C54885815C1C',
-    'Una mail dice "Il tuo account verrà chiuso tra 1 ora se non clicchi qui". Cosa fai?',
-    '["Clicco subito per non perdere l''account", "Rispondo chiedendo più tempo", "Ignoro il link e controllo sul sito ufficiale", "Inoltro la mail a tutti i colleghi"]'::jsonb,
-    2,
-    'L''urgenza e la paura sono le armi preferite del phishing. Le aziende serie non ti minacciano di chiusura immediata via mail.',
-    'multiple_choice'
+    'La tua banca ti scrive chiedendo di confermare il PIN via email per sbloccare il conto.',
+    '["Vero", "Falso"]'::jsonb,
+    1,
+    'Falso. Le banche e le istituzioni serie non chiedono MAI credenziali, password o PIN tramite email, SMS o telefono.',
+    'true_false',
+    NULL
 ),
 (
     '98644952-3836-4218-A626-C54885815C1C',
-    'La mail inizia con "Gentile Cliente" invece del tuo nome. Cosa suggerisce?',
-    '["È indice di una mail massiva (potenziale phishing)", "È un segno di rispetto", "La banca ha dimenticato il mio nome", "È la prassi standard"]'::jsonb,
+    'Ricevi un''email da un collega con allegato "Fattura.exe". È sicuro aprirlo?',
+    '["Vero", "Falso"]'::jsonb,
+    1,
+    'Falso. Un file .exe è un programma eseguibile. Le fatture sono solitamente PDF o XML. Aprire un .exe da un''email è quasi sempre garanzia di infezione, anche se il mittente sembra noto (potrebbe essere stato hackerato).',
+    'true_false',
+    NULL
+),
+(
+    '98644952-3836-4218-A626-C54885815C1C',
+    '"Ultimo avviso: il tuo account verrà eliminato in 10 minuti". Questa tecnica è basata su:',
+    '["Paura e Urgenza", "Cortesia e Rispetto", "Protocolli Standard", "Verifica a Due Fattori"]'::jsonb,
     0,
-    'Le organizzazioni con cui hai un rapporto usano solitamente il tuo nome. "Gentile Cliente" è spesso usato nelle campagne di phishing di massa.',
-    'multiple_choice'
+    'Il phishing fa leva sulle emozioni forti come la paura e l''urgenza per spingerti ad agire senza riflettere.',
+    'multiple_choice',
+    NULL
 ),
 (
     '98644952-3836-4218-A626-C54885815C1C',
-    'La tua "banca" ti chiede via mail di rispondere con la tua password per un "controllo di sicurezza".',
-    '["Glie la mando, è per la sicurezza", "La mando ma criptata", "Nessuna banca chiede mai la password via mail", "Chiedo prima il nome dell''impiegato"]'::jsonb,
-    2,
-    'Le credenziali non vengono **mai** richieste via email o telefono dagli amministratori di sistema o dalle banche.',
-    'multiple_choice'
-),
-(
-    '98644952-3836-4218-A626-C54885815C1C',
-    'Ricevi una fattura imprevista come allegato ".exe".',
-    '["Apro per controllare", "È sicuramente un virus, non aprire", "È un formato standard per le fatture", "L''antivirus lo bloccherebbe se fosse pericoloso"]'::jsonb,
+    'Un sito con il lucchetto HTTPS è sempre legittimo e sicuro, indipendentemente dal nome del dominio.',
+    '["Vero", "Falso"]'::jsonb,
     1,
-    'Le fatture sono solitamente PDF. Un file .exe è un programma eseguibile e quasi certamente installerà malware.',
-    'multiple_choice'
+    'Falso. HTTPS significa solo che la comunicazione è cifrata, non che il sito sia legittimo. Anche i siti di phishing possono (e spesso hanno) il lucchetto HTTPS gratuito.',
+    'true_false',
+    NULL
 );
 
--- Mission 2 Questions
-INSERT INTO public.mission_questions (mission_id, text, options, correct_answer, explanation, type)
+-- Mission 2: Analisi Avanzata dei Link (Medium)
+INSERT INTO public.mission_questions (mission_id, text, options, correct_answer, explanation, type, image_url)
 VALUES
 (
     'C4B4FEF1-415B-4EC5-BCCA-61B0212047A2',
-    'Analizza questo link: "https://paypal.supporto-sicurezza.com". Dove porta realmente?',
-    '["Sul sito di PayPal", "Su una pagina di supporto ufficiale", "Su ''supporto-sicurezza.com'' (sito truffa)", "È un sottodominio sicuro di PayPal"]'::jsonb,
-    2,
-    'In un URL, la parte "reale" è quella subito prima del .com/.it. Qui il dominio è "supporto-sicurezza.com", non PayPal.',
-    'multiple_choice'
+    'Un SMS dalla "Dogana" contiene un link "bit.ly/34fk". Cosa dovresti fare?',
+    '["Cliccare subito per pagare", "Usare un URL expander per verificare", "Rispondere ''STOP'' all''SMS", "Inoltro l''SMS alla Polizia"]'::jsonb,
+    1,
+    'Invece di cliccare alla cieca, usa un servizio online di "URL Expander" per vedere dove porta realmente quel link abbreviato prima di aprirlo.',
+    'multiple_choice',
+    NULL
 ),
 (
     'C4B4FEF1-415B-4EC5-BCCA-61B0212047A2',
-    'Un attaccante usa una ''a'' cirillica al posto della ''a'' latina in "amazon.com". Come si chiama questo attacco?',
-    '["SQL Injection", "Homograph Attack (IDN Homograph)", "Brute Force", "Man in the Middle"]'::jsonb,
+    'Nell''URL "https://google.com.login-page.xyz", il vero dominio è "google.com".',
+    '["Vero", "Falso"]'::jsonb,
     1,
-    'L''attaccante sfrutta caratteri visivamente identici ma con codici diversi per registrare domini falsi che sembrano veri.',
-    'multiple_choice'
+    'Falso. Il vero dominio è l''ultima parte a destra prima del TLD (.xyz, .com, .it). In questo caso il dominio è "login-page.xyz", il resto è solo un sottodominio ingannevole.',
+    'true_false',
+    NULL
 ),
 (
     'C4B4FEF1-415B-4EC5-BCCA-61B0212047A2',
-    'Il testo della mail dice "www.google.com" ma passando il mouse sopra vedi che punta a "bit.ly/xyz".',
-    '["È normale redirection", "È sospetto, l''URL di destinazione è mascherato", "Google usa bit.ly per i suoi link", "È sicuro se inizia con https"]'::jsonb,
+    'Se passando il mouse su un link vedi un indirizzo IP numerico (es. 192.168.x.x) invece di un dominio, è probabile che sia sicuro?',
+    '["Vero", "Falso"]'::jsonb,
     1,
-    'Se il testo visualizzato non corrisponde all''URL di destinazione (visibile in basso a sinistra nel browser), è un forte segnale di pericolo.',
-    'multiple_choice'
+    'Falso. Vedere un IP nudo invece di un dominio, specialmente per servizi pubblici o bancari, è altamente sospetto.',
+    'true_false',
+    NULL
 ),
 (
     'C4B4FEF1-415B-4EC5-BCCA-61B0212047A2',
-    'Ricevi un SMS dalla "Posta" con un link "bit.ly/pacco23". È affidabile?',
-    '["Sì, le poste usano sempre bit.ly", "No, le grandi aziende usano domini propri e shortener brandizzati", "Dipende dall''orario di invio", "Sì, se il numero del mittente sembra italiano"]'::jsonb,
+    'Un attaccante registra "appIe.com" usando caratteri cirillici identici a quelli latini. Come si chiama questo attacco?',
+    '["SQL Injection", "IDN Homograph Attack", "Cross-Site Scripting", "Denial of Service"]'::jsonb,
     1,
-    'Le grandi aziende usano domini proprietari (es. poste.it) o shortener brandizzati. I link bit.ly generici sono sospetti in questo contesto.',
-    'multiple_choice'
+    'L''IDN Homograph Attack sfrutta la somiglianza visiva tra caratteri di alfabeti diversi (es. ''a'' latina vs ''a'' cirillica) per falsificare domini.',
+    'multiple_choice',
+    NULL
 ),
 (
     'C4B4FEF1-415B-4EC5-BCCA-61B0212047A2',
-    'Clicchi un link e atterri su una pagina IDENTICA a quella di Microsoft 365, ma l''URL è "login-microsoft-auth.net".',
-    '["Inserisco le credenziali, la pagina è giusta", "È un sito di phishing clonato", "Microsoft ha cambiato dominio", "È un server di backup"]'::jsonb,
+    'Se una pagina di login è graficamente identica a quella ufficiale Microsoft, ma l''URL è diverso (es. micro-soft.net), è sicuro inserire i dati?',
+    '["Vero", "Falso"]'::jsonb,
     1,
-    'È facile copiare la grafica di un sito. L''unica cosa che un attaccante non può falsificare perfettamente è il dominio nella barra degli indirizzi.',
-    'multiple_choice'
+    'Falso. La grafica si può clonare facilmente. L''unica garanzia è l''URL corretto (es. microsoft.com). Se l''URL è diverso, è un sito di phishing.',
+    'true_false',
+    NULL
 );
 
--- Mission 3 Questions
-INSERT INTO public.mission_questions (mission_id, text, options, correct_answer, explanation, type)
+-- Mission 3: Manipolazione Sociale (Hard)
+INSERT INTO public.mission_questions (mission_id, text, options, correct_answer, explanation, type, image_url)
 VALUES
 (
     '9381035D-ED26-46A3-B789-12F5EFF3BA77',
-    'Arriva una mail dal "CEO" che chiede un bonifico urgente su un conto estero per un''operazione segreta.',
-    '["Eseguo subito, è il capo", "Verifico la procedura internamente (chiamata o protocollo)", "Rispondo alla mail chiedendo conferma", "Lo anticipo con la mia carta di credito"]'::jsonb,
+    'Il "Direttore" ti scrive su WhatsApp chiedendo di comprare buoni regalo Amazon per i clienti.',
+    '["Corro a comprarli subito", "Verifico chiamando il Direttore", "Pago con la carta aziendale", "Chiedo il rimborso spese"]'::jsonb,
     1,
-    'Questa è la "Truffa del CEO". I truffatori fanno leva sulla gerarchia e la segretezza. Verifica sempre tramite un altro canale.',
-    'multiple_choice'
+    'Questa è una classica "CEO Fraud". Non agire mai su richieste finanziarie insolite ricevute via chat o email senza una verifica vocale o di persona.',
+    'multiple_choice',
+    NULL
 ),
 (
     '9381035D-ED26-46A3-B789-12F5EFF3BA77',
-    'Trovi una chiavetta USB nel parcheggio aziendale con etichetta "Stipendi Dirigenti 2024".',
-    '["La inserisco nel PC per cercare il proprietario", "La porto all''ufficio oggetti smarriti/IT senza inserirla", "La guardo a casa sul mio PC personale", "La formatto e la uso"]'::jsonb,
+    '"Microsoft" ti chiama dicendo che il tuo PC invia virus e deve connettersi da remoto. È una procedura standard?',
+    '["Vero", "Falso"]'::jsonb,
     1,
-    'È una trappola (Baiting). La chiavetta potrebbe contenere malware che si installa automaticamente appena inserita, o distruggere il PC (USB Killer).',
-    'multiple_choice'
+    'Falso. Microsoft, Apple o Google non chiamano MAI i clienti a freddo per segnalare virus. È una truffa "Tech Support Scam".',
+    'true_false',
+    NULL
 ),
 (
     '9381035D-ED26-46A3-B789-12F5EFF3BA77',
-    'Ti chiama il "Supporto Tecnico Microsoft" dicendo che il tuo PC ha un virus e devono collegarsi da remoto.',
-    '["Seguo le loro istruzioni", "Microsoft non fa chiamate non sollecitate di supporto", "Chiedo il loro numero di matricola e procedo", "Do loro accesso solo per 5 minuti"]'::jsonb,
+    'Trovi una chiavetta USB incustodita in ufficio. La cosa più sicura da fare è inserirla nel PC per cercare il proprietario.',
+    '["Vero", "Falso"]'::jsonb,
     1,
-    'I grandi provider tech non ti chiamano mai a casa per dirti che hai un virus. È una truffa per installare RAT (Remote Access Trojan) o rubare soldi.',
-    'multiple_choice'
+    'Falso! Mai inserire supporti sconosciuti. È un attacco "Baiting". La chiavetta potrebbe installare malware automaticamente.',
+    'true_false',
+    NULL
 ),
 (
     '9381035D-ED26-46A3-B789-12F5EFF3BA77',
-    'Una persona con le mani impegnate da scatoloni ti chiede di tenergli aperta la porta riservata col badge.',
-    '["Per gentilezza apro", "Chiedo di vedere il badge o non apro", "Apro solo se è vestito bene", "Chiamo la polizia"]'::jsonb,
+    'Uno sconosciuto con le mani occupate ti chiede di tenergli aperta la porta riservata. Cosa fai?',
+    '["Lo faccio per gentilezza", "Chiedo di passare il badge", "Gli apro se è ben vestito", "Chiamo subito il 112"]'::jsonb,
     1,
-    'Il Tailgating sfrutta la cortesia per accedere ad aree riservate. La sicurezza fisica è il primo baluardo della cybersecurity.',
-    'multiple_choice'
+    'Questa tecnica si chiama "Tailgating". La cortesia è il nemico della sicurezza fisica. Ognuno deve passare il proprio badge.',
+    'multiple_choice',
+    NULL
 ),
 (
     '9381035D-ED26-46A3-B789-12F5EFF3BA77',
-    'Qualcuno chiama fingendosi un fornitore e chiede "conferma" di alcuni dati interni per "aggiornare l''anagrafica".',
-    '["Fornisco i dati, sembrano innocui", "Rifiuto e verifico l''identità del fornitore chiamando il numero ufficiale", "Chiedo di mandarmi una mail generica", "Do dati falsi per vedere cosa succede"]'::jsonb,
+    'Lavorare su documenti sensibili in treno senza filtro privacy sullo schermo è una pratica sicura.',
+    '["Vero", "Falso"]'::jsonb,
     1,
-    'Il Pretexting consiste nell''inventare uno scenario (pretesto) per estorcere informazioni. Non dare mai dati aziendali a chiamante non verificati.',
-    'multiple_choice'
+    'Falso. Si chiama "Shoulder Surfing". Chiunque passi o sia seduto vicino può leggere i tuoi dati. Usa sempre un Privacy Screen in pubblico.',
+    'true_false',
+    NULL
 );
