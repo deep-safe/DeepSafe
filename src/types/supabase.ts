@@ -745,6 +745,15 @@ export interface Database {
                 }
                 Returns: Json
             }
+            complete_level_v4: {
+                Args: {
+                    p_user_id: string
+                    p_level_id: string
+                    p_score: number
+                    p_status?: string
+                }
+                Returns: Json
+            }
             increment_credits: {
                 Args: {
                     p_user_id: string

@@ -20,7 +20,7 @@ INSERT INTO public.mission_questions (mission_id, text, type, options, correct_a
 ('ba000100-0000-0000-0000-000000000010', 'Come si mitiga un attacco NTP Amplification?', 'multiple_choice', '["Spegnendo il server", "Configurando i server NTP per non rispondere alle query ''monlist'' pubbliche e usando Rate Limiting", "Cambiando l''ora", "Usando TCP"]', 1, 'È una misconfiguration nota del demone NTP.', NULL),
 ('ba000100-0000-0000-0000-000000000010', 'Se sei la VITTIMA di un attacco da 100Gbps, il firewall ti salva?', 'multiple_choice', '["Sì", "No, la tua linea (es. 1Gbps) è satura A MONTE del firewall. Il traffico buono non arriva nemmeno. Serve un servizio Anti-DDoS in cloud (Scrubbing Center)", "Sì, se è buono", "No, devi staccare il cavo"]', 1, 'Il DDoS volumetrico si combatte con la banda, non con la CPU.', NULL),
 ('ba000100-0000-0000-0000-000000000010', 'BCP 38 (Ingress Filtering) impedisce lo spoofing?', 'true_false', '["Vero", "Falso"]', 0, 'Sì. Se tutti gli ISP controllassero che i pacchetti in uscita dalla loro rete hanno IP sorgenti della loro rete, lo spoofing sarebbe impossibile.', NULL),
-('ba000100-0000-0000-0000-000000000010', 'Questo grafico mostra un attacco di amplificazione?', 'image_true_false', '["Vero", "Falso"]', 0, 'Sì, picchi improvvisi e verticali di traffico in entrata UDP sulla porta alta sono tipici.', 'https://placehold.co/600x400?text=DDoS+Traffic+Spike');
+('ba000100-0000-0000-0000-000000000010', 'Tor Browser protegge la tua identità instradando il traffico:', 'multiple_choice', '["Direttamente al server", "Attraverso tre nodi casuali (Guard, Middle, Exit) cifrati a cipolla", "In incognito", "Via satellite"]', 1, 'Peeling the onion.', NULL);
 
 
 -- Mission 2: Slowloris - Medio
@@ -37,7 +37,7 @@ INSERT INTO public.mission_questions (mission_id, text, type, options, correct_a
 ('ba000100-0000-0000-0000-000000000011', 'Un firewall standard rileva Slowloris?', 'multiple_choice', '["Sì", "Spesso no, perché il traffico sembra legittimo (pochi pacchetti lenti). Serve un WAF o un modulo Anti-DDoS applicativo", "Sì, se costoso", "No, mai"]', 1, 'Non c''è "flood" da rilevare.', NULL),
 ('ba000100-0000-0000-0000-000000000011', 'Slowloris funziona su UDP?', 'multiple_choice', '["Sì", "No, richiede una connessione TCP stabilita da tenere appesa", "Forse", "Sì"]', 1, 'È specifico per TCP/HTTP.', NULL),
 ('ba000100-0000-0000-0000-000000000011', 'R.U.D.Y. (R-U-Dead-Yet?) è simile a Slowloris?', 'true_false', '["Vero", "Falso"]', 0, 'Sì, ma agisce sulle richieste POST (invio form) invece degli header. Invia il corpo del messaggio 1 byte alla volta.', NULL),
-('ba000100-0000-0000-0000-000000000011', 'Aumentare il timeout di connessione aiuta contro Slowloris?', 'image_true_false', '["Vero", "Falso"]', 1, 'Peggiora la situazione! Il server aspetta ancora di più prima di liberare la risorsa, aiutando l''attaccante.', 'https://placehold.co/600x400?text=Connection+Timeout+High');
+('ba000100-0000-0000-0000-000000000011', 'Tor Browser protegge la tua identità instradando il traffico:', 'multiple_choice', '["Direttamente al server", "Attraverso tre nodi casuali (Guard, Middle, Exit) cifrati a cipolla", "In incognito", "Via satellite"]', 1, 'Peeling the onion.', NULL);
 
 
 -- Mission 3: CDN & Scrubbing - Difficile
@@ -54,7 +54,7 @@ INSERT INTO public.mission_questions (mission_id, text, type, options, correct_a
 ('ba000100-0000-0000-0000-000000000012', 'Un botnet IoT (Mirai) può attaccare un sito protetto da CDN?', 'multiple_choice', '["No", "Sì, può lanciare un attacco HTTP Flood (Livello 7) che la CDN deve filtrare (es. Challenge JS/Captcha). Se il flood è immenso, costa soldi o rallenta", "Solo se il sito è statico", "Boh"]', 1, 'Gli attacchi L7 sono costosi da mitigare.', NULL),
 ('ba000100-0000-0000-0000-000000000012', 'Cosa succede se il server invia una mail in uscita?', 'multiple_choice', '["Nulla", "L''header della mail rivela l''IP sorgente del server! Un errore classico per leakare l''Origin IP. Bisogna usare relay esterni (es. SendGrid)", "Arriva la mail", "Spam"]', 1, 'Le mail di notifica "Benvenuto Utente" spesso tradiscono l''IP reale.', NULL),
 ('ba000100-0000-0000-0000-000000000012', 'I record MX (Mail) possono rivelare l''IP del server web?', 'true_false', '["Vero", "Falso"]', 0, 'Sì, se Mail e Web sono ospitati sullo stesso server fisico (pratica comune negli hosting economici).', NULL),
-('ba000100-0000-0000-0000-000000000012', 'È sicuro lasciare i sottodomini (es. `dev.sito.com`) senza CDN?', 'image_true_false', '["Vero", "Falso"]', 1, 'Spesso `dev` è sullo stesso server di `www`. Trovando l''IP di `dev` (non protetto), trovo l''IP di `www`.', 'https://placehold.co/600x400?text=Subdomain+Leak');
+('ba000100-0000-0000-0000-000000000012', 'In ambito Maschera Caduta (Cybersecurity), qual è la regola d''oro?', 'multiple_choice', '["Fidarsi di tutti", "Zero Trust (Mai fidarsi, verificare sempre)", "Usare password 123456", "Non usare il computer"]', 1, 'La fiducia implicita è la vulnerabilità principale.', NULL);
 
 
 -- =================================================================================================
@@ -75,7 +75,7 @@ INSERT INTO public.mission_questions (mission_id, text, type, options, correct_a
 ('ba000100-0000-0000-0000-000000000013', 'Se usi una VPN pubblica "No Logs", sei sicuro che non ti traccino?', 'multiple_choice', '["Sì", "No. Devi fidarti ciecamente del provider VPN. Tecnicamente possono vedere e loggare tutto", "Sì se paghi", "Solo con Bitcoin"]', 1, 'La VPN sposta solo la fiducia dall''ISP al provider VPN.', NULL),
 ('ba000100-0000-0000-0000-000000000013', 'Una VPN protegge dai malware scaricati?', 'multiple_choice', '["Sì", "No. La VPN cifra il trasporto, non disinfetta il file. Se scarichi un virus HTTPS, arriva cifrato e ti infetta", "Sì, ha l''antivirus", "Forse"]', 1, 'La VPN è un tubo, non un filtro (a meno che non sia una Secure Web Gateway).', NULL),
 ('ba000100-0000-0000-0000-000000000013', 'Il protocollo WireGuard è più veloce di OpenVPN?', 'true_false', '["Vero", "Falso"]', 0, 'Sì, è molto più leggero e moderno ("lean code base").', NULL),
-('ba000100-0000-0000-0000-000000000013', 'Questa icona significa che tutto il traffico è protetto?', 'image_true_false', '["Vero", "Falso"]', 1, 'Non puoi saperlo. Se è in Split Tunneling, potresti stare navigando in chiaro su Google.', 'https://placehold.co/600x400?text=VPN+Connected+Icon');
+('ba000100-0000-0000-0000-000000000013', 'Approfondimento su: TUNNEL. Qual è il rischio maggiore?', 'multiple_choice', '["Ignoranza", "Mancanza di aggiornamenti", "Password deboli", "Tutte le precedenti"]', 3, 'La sicurezza è un processo, non un prodotto.', NULL);
 
 
 -- Mission 2: IPSec vs SSL VPN - Medio
@@ -92,7 +92,7 @@ INSERT INTO public.mission_questions (mission_id, text, type, options, correct_a
 ('ba000100-0000-0000-0000-000000000014', 'IPSec ESP (Encapsulating Security Payload) cifra tutto il pacchetto?', 'multiple_choice', '["No, solo l''header", "Sì, nel modo Tunnel ipsec cifra anche l''header IP originale (creandone uno nuovo esterno). Nel modo Transport cifra solo il payload", "Solo la password", "No"]', 1, 'Tunnel Mode è quello usato per le VPN Site-to-Site.', NULL),
 ('ba000100-0000-0000-0000-000000000014', 'È necessario installare un client per la VPN SSL?', 'multiple_choice', '["Sì", "Spesso no, basta il browser (Portal Mode). Ma per accesso di rete completo (Tunnel Mode) serve un agent leggero", "No, mai", "Dipende da Windows"]', 1, 'La facilità d''uso è il vantaggio di SSL.', NULL),
 ('ba000100-0000-0000-0000-000000000014', 'La "VPN Always-On" impedisce all''utente di disconnettersi.', 'true_false', '["Vero", "Falso"]', 0, 'Forza il traffico attraverso l''azienda sempre, migliorando la sicurezza dei lavoratori remoti.', NULL),
-('ba000100-0000-0000-0000-000000000014', 'VPN su porta 443 passa attraverso i firewall degli hotel?', 'image_true_false', '["Vero", "Falso"]', 0, 'Sì, perché sembra traffico HTTPS normale. IPSec (Porta 500/4500 UDP) viene spesso bloccato.', 'https://placehold.co/600x400?text=VPN+Over+443');
+('ba000100-0000-0000-0000-000000000014', 'Approfondimento su: HTTPS. Qual è il rischio maggiore?', 'multiple_choice', '["Ignoranza", "Mancanza di aggiornamenti", "Password deboli", "Tutte le precedenti"]', 3, 'La sicurezza è un processo, non un prodotto.', NULL);
 
 
 -- Mission 3: Kill Switch - Difficile
@@ -109,7 +109,7 @@ INSERT INTO public.mission_questions (mission_id, text, type, options, correct_a
 ('ba000100-0000-0000-0000-000000000015', 'DNS Leak durante la riconnessione VPN è pericoloso?', 'multiple_choice', '["Sì, rivela i siti che stai visitando all''ISP mentre la VPN negozia le chiavi", "No, tanto è un attimo", "Solo se piove", "No"]', 0, 'È un momento critico di esposizione.', NULL),
 ('ba000100-0000-0000-0000-000000000015', 'Tor Browser ha bisogno di una VPN con Kill Switch?', 'multiple_choice', '["Sì", "Non strettamente. Tor gestisce il routing in modo diverso, ma una VPN aggiunge un layer di difesa (Tor over VPN) per nascondere l''uso di Tor all''ISP", "No è vietato", "Fa conflitto"]', 1, 'Usare Tor senza VPN segnala all''ISP che "stai usando Tor" (sospetto).', NULL),
 ('ba000100-0000-0000-0000-000000000015', 'WebRTC nel browser può rivelare il tuo IP reale anche sotto VPN?', 'true_false', '["Vero", "Falso"]', 0, 'Verissimo. È una nota vulnerabilità (STUN requests). Va disabilitato.', NULL),
-('ba000100-0000-0000-0000-000000000015', 'Questo test di "IP Leak" è passato?', 'image_true_false', '["Vero", "Falso"]', 1, 'Se vedi il TUO ip reale o il TUO provider internet nella lista, il test è fallito.', 'https://placehold.co/600x400?text=IP+Leak+Detected');
+('ba000100-0000-0000-0000-000000000015', 'In ambito Caduta nel Vuoto (Cybersecurity), qual è la regola d''oro?', 'multiple_choice', '["Fidarsi di tutti", "Zero Trust (Mai fidarsi, verificare sempre)", "Usare password 123456", "Non usare il computer"]', 1, 'La fiducia implicita è la vulnerabilità principale.', NULL);
 
 
 -- =================================================================================================
@@ -130,7 +130,7 @@ INSERT INTO public.mission_questions (mission_id, text, type, options, correct_a
 ('ba000100-0000-0000-0000-000000000016', 'I WAF basati su Regex (Espressioni Regolari) sono perfetti?', 'multiple_choice', '["Sì", "No, sono propensi a falsi positivi e bypassabili con sintassi SQL creativa che non matcha la regola esatta", "Sì, Google li usa", "No, sono lenti"]', 1, 'Le regole statiche sono fragili. Servono modelli semantici.', NULL),
 ('ba000100-0000-0000-0000-000000000016', 'Qual è la differenza tra lista "Positive Security" e "Negative Security"?', 'multiple_choice', '["L''umore", "La Negativa blocca il male noto (Blacklist). La Positiva permette SOLO il bene noto (Whitelist, es. ''questo campo accetta solo numeri'')", "Il costo", "Nessuna"]', 1, 'La Positive Security è molto più sicura ma difficile da mantenere.', NULL),
 ('ba000100-0000-0000-0000-000000000016', 'ModSecurity è un famoso WAF Open Source.', 'true_false', '["Vero", "Falso"]', 0, 'Lo standard de facto per i WAF self-hosted.', NULL),
-('ba000100-0000-0000-0000-000000000016', 'Questo log "403 Forbidden" generato dal WAF significa che il sito è rotto?', 'image_true_false', '["Vero", "Falso"]', 1, 'No, significa che il WAF ha fatto il suo lavoro bloccando una richiesta malevola.', 'https://placehold.co/600x400?text=WAF+403+Block');
+('ba000100-0000-0000-0000-000000000016', 'In ambito Il Filtro Intelligente (Cybersecurity), qual è la regola d''oro?', 'multiple_choice', '["Fidarsi di tutti", "Zero Trust (Mai fidarsi, verificare sempre)", "Usare password 123456", "Non usare il computer"]', 1, 'La fiducia implicita è la vulnerabilità principale.', NULL);
 
 
 -- Mission 2: Virtual Patching - Medio
@@ -147,7 +147,7 @@ INSERT INTO public.mission_questions (mission_id, text, type, options, correct_a
 ('ba000100-0000-0000-0000-000000000017', 'Perché preferire la Virtual Patch al patching immediato del codice?', 'multiple_choice', '["Pigrizia", "Per guadagnare tempo. Patchare il codice di fretta in produzione causa spesso nuovi bug o downtime", "Perché non si sa programmare", "Per risparmiare"]', 1, 'Time-to-fix immediato vs Time-to-develop.', NULL),
 ('ba000100-0000-0000-0000-000000000017', 'WAF in modalità "Learning" cosa fa?', 'multiple_choice', '["Studia", "Osserva il traffico normale per apprendere cosa è lecito, costruendo automaticamente la Whitelist", "Dorme", "Ruba dati"]', 1, 'Utile per creare policy positive.', NULL),
 ('ba000100-0000-0000-0000-000000000017', 'Log4Shell poteva essere bloccato con una Virtual Patch?', 'true_false', '["Vero", "Falso"]', 0, 'Sì, bloccando la stringa `${jndi:` negli header, e i WAF lo hanno fatto subito.', NULL),
-('ba000100-0000-0000-0000-000000000017', 'Applicare una patch WAF può bloccare utenti legittimi?', 'image_true_false', '["Vero", "Falso"]', 0, 'Sì, se la regola è troppo aggressiva. È sempre bene testare in modalità "Log Only" prima di attivare "Block".', 'https://placehold.co/600x400?text=WAF+False+Positive');
+('ba000100-0000-0000-0000-000000000017', 'Approfondimento su: TESTA. Qual è il rischio maggiore?', 'multiple_choice', '["Ignoranza", "Mancanza di aggiornamenti", "Password deboli", "Tutte le precedenti"]', 3, 'La sicurezza è un processo, non un prodotto.', NULL);
 
 
 -- Mission 3: Rate Limiting & Bot - Difficile
@@ -164,4 +164,4 @@ INSERT INTO public.mission_questions (mission_id, text, type, options, correct_a
 ('ba000100-0000-0000-0000-000000000018', 'Cos''è il "Credential Stuffing"?', 'multiple_choice', '["Un tacchino ripieno", "Provare username/password rubati da ALTRI siti (Data Breach) per vedere se funzionano sul tuo. I bot lo fanno su scala massiva", "Un errore", "Un gioco"]', 1, 'Il riutilizzo delle password da parte degli utenti rende questo attacco micidiale.', NULL),
 ('ba000100-0000-0000-0000-000000000018', 'Un "Invisible Captcha" (reCAPTCHA v3) disturba l''utente?', 'multiple_choice', '["Sì", "No, analizza il comportamento (movimento mouse, click) in background e blocca solo se sospetto (punteggio basso)", "Sì, chiede i semafori", "No, non funziona"]', 1, 'Migliora la UX rispetto a "Seleziona i semafori".', NULL),
 ('ba000100-0000-0000-0000-000000000018', 'Bloccare gli IP TOR è una buona pratica di Rate Limiting?', 'true_false', '["Vero", "Falso"]', 0, 'Spesso sì, perché molto traffico malevolo e di scraping automatico proviene dagli Exit Node di Tor.', NULL),
-('ba000100-0000-0000-0000-000000000018', 'Questo grafico a "dente di sega" indica un attacco?', 'image_true_false', '["Vero", "Falso"]', 0, 'Sì, indica un bot che colpisce, viene bloccato (timeout), aspetta, e colpisce ancora ciclicamente.', 'https://placehold.co/600x400?text=Sawtooth+Traffic+Pattern');
+('ba000100-0000-0000-0000-000000000018', 'In ambito Semaforo Rosso (Cybersecurity), qual è la regola d''oro?', 'multiple_choice', '["Fidarsi di tutti", "Zero Trust (Mai fidarsi, verificare sempre)", "Usare password 123456", "Non usare il computer"]', 1, 'La fiducia implicita è la vulnerabilità principale.', NULL);
