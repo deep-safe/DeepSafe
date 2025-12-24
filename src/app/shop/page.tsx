@@ -227,7 +227,7 @@ function ShopContent() {
             id: 'mystery_box',
             name: 'Cassa Crittografata',
             description: 'Tenta la fortuna! Contiene premi casuali.',
-            cost: 50,
+            cost: 150,
             icon: '🎁',
             effect_type: 'mystery_box'
         } as ShopItem;
@@ -329,7 +329,7 @@ function ShopContent() {
                                     onClick={() => handleBuyCredits('small')}
                                     className="relative z-10 w-full py-1.5 bg-slate-800 hover:bg-cyan-600 text-white text-xs font-bold rounded transition-colors"
                                 >
-                                    €4.99
+                                    €1.99
                                 </button>
                             </div>
                             <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 flex flex-col items-center text-center hover:border-cyan-500 transition-colors group relative overflow-hidden">
@@ -342,7 +342,7 @@ function ShopContent() {
                                     onClick={() => handleBuyCredits('medium')}
                                     className="w-full py-1.5 bg-slate-800 hover:bg-cyan-600 text-white text-xs font-bold rounded transition-colors"
                                 >
-                                    €9.99
+                                    €3.99
                                 </button>
                             </div>
                             <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 flex flex-col items-center text-center hover:border-cyan-500 transition-colors group relative overflow-hidden">
@@ -355,7 +355,7 @@ function ShopContent() {
                                     onClick={() => handleBuyCredits('large')}
                                     className="w-full py-1.5 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-black text-xs font-bold rounded transition-colors"
                                 >
-                                    €19.99
+                                    €7.99
                                 </button>
                             </div>
                         </section>
@@ -403,7 +403,9 @@ function ShopContent() {
                                 {isBuying === 'mystery_box' ? 'DECRITTAZIONE...' : (
                                     <>
                                         <span>APRI</span>
-                                        <span className="bg-black/20 px-2 py-0.5 rounded text-xs">50 NC</span>
+                                        <span className="bg-black/20 px-2 py-0.5 rounded text-xs">
+                                            {shopItems.find(i => i.id === 'mystery_box')?.cost || 150} NC
+                                        </span>
                                     </>
                                 )}
                             </button>

@@ -17,7 +17,10 @@ Crea Account Stripe: Vai su Stripe.com e registrati (è gratis finché non vendi
 
 Crea i Prodotti: Nella dashboard Stripe, vai su "Prodotti" e crea:
 
-Nome: Deepsafe Elite | Prezzo: 4.99€ (Ricorrente/Mensile). -> Copia il "Price ID" (inizia con price_...).
+Nome: Deepsafe Elite | Prezzo: 4.99€ (Ricorrente/Mensile). -> Copia il "Price ID".
+Nome: Credit Pack Small (500 NC) | Prezzo: 1.99€ (Una tantum). -> Copia il "Price ID".
+Nome: Credit Pack Medium (1200 NC) | Prezzo: 3.99€ (Una tantum). -> Copia il "Price ID".
+Nome: Credit Pack Large (2500 NC) | Prezzo: 7.99€ (Una tantum). -> Copia il "Price ID".
 
 Nome: System Reboot | Prezzo: 0.99€ (Una tantum). -> Copia il Price ID.
 
@@ -139,4 +142,3 @@ Per verificare che i link aprano l'app:
 *   **Android**: Reinstalla l'app (`./gradlew assembleDebug`). Poi da terminale:
     `adb shell am start -W -a android.intent.action.VIEW -d "deepsafe://dashboard" com.deepsafe.app`
 *   **iOS**: Apri Safari sul simulatore (o dispositivo) e scrivi nella barra indirizzi: `deepsafe://dashboard`. L'app dovrebbe aprirsi automaticamente.
-
