@@ -22,7 +22,8 @@ import {
     Volume2,
     Smartphone,
     MessageSquare,
-    BellOff
+    BellOff,
+    ArrowUp
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import posthog from 'posthog-js';
@@ -611,16 +612,22 @@ export default function ProfilePage() {
                         />
                     </div>
 
-                    {/* Feedback Button */}
-                    <button
-                        onClick={() => setIsFeedbackOpen(true)}
-                        className="w-full py-3 rounded-lg border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 font-bold font-orbitron tracking-widest hover:bg-cyan-500 hover:text-white transition-all flex items-center justify-center gap-2 group"
-                    >
-                        <MessageSquare className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
-                        INVIA FEEDBACK
-                    </button>
-                    <p className="text-[10px] text-center text-amber-500/80 font-mono animate-pulse">
-                        🎁 Ricevi 1 mese PRO per ogni feedback utile!
+                    {/* Feedback Button Container */}
+                    <div className="relative group/btn pt-4 pb-2">
+                        {/* Stronger Glow Effect */}
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-cyan-500 rounded-lg blur opacity-50 group-hover/btn:opacity-100 transition duration-500 animate-pulse" />
+
+                        <button
+                            onClick={() => setIsFeedbackOpen(true)}
+                            className="relative w-full py-4 rounded-lg bg-gradient-to-r from-cyan-900 to-slate-900 border border-cyan-400 text-white font-bold font-orbitron tracking-widest hover:from-cyan-800 hover:to-slate-800 transition-all flex items-center justify-center gap-2 z-10 shadow-[0_0_20px_rgba(34,211,238,0.4)]"
+                        >
+                            <MessageSquare className="w-6 h-6 text-amber-500 group-hover/btn:rotate-12 transition-transform" />
+                            <span className="text-lg drop-shadow-[0_0_5px_rgba(0,0,0,0.8)]">INVIA FEEDBACK</span>
+                        </button>
+                    </div>
+
+                    <p className="text-[10px] text-center text-amber-500 font-bold font-mono animate-pulse flex items-center justify-center gap-2 pt-1">
+                        <ArrowUp className="w-3 h-3" /> CLICCA QUI PER VINCERE 1 MESE PRO <ArrowUp className="w-3 h-3" />
                     </p>
 
                     {/* Logout Button */}
