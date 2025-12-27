@@ -142,3 +142,14 @@ Per verificare che i link aprano l'app:
 *   **Android**: Reinstalla l'app (`./gradlew assembleDebug`). Poi da terminale:
     `adb shell am start -W -a android.intent.action.VIEW -d "deepsafe://dashboard" com.deepsafe.app`
 *   **iOS**: Apri Safari sul simulatore (o dispositivo) e scrivi nella barra indirizzi: `deepsafe://dashboard`. L'app dovrebbe aprirsi automaticamente.
+
+
+### 🌐 Landing Page Transformation (2025-12-27)
+Ho trasformato la Landing Page in una vera homepage.
+*   **Formspree**: Ho rimosso il form della waitlist, quindi non riceverai più email lì per le iscrizioni dalla homepage.
+*   **Countdown**: Rimosso il timer.
+*   **Nuove Pagine**:
+    *   `/chi-siamo`: Pagina co-founders (Simone & Sergio) e Mission.
+    *   `/prezzi`: Pagina con le tier Gratis, Pro (Agente), Premium (Elite).
+    *   `/links`: Pagina stile Linktree.
+*   **Navigazione**: Aggiornata la Navbar per includere tutte queste pagine.

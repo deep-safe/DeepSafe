@@ -10,3 +10,18 @@
 
 ## Previous Fixes
 - **Mystery Box Cost**: Fixed the mystery box logic to correctly deduct 150 NC.
+
+# Website Transformation (2025-12-27)
+- **Landing Page Refactor**: Updated `src/app/page.tsx` to serve as the homepage.
+    - Removed Waitlist logic.
+    - Replaced Countdown.
+- **New Site Structure**:
+    - **`src/components/site/SiteNavbar.tsx`**: Shared navigation component.
+    - **`src/components/site/SiteFooter.tsx`**: Shared footer component.
+    - **`/chi-siamo`**: About Us page featuring founders Mattioli & Suarato.
+    - **`/prezzi`**: Pricing page with Free, Pro, and Elite tiers.
+    - **`/links`**: Resources page.
+
+## Analytics & SEO
+- **Google Analytics**: Integrated Tracking ID `G-HJWJBEW0ZS` via `next/script` in `src/app/layout.tsx`.
+- **Google Verification**: Added Google Site Verification tag `8qmREYvq02YN2lDjMscR2l6ysUa6ZfMPd3nHhzsA29k`.

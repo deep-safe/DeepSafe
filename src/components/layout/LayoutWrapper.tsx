@@ -24,7 +24,8 @@ export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     const { setLastLoginDate } = useUserStore();
     const router = useRouter();
 
-    const isLandingPage = pathname === '/' || pathname === '/a' || pathname === '/s' || pathname === '/privacy-policy' || pathname === '/terms' || pathname === '/cookie-policy';
+    const publicPaths = ['/', '/a', '/s', '/privacy-policy', '/terms', '/cookie-policy', '/chi-siamo', '/prezzi', '/links'];
+    const isLandingPage = publicPaths.includes(pathname || '');
 
     React.useEffect(() => {
         if (isLandingPage) return;

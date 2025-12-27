@@ -4,47 +4,13 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { WaitlistSuccessModal } from '@/components/landing/WaitlistSuccessModal';
-import Countdown from '@/components/landing/Countdown';
+import SiteNavbar from '@/components/site/SiteNavbar';
+import SiteFooter from '@/components/site/SiteFooter';
 import LeaderboardSection from '@/components/landing/LeaderboardSection';
 
 export default function LandingPage() {
-    const [email, setEmail] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    // Waitlist logic removed
 
-    const handleWaitlistSubmit = async (e: React.FormEvent) => {
-        e.preventDefault(); // Prevent default form submission which would reload the page
-        if (!email) {
-            alert('Per favore inserisci un indirizzo email valido.');
-            return;
-        }
-
-        setIsSubmitting(true);
-
-        try {
-            const response = await fetch("https://formspree.io/f/mblnawdv", {
-                method: "POST",
-                body: JSON.stringify({ email }),
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                setShowSuccessModal(true);
-                setEmail('');
-            } else {
-                alert('C\'è stato un problema. Riprova più tardi.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Errore di connessione. Riprova più tardi.');
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
 
     return (
         <>
@@ -53,22 +19,11 @@ export default function LandingPage() {
             <link rel="stylesheet" href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/css/theme.css`} />
             <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet" />
 
-            <WaitlistSuccessModal
-                isOpen={showSuccessModal}
-                onClose={() => setShowSuccessModal(false)}
-            />
+
 
             <div className="theme-youth min-h-screen w-full bg-[#0a0a12] text-[#e0e0e0] font-['Outfit'] overflow-x-hidden">
                 {/* Navbar */}
-                <nav className="absolute w-full z-10 py-5">
-                    <div className="container mx-auto px-4 flex justify-between items-center">
-                        <div className="flex items-center gap-3">
-                            <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/landing/assets/new-logo.png`} alt="DeepSafe Logo" className="h-10 w-10 md:h-[45px] md:w-[45px]" />
-                            <span className="font-['Orbitron'] font-black text-xl md:text-2xl tracking-widest bg-gradient-to-r from-white via-blue-200 to-blue-500 bg-clip-text text-transparent">DEEPSAFE</span>
-                        </div>
-                        <a href="#waitlist" className="btn btn-primary hidden md:inline-block" style={{ fontSize: '1.2rem', padding: '15px 40px' }}>ISCRIVITI ALLA LISTA D'ATTESA</a>
-                    </div>
-                </nav>
+                <SiteNavbar />
 
                 {/* Hero Section */}
                 <header className="hero section min-h-[90vh] flex items-center text-center pt-32 pb-20 relative overflow-hidden bg-[radial-gradient(circle_at_center,#1a1a2e_0%,#000_100%)]">
@@ -86,10 +41,10 @@ export default function LandingPage() {
                             DeepSafe ti dà gli strumenti per difendere te stesso e il tuo futuro.
                         </p>
 
-                        <Countdown targetDate="2025-12-24T12:00:00" />
+
 
                         <div className="flex flex-col md:flex-row gap-6 justify-center items-center w-full max-w-2xl mx-auto md:max-w-none">
-                            <a href="#waitlist" className="btn btn-primary" style={{ fontSize: '1.2rem', padding: '15px 40px' }}>ISCRIVITI ALLA LISTA D'ATTESA</a>
+                            <Link href="/dashboard" className="btn btn-primary" style={{ fontSize: '1.2rem', padding: '15px 40px' }}>PROVA LA WEB APP</Link>
                             <a href="#features" className="btn hidden md:inline-block" style={{ border: '1px solid white', color: 'white', fontSize: '1.2rem', padding: '15px 40px' }}>SCOPRI DI PIÙ</a>
                         </div>
                     </div>
@@ -175,7 +130,7 @@ export default function LandingPage() {
                                     Accedi allo shop per sbloccare nuovi visualizzatori, skin per l'interfaccia e potenziamenti che
                                     ti aiuteranno nelle sfide più difficili.
                                 </p>
-                                <a href="#waitlist" className="btn btn-primary" style={{ fontSize: '1rem', padding: '12px 30px' }}>ENTRA NELLO STORE</a>
+                                <Link href="/shop" className="btn btn-primary" style={{ fontSize: '1rem', padding: '12px 30px' }}>ENTRA NELLO STORE</Link>
                             </div>
                             <div className="flex-1 w-full min-w-[300px]">
                                 <div className="rounded-2xl overflow-hidden border-2 border-[#00f3ff] shadow-[0_0_20px_rgba(0,243,255,0.2)]">
@@ -235,22 +190,13 @@ export default function LandingPage() {
                     <div className="container mx-auto px-4 text-center flex flex-col items-center">
                         <h2 className="text-3xl md:text-4xl font-bold mb-6 uppercase tracking-wide text-white drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">Sei Pronto a Giocare?</h2>
                         <p className="mb-10 max-w-lg mx-auto text-gray-300 text-center">
-                            Iscriviti alla lista d'attesa per ottenere un premio esclusivo e l’accesso anticipato all’app.
                         </p>
 
-                        <form className="waitlist-form w-full flex flex-col gap-4" style={{ maxWidth: '400px' }} onSubmit={handleWaitlistSubmit}>
-                            <input
-                                type="email"
-                                placeholder="Inserisci la tua email"
-                                required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full p-4 rounded bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-[#00f3ff] transition-colors"
-                            />
-                            <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={isSubmitting}>
-                                {isSubmitting ? 'INVIO...' : 'FAI RICHIESTA PER PARTECIPARE'}
-                            </button>
-                        </form>
+                        <div className="flex justify-center w-full">
+                            <Link href="/dashboard" className="btn btn-primary" style={{ width: '100%', maxWidth: '300px', fontSize: '1.2rem' }}>
+                                PROVA LA WEB APP
+                            </Link>
+                        </div>
                     </div>
                 </section>
 
@@ -273,11 +219,7 @@ export default function LandingPage() {
                     </div>
                 </section> */}
 
-                <footer className="py-10 text-center border-t border-[#333] text-gray-500 bg-[#0a0a12]">
-                    <div className="container mx-auto px-4">
-                        <p>&copy; 2025 DeepSafe. Tutti i diritti riservati. | <Link href="/privacy-policy" className="hover:text-gray-300 transition-colors">Privacy Policy</Link> | <Link href="/terms" className="hover:text-gray-300 transition-colors">Termini e Condizioni</Link></p>
-                    </div>
-                </footer>
+                <SiteFooter />
             </div>
         </>
     );
