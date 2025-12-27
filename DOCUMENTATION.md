@@ -25,3 +25,9 @@
 ## Analytics & SEO
 - **Google Analytics**: Integrated Tracking ID `G-HJWJBEW0ZS` via `next/script` in `src/app/layout.tsx`.
 - **Google Verification**: Added Google Site Verification tag `8qmREYvq02YN2lDjMscR2l6ysUa6ZfMPd3nHhzsA29k`.
+
+## Feedback System (2025-12-27)
+- **Incentive**: Added visualization of "1 Month Free PRO" reward for constructive feedback.
+- **UI Changes**:
+    - **Profile Page**: Added teaser text below the "Send Feedback" button.
+    - **Feedback Modal**: Added a "Special Reward" banner with details.

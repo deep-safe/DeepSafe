@@ -619,6 +619,9 @@ export default function ProfilePage() {
                         <MessageSquare className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
                         INVIA FEEDBACK
                     </button>
+                    <p className="text-[10px] text-center text-amber-500/80 font-mono animate-pulse">
+                        🎁 Ricevi 1 mese PRO per ogni feedback utile!
+                    </p>
 
                     {/* Logout Button */}
                     <button

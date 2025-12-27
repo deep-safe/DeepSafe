@@ -100,6 +100,21 @@ export function FeedbackModal({ isOpen, onClose, userId }: FeedbackModalProps) {
 
                         {/* Body */}
                         <div className="p-6 space-y-6">
+                            {/* Reward Banner */}
+                            {!success && (
+                                <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 flex gap-3 items-start">
+                                    <div className="p-2 bg-amber-500/20 rounded-md shrink-0">
+                                        <Lightbulb className="w-5 h-5 text-amber-500" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h4 className="text-sm font-bold text-amber-500 font-orbitron">RICOMPENSA SPECIALE</h4>
+                                        <p className="text-xs text-amber-200/80 leading-relaxed">
+                                            I feedback più costruttivi (bug critici o idee innovative) verranno ricompensati con <span className="text-white font-bold">1 Mese di DeepSafe PRO</span> gratis!
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+
                             {success ? (
                                 <div className="flex flex-col items-center justify-center py-8 space-y-4 text-green-400 animate-in fade-in zoom-in">
                                     <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center border border-green-500/50">

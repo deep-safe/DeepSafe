@@ -38,31 +38,6 @@ NEXT_PUBLIC_VAPID_PUBLIC_KEY=BM0eDPMc_d0Wa52e0qXIXZwbO6Hmopb7yF1uPzm8rdi_FM3T_6s
 VAPID_PRIVATE_KEY=oixHmzYAEZ0xyEhq1k1djsN-lEEj64UPVzdH9d38N4A
 ```
 
-2.  **Database**: Vai nella dashboard di Supabase -> SQL Editor.
-### 3. Run Migration for Province Scores
-Run the SQL in `supabase_add_province_scores.sql` to add the `province_scores` column.
-
-### 4. Run Migration for Badges
-Run the SQL in `supabase_add_badges.sql` to add the `earned_badges` column.
-
-### 5. Run Migration for Friends
-Run the SQL in `supabase_add_friends.sql` to create the `friends` table.
-
-### 6. Run Migration for Shop
-Run the SQL in `supabase_add_shop.sql` to add `credits`, `streak_freezes`, and `inventory` columns.
-
-### 7. Run Migration for Admin Panel
-Run the SQL in `supabase_add_admin.sql` to add the `is_admin` column and RLS policies.
-
-### 8. Enable God Mode (Admin)
-1.  Go to Supabase -> Table Editor -> `profiles`.
-2.  Find your user row.
-3.  Set `is_admin` to `TRUE`.
-4.  Click "Save".
-    *   Apri il file `supabase_push_setup.sql` (che ho creato nel progetto) o copia il suo contenuto.
-    *   Esegui lo script per creare la tabella `push_subscriptions`.
-
----
 
 ### ⏰ Daily Reminder Automation
 
@@ -153,3 +128,8 @@ Ho trasformato la Landing Page in una vera homepage.
     *   `/prezzi`: Pagina con le tier Gratis, Pro (Agente), Premium (Elite).
     *   `/links`: Pagina stile Linktree.
 *   **Navigazione**: Aggiornata la Navbar per includere tutte queste pagine.
+
+### 🎁 Feedback Rewards (Manual)
+- **Monitorare Feedback**: Controlla regolarmente la tabella `feedback` su Supabase.
+- **Assegnare Premio**: Quando trovi un feedback utile, usa la funzione Admin (o direttamente il database) per dare 1 mese di PRO all'utente corrispondente.
+- **Nota**: L'incentivo è ora visibile nel Profilo e nel Modal Feedback.
