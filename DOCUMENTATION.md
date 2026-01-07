@@ -31,3 +31,8 @@
 - **UI Changes**:
     - **Profile Page**: Added teaser text below the "Send Feedback" button.
     - **Feedback Modal**: Added a "Special Reward" banner with details.
+
+# Admin Panel Updates (2026-01-07)
+- **User Email Display**: Replaced User ID with Email in the Admin Panel user list.
+- **Secure API**: Implemented `/api/admin/users` to securely fetch email addresses from `auth.users` using the Service Role.
+- **Search**: Enhanced search functionality to support searching by email address.

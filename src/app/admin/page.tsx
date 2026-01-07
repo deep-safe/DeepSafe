@@ -24,6 +24,7 @@ export default function AdminPage() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [users, setUsers] = useState<Profile[]>([]);
+    const [userEmails, setUserEmails] = useState<Record<string, string>>({});
     const [filteredUsers, setFilteredUsers] = useState<Profile[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -83,9 +84,10 @@ export default function AdminPage() {
         const lowerTerm = searchTerm.toLowerCase();
         setFilteredUsers(users.filter(user =>
             (user.username?.toLowerCase().includes(lowerTerm) || '') ||
+            (userEmails[user.id]?.toLowerCase().includes(lowerTerm) || '') ||
             (user.id.toLowerCase().includes(lowerTerm))
         ));
-    }, [searchTerm, users]);
+    }, [searchTerm, users, userEmails]);
 
     const checkAdminAndFetchData = async () => {
         setIsLoading(true);
@@ -121,6 +123,27 @@ export default function AdminPage() {
             console.error('Error fetching users:', error);
         } else {
             setUsers(allProfiles || []);
+
+
+            // Fetch emails via secure RPC
+            try {
+                const { data: emailData, error: emailError } = await supabase
+                    .rpc('get_admin_user_emails');
+
+                if (emailError) {
+                    console.error('Error fetching emails via RPC:', emailError);
+                } else if (emailData) {
+                    // emailData is an array of objects { user_id, user_email }
+                    // Convert to map for easy lookup
+                    const emailMap: Record<string, string> = {};
+                    (emailData as any[]).forEach((item) => {
+                        emailMap[item.user_id] = item.user_email;
+                    });
+                    setUserEmails(emailMap);
+                }
+            } catch (rpcError) {
+                console.error('Unexpected error fetching emails:', rpcError);
+            }
         }
         setIsLoading(false);
     };
@@ -532,7 +555,7 @@ export default function AdminPage() {
                                             {user.is_admin && <Shield className="w-3 h-3 text-cyan-500" />}
                                         </div>
                                         <div className="text-[10px] text-slate-600 font-mono tracking-tight group-hover:text-slate-500 transition-colors">
-                                            {user.id}
+                                            {userEmails[user.id] || user.id}
                                         </div>
                                     </div>
                                 </td>

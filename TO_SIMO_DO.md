@@ -1,0 +1,2 @@
+- [ ] **Verify Admin Access**: Ensure that only authorized users have access to the `/admin` page and the new `/api/admin/users` endpoint.
+- [ ] **Test Search**: Try searching users by email in the Admin Panel to confirm the new functionality.
