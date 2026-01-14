@@ -801,6 +801,10 @@ export interface Database {
                 }
                 Returns: Json
             }
+            get_admin_user_emails: {
+                Args: Record<PropertyKey, never>
+                Returns: Json
+            }
         }
         Enums: {
             [_ in never]: never
