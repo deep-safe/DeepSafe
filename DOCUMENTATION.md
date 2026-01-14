@@ -56,3 +56,81 @@
     - `src/lib/supabase/02_mystery_box_fix.sql` (righe 18, 71)
 - **Script SQL**: Creato `sql_updates/update_mystery_box_price.sql` per aggiornare il database esistente
 - **Verifica Build**: ✅ Compilato con successo
+
+# Email Notifica Regalo (2026-01-14)
+
+## Obiettivo
+Implementare l'invio automatico di email quando viene inviato un regalo agli utenti dal pannello admin, per notificarli immediatamente e invitarli a controllare l'app.
+
+## Implementazione
+
+### Backend - Database
+- **Migration SQL**: `supabase/migrations/20250114_add_gift_email_notification.sql`
+  - Abilita l'estensione `pg_net` per chiamate HTTP da PostgreSQL
+  - Crea la funzione `send_gift_notification_email()` che:
+    - Recupera l'email dell'utente da `auth.users`
+    - Recupera il username da `profiles`
+    - Costruisce un'email HTML professionale con template personalizzato
+    - Invia l'email tramite Resend API usando `pg_net.http_post()`
+    - Gestisce gli errori senza bloccare l'invio del regalo
+  - Modifica la funzione `send_gift()` per chiamare automaticamente `send_gift_notification_email()`
+  - Aggiunge la colonna `icon_url` alla tabella `gifts` se non esiste
+
+### Email Template
+Template HTML professionale con:
+- **Design**: Stile dark mode coerente con l'identità DeepSafe
+- **Responsive**: Ottimizzato per desktop e mobile
+- **Contenuto Dinamico**:
+  - Nome utente personalizzato
+  - Descrizione del regalo (crediti, vite, avatar)
+  - Messaggio personalizzato dai founder
+  - CTA button per aprire l'app
+- **Branding**: Logo, colori gradient cyan/blue, emoji regalo 🎁
+
+### Servizio Email
+- **Provider**: Resend ([resend.com](https://resend.com))
+- **Piano**: Gratuito - 3,000 email/mese, 100 email/giorno
+- **Invio**: Asincrono tramite `pg_net`, non blocca la creazione del regalo
+- **Gestione Errori**: Se l'email fallisce, il regalo viene comunque creato e l'errore viene loggato
+
+### Configurazione Richiesta
+1. Creare account su Resend
+2. Ottenere API Key da Resend dashboard
+3. Configurare la API Key in Supabase:
+   ```sql
+   ALTER DATABASE postgres SET app.settings.resend_api_key = 're_YOUR_API_KEY';
+   SELECT pg_reload_conf();
+   ```
+4. Eseguire la migration `20250114_add_gift_email_notification.sql`
+
+### File Correlati
+- **Migration**: `supabase/migrations/20250114_add_gift_email_notification.sql`
+- **Guida Setup**: `RESEND_SETUP_GUIDE.md` - Guida dettagliata per configurare Resend
+- **Componente Admin**: `src/components/admin/GiftModal.tsx` (nessuna modifica richiesta)
+- **Funzione Regalo**: Modificata `send_gift()` in PostgreSQL
+
+### Funzionalità
+- ✅ Invio automatico email quando un admin invia un regalo
+- ✅ Template HTML professionale e responsive
+- ✅ Supporto per tutti i tipi di regalo (crediti, vite, avatar)
+- ✅ Invio asincrono (non blocca l'UI)
+- ✅ Gestione errori robusta
+- ✅ Personalizzazione messaggio per ogni regalo
+- ✅ Log degli errori per debugging
+
+### Testing
+Per testare l'invio email:
+1. Configurare Resend come descritto in `RESEND_SETUP_GUIDE.md`
+2. Accedere al pannello admin (`/admin`)
+3. Selezionare un utente (preferibilmente il proprio account)
+4. Inviare un regalo qualsiasi
+5. Verificare la ricezione dell'email
+6. Controllare i log Resend per conferma invio
+
+### Note Tecniche
+- Le email sono inviate **dopo** la creazione del regalo nel database
+- Se l'utente non ha email, viene loggato un WARNING ma il regalo viene creato
+- L'invio email usa `PERFORM` (non `SELECT`) per esecuzione asincrona
+- La API key è configurata a livello database per sicurezza
+- Il template email supporta personalizzazione completa del messaggio
+

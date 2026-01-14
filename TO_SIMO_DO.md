@@ -1,4 +1,0 @@
-- [ ] **Verify Admin Access**: Ensure that only authorized users have access to the `/admin` page and the new `/api/admin/users` endpoint.
-- [ ] **Test Search**: Try searching users by email in the Admin Panel to confirm the new functionality.
-- [ ] **Verifica Prezzi Shop**: Avvia `npm run dev` e visita `/shop` per verificare i nuovi prezzi delle monete (1000 NC €0.99, 2500 NC €1.49, 6000 NC €3.99).
-- [ ] **Aggiorna Prezzo Cassa**: Esegui il file SQL `sql_updates/update_mystery_box_price.sql` nel Supabase SQL Editor per aggiornare il prezzo della Cassa Crittografata a 500 NC.
