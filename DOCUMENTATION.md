@@ -36,3 +36,23 @@
 - **User Email Display**: Replaced User ID with Email in the Admin Panel user list.
 - **Secure API**: Implemented `/api/admin/users` to securely fetch email addresses from `auth.users` using the Service Role.
 - **Search**: Enhanced search functionality to support searching by email address.
+
+# Shop Price Optimization (2026-01-14)
+## Coin Pack Rebalancing
+- **Obiettivo**: Rendere le monete più convenienti e fornire vantaggi effettivi agli utenti.
+- **Modifiche ai Prezzi**:
+    - **Starter Pack**: 1000 NC a €0.99 (era 500 NC a €1.99) - **+100% monete, -50% prezzo**
+    - **Pacchetto POPOLARE**: 2500 NC a €1.49 (era 1200 NC a €3.99) - **Bonus +68%**
+    - **Pacchetto MIGLIOR VALORE**: 6000 NC a €3.99 (era 2500 NC a €7.99) - **Bonus +50%**
+- **File Modificato**: `src/app/shop/page.tsx` (righe 323-360)
+- **Verifica Build**: ✅ Compilato con successo, 34 pagine generate correttamente
+- **Note**: I prezzi Stripe dovranno essere aggiornati separatamente nel dashboard quando la funzionalità sarà attivata.
+
+## Mystery Box Price Increase
+- **Obiettivo**: Rendere la Cassa Crittografata più speciale e meno facilmente ottenibile.
+- **Modifica**: Prezzo aumentato da **150 NC a 500 NC** (+233%)
+- **File Modificati**: 
+    - `src/app/shop/page.tsx` (righe 230, 407)
+    - `src/lib/supabase/02_mystery_box_fix.sql` (righe 18, 71)
+- **Script SQL**: Creato `sql_updates/update_mystery_box_price.sql` per aggiornare il database esistente
+- **Verifica Build**: ✅ Compilato con successo

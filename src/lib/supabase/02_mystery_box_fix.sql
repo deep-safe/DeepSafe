@@ -15,7 +15,7 @@ VALUES (
     'mystery_box',
     'Cassa Crittografata',
     'Tenta la fortuna! Contiene premi casuali.',
-    50,
+    1000,
     '🎁',
     'mystery_box',
     true,
@@ -68,7 +68,7 @@ SECURITY DEFINER
 AS $$
 DECLARE
     v_profile RECORD;
-    v_cost INT := 50;
+    v_cost INT := 500;
     
     -- Variables for Weighted Logic
     v_loot_record RECORD;
