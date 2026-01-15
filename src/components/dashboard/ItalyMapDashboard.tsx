@@ -275,7 +275,9 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
         // Add small padding (5%) to avoid touching edges exactly
         const paddingX = bbox.width * 0.05;
         const paddingY = bbox.height * 0.05;
-        return `${bbox.minX - paddingX / 2} ${bbox.minY - paddingY / 2} ${bbox.width + paddingX} ${bbox.height + paddingY}`;
+        // Add visual offset to center the map better (moves map UP)
+        const yOffset = bbox.height * 0.08;
+        return `${bbox.minX - paddingX / 2} ${bbox.minY - paddingY / 2 + yOffset} ${bbox.width + paddingX} ${bbox.height + paddingY}`;
     }, [dynamicProvincesData]);
 
     // Helper to calculate region box (hoisted for initialization)

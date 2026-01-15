@@ -1234,3 +1234,15 @@ Ridurre i tempi di attesa percepiti durante la navigazione nella mappa (zoom ing
 
 ## Risultato
 L'ingresso nelle regioni e il ritorno alla vista nazionale sono ora due volte più veloci, migliorando notevolmente l'esperienza utente.
+
+# Centramento Mappa Italia (2026-01-15)
+
+## Obiettivo
+Correggere il posizionamento della mappa dell'Italia nella dashboard, che risultava leggermente spostata verso il basso, lasciando un gap vuoto in alto.
+
+## Modifiche
+- **`src/components/dashboard/ItalyMapDashboard.tsx`**: Aggiunto un offset verticale positivo (`yOffset`) al calcolo del `viewBox` iniziale. Questo sposta l'area visibile verso il basso, con l'effetto visivo di spostare la mappa verso l'alto e centrarla meglio nello schermo.
+- Valore offset: circa 8% dell'altezza totale del bounding box.
+
+## Risultato
+La mappa appare ora perfettamente centrata verticalmente all'apertura dell'app.
