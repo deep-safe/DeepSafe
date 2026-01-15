@@ -1039,3 +1039,86 @@ La chiamata `redeem_code()` è wrappata in try/catch:
 - ✅ `TO_SIMO_DO.md` (UPDATED) - Rimossa nota "Da Implementare"
 - ✅ `DOCUMENTATION.md` (UPDATED) - Questa documentazione
 
+---
+
+# Sistema Auto-Check Scadenza PRO (2026-01-15)
+
+## Obiettivo
+Garantire che gli abbonamenti PRO scaduti vengano disattivati tempestivamente, mantenendo lo stato consistente sia per gli utenti attivi (controllo immediato) che per quelli inattivi (pulizia periodica).
+
+## Architettura Implementata "Belt and Suspenders"
+
+### 1. Lazy Check (Controllo all'Accesso)
+Ogni volta che si accedono alle statistiche di referral (tramite `ProStatusCard` nel profilo), il sistema esegue un controllo mirato per l'utente corrente **prima** di restituire i dati.
+
+- **Trigger**: Chiamata RPC `get_referral_stats()`
+- **Azione**: Se `pro_expires_at < NOW()`, imposta `is_premium = false`
+- **Vantaggio**: Garanzia 100% che l'utente veda lo stato corretto nell'interfaccia, senza race conditions col cron job.
+
+### 2. Scheduled Job (Controllo Background)
+Un job pianificato tramite `pg_cron` esegue una pulizia globale ogni notte.
+
+- **Schedule**: Ogni giorno a mezzanotte (UTC)
+- **Funzione**: `check_pro_expiration()` (controlla tutti gli utenti)
+- **Vantaggio**: Mantiene il database pulito anche per utenti che non effettuano login da tempo.
+
+## Dettagli Tecnici
+
+### Migration SQL
+**File**: `supabase/migrations/20260115_schedule_pro_check.sql`
+
+1. **Abilitazione pg_cron**: `CREATE EXTENSION IF NOT EXISTS pg_cron`
+2. **Scheduling**:
+   ```sql
+   SELECT cron.schedule('daily_pro_check', '0 0 * * *', $$SELECT check_pro_expiration()$$);
+   ```
+3. **Update RPC**: Aggiornata `get_referral_stats` per includere la logica lazy check.
+
+### Logica Lazy Check
+```sql
+UPDATE profiles
+SET is_premium = false
+WHERE id = auth.uid()
+AND is_premium = true
+AND pro_expires_at < NOW();
+```
+Eseguita all'inizio della funzione per atomicità (nella stessa transazione della lettura successiva).
+
+## Verifica e Testing
+Vedi `TO_SIMO_DO.md` per istruzioni dettagliate su come verificare manualmente l'attivazione del cron job e testare il lazy check modificando manualmente le date di scadenza.
+
+## Note
+- Richiede l'estensione `pg_cron` abilitata nel progetto Supabase.
+- Il lazy check funge da fallback robusto nel caso il cron job fallisca o sia disabilitato.
+
+
+
+---
+
+# Admin Referral Analytics (2026-01-15)
+
+## Obiettivo
+Fornire agli amministratori una visione d'insieme chiara e immediata delle performance del sistema di referral, inclusi grafici di crescita e classifiche degli utenti più attivi.
+
+## Implementazione
+
+### Backend
+**File**: `supabase/migrations/20260115_admin_referral_analytics.sql`
+- **RPC**: `get_admin_referral_stats`
+- **Dati restituiti**:
+    - `total_referrals`: Conteggio totale inviti.
+    - `total_pro_months_distributed`: Somma totale mesi PRO guadagnati.
+    - `top_referrers`: Array top 10 utenti per numero inviti.
+    - `daily_growth`: Array ultimi 30 giorni (data, conteggio inviti).
+
+### Frontend
+**File**: `src/app/admin/referrals/page.tsx`
+- **Libreria Grafici**: `recharts`
+- **Componenti**:
+    - **KPI Cards**: Totale inviti, Mesi PRO distribuiti, Top Referrer.
+    - **Line Chart**: Crescita giornaliera ultimi 30gg.
+    - **Bar Chart**: Top 5 referrers.
+    - **Table**: Leaderboard dettagliata.
+
+## Accesso
+Accessibile dalla Dashboard Admin principale tramite il pulsante "REFERRALS".

@@ -131,18 +131,43 @@ UPDATE profiles SET pro_months_earned = LEAST(12, pro_months_earned + 1)  -- Cam
 ```sql
 -- Utenti che hanno ricevuto Pro da feedback
 SELECT username, pro_months_earned, has_submitted_feedback
-FROM profiles
 WHERE has_submitted_feedback = true;
 ```
 
-
-Implementa UI riscatto quando decidi dove posizionarla
-Schedula scadenza PRO automatica
 Monitora analytics referral
 
-### Test 7: Flusso Invito da "Aggiungi Amico" (Aggiornato)
-1. Apri la modale "Aggiungi Agente" dalla Leaderboard.
-2. Cerca un username inesistente (es: "qwertyuiop").
-3. **Verifica**: Deve apparire SUBITO il tuo codice invito con i tasti Copia/Condividi.
-4. **Verifica**: Non deve esserci nessun pulsante intermedio "Invita un amico".
-5. **Verifica**: Devono essere visibili le reward (+10 ❤️, +1 Mese PRO).
+## 7. Setup Controllo Automatico Scadenza PRO (NUOVO - 2026-01-15)
+
+Oltre alla logica di business, abbiamo implementato un controllo automatico della scadenza PRO.
+
+### 1. Verifica pg_cron (Manuale)
+Vai nella dashboard di Supabase -> Database -> Extensions.
+Cerca `pg_cron` e assicurati che sia abilitato. La migration prova ad abilitarlo, ma potrebbe richiedere permessi superiori.
+Se la migration fallisce su `CREATE EXTENSION`, abilitalo manualmente dalla dashboard.
+
+### 2. Monitorare Job schedulato
+Per verificare che il job sia schedulato correttamente:
+```sql
+SELECT * FROM cron.job;
+```
+Dovresti vedere un job chiamato `daily_pro_check`.
+
+### 3. Verifica Lazy Check
+Il controllo avviene anche ogni volta che l'utente apre il profilo (`get_referral_stats`).
+Per testarlo, imposta una data di scadenza nel passato e ricarica il profilo: è immediato.
+
+
+## 8. Admin Referral Analytics (NUOVO - 2026-01-15)
+
+È stata aggiunta una dashboard dedicata per monitorare i referral.
+
+### 1. Applicare Migrazione
+Esegui lo script SQL:
+`supabase/migrations/20260115_admin_referral_analytics.sql`
+
+Questo creerà la funzione `get_admin_referral_stats`.
+
+### 2. Accesso
+1. Vai su `/admin` (devi essere admin e aver sbloccato con codice).
+2. Clicca sul nuovo pulsante "REFERRALS".
+3. Verifica che i grafici e la classifica (leaderboard) si carichino correttamente.

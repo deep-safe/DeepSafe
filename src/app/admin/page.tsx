@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 import { useRouter } from 'next/navigation';
-import { Shield, Users, Coins, Search, Save, Ban, RefreshCw, Crown, Package, Medal, Zap, Trash2, Plus, X, ShoppingCart, BookOpen, Activity, MessageSquare, Map as MapIcon } from 'lucide-react';
+import { Shield, Users, Coins, Search, Save, Ban, RefreshCw, Crown, Package, Medal, Zap, Trash2, Plus, X, ShoppingCart, BookOpen, Activity, MessageSquare, Map as MapIcon, Share2 } from 'lucide-react';
 import { BADGES_DATA } from '@/data/badgesData';
 import { GiftModal } from '@/components/admin/GiftModal';
 import { ConfirmationModal } from '@/components/admin/ConfirmationModal';
@@ -485,6 +485,16 @@ export default function AdminPage() {
                         <Gift className="w-6 h-6 text-indigo-400" />
                     </div>
                     <span className="text-xs font-bold text-slate-400 group-hover:text-indigo-300 font-mono">SEND GIFT</span>
+                </button>
+
+                <button
+                    onClick={() => router.push('/admin/referrals')}
+                    className="p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:bg-cyan-900/20 hover:border-cyan-500/50 transition-all group flex flex-col items-center gap-3"
+                >
+                    <div className="p-3 bg-cyan-900/20 rounded-full group-hover:scale-110 transition-transform">
+                        <Share2 className="w-6 h-6 text-cyan-400" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-400 group-hover:text-cyan-300 font-mono">REFERRALS</span>
                 </button>
             </div>
 
