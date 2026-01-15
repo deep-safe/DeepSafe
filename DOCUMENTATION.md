@@ -1176,3 +1176,24 @@ Aumentare la percezione del valore dell'abbonamento PRO e incentivare il feedbac
 - **Headers Extra**: Aggiunte intestazioni "MONETE" e "POTENZIAMENTI" per una migliore organizzazione.
 - **Focus**: Design minimale centrato su Nome, Prezzo e Icona per massimo impatto visivo.
 
+# Revisione Missioni Completate (2026-01-15)
+
+## Obiettivo
+Permettere agli utenti di cliccare sulle missioni già completate (status verde) per rivedere le domande e le risposte, invece di disabilitare l'interazione.
+
+## Implementazione
+
+### Frontend
+**File**: `src/components/dashboard/ProvinceModal.tsx`
+- **Rimozione Blocco**: Rimossa la logica `disabled={isPassed}` dai pulsanti delle missioni.
+- **UX Update**: 
+    - Cambiato il cursore da `not-allowed` a `pointer`.
+    - Aggiunto effetto hover per indicare interattività.
+    - Cambiato il testo del pulsante da "COMPLETATA" a "RIVEDI DOMANDE" quando lo stato è `isPassed`.
+- **Navigazione**: Il click ora reindirizza sempre alla pagina di training (`/training`), permettendo di rileggere la lezione e i quiz.
+
+## Testing
+1. Aprire una provincia completata (verde).
+2. Verificare che il pulsante "MISSIONE COMPLETATA" sia cliccabile.
+3. Cliccare e verificare che si apra la pagina della missione correttamente.
+

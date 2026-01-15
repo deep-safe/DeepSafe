@@ -100,10 +100,10 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                     return (
                                         <button
                                             key={mission.id}
-                                            disabled={isPassed}
-                                            onClick={() => !isPassed && router.push(`/training?problemId=mission-1&provinceId=${province.id}&missionId=${mission.id}`)}
+
+                                            onClick={() => router.push(`/training?problemId=mission-1&provinceId=${province.id}&missionId=${mission.id}`)}
                                             className={`group relative flex items-center justify-between p-4 rounded-xl border transition-all duration-300 w-full text-left ${isPassed
-                                                ? 'bg-emerald-950/20 border-emerald-900/30 opacity-70 cursor-not-allowed'
+                                                ? 'bg-emerald-950/20 border-emerald-900/30 hover:bg-emerald-900/30 hover:border-emerald-500/30 cursor-pointer'
                                                 : mScore.score > 0
                                                     ? 'bg-amber-950/20 border-amber-900/50 hover:border-amber-500/50'
                                                     : 'bg-slate-900/50 border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900'
@@ -148,7 +148,7 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                                     : 'bg-slate-950 border-slate-800 text-slate-400 group-hover:text-cyan-500 group-hover:border-cyan-900'
                                                 }`}>
                                                 {isPassed
-                                                    ? 'COMPLETATA'
+                                                    ? 'RIVEDI DOMANDE'
                                                     : mScore.score > 0
                                                         ? `PROVATA: ${Math.round((mScore.score / (mScore.maxScore || 1)) * 100)}%`
                                                         : (mission.level || 'semplice')}
@@ -167,10 +167,9 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
 
                                 return (
                                     <button
-                                        disabled={isPassed}
-                                        onClick={() => !isPassed && router.push(`/training?problemId=mission-1&provinceId=${province.id}`)}
+                                        onClick={() => router.push(`/training?problemId=mission-1&provinceId=${province.id}`)}
                                         className={`w-full group relative overflow-hidden rounded-xl border p-6 transition-all duration-300 ${isPassed
-                                            ? 'bg-emerald-950/20 border-emerald-900/30 opacity-70 cursor-not-allowed'
+                                            ? 'bg-emerald-950/20 border-emerald-900/30 hover:bg-emerald-900/30 hover:border-emerald-500/30 cursor-pointer'
                                             : isProvata
                                                 ? 'bg-amber-950/20 border-amber-900/50 hover:bg-amber-900/20 hover:border-amber-500/50'
                                                 : 'bg-cyan-950/30 border-cyan-900/50 hover:bg-cyan-900/20 hover:border-cyan-500/50'
@@ -188,7 +187,7 @@ export default function ProvinceModal({ province, onClose }: ProvinceModalProps)
                                                 </div>
                                                 <span className={`text-lg font-bold ${isPassed ? 'text-emerald-100/60' : isProvata ? 'text-amber-100' : 'text-white'
                                                     }`}>
-                                                    {isPassed ? 'MISSIONE COMPLETATA' : isProvata ? 'RITENTA MISSIONE' : 'AVVIA MISSIONE'}
+                                                    {isPassed ? 'RIVEDI DOMANDE' : isProvata ? 'RITENTA MISSIONE' : 'AVVIA MISSIONE'}
                                                 </span>
                                             </div>
                                             {!isPassed && (

@@ -119,3 +119,10 @@ Dovresti vedere un job chiamato `daily_pro_check`.
 ### 3. Verifica Lazy Check
 Il controllo avviene anche ogni volta che l'utente apre il profilo (`get_referral_stats`).
 Per testarlo, imposta una data di scadenza nel passato e ricarica il profilo: è immediato.
+
+## 8. Verifica Revisione Missioni (2026-01-15)
+
+Dopo aver ricaricato l'applicazione:
+1. Apri una provincia che hai già completato.
+2. Clicca sul pulsante "RIVEDI DOMANDE" (ex "COMPLETATA").
+3. Verifica che ti porti alla schermata della missione per poter rileggere il contenuto.
