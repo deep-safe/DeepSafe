@@ -184,3 +184,18 @@ Per testare il sistema di premi settimanali/mensili senza aspettare la data effe
 4. Scorri la pagina per assicurarti che tutte le sezioni siano visibili e ben formattate.
 5. Verifica che i pulsanti abbiano uno stile moderno (bordi o sfondi colorati, niente stile legacy).
 
+## 15. Verifica SEO/GEO (2026-01-15)
+
+1. Apri la homepage e controlla il TAG TITLE nel tab del browser: dovrebbe essere "DeepSafe - Impara la Sicurezza Digitale Giocando (Gratis)".
+2. Ispeziona elemento (`Cmd+Opt+I`) -> cerca `<meta name="description">` e verifica che contenga "Duolingo della vita digitale".
+3. Verifica che nella homepage siano presenti le parole "Competenze Digitali" e il riferimento a imparare "come una lingua".
+4. (Opzionale) Copia l'HTML della homepage in un tool di validazione JSON-LD (o Schema Markup Validator) per verificare che `SoftwareApplication` sia corretto.
+
+## 16. Fix Build Error (2026-01-15)
+
+1. Esegui `npm run build` e verifica che non ci siano errori "Parsing ecmascript source code failed".
+2. Verifica che la Homepage carichi correttamente tutte le sezioni fino al footer (SiteFooter).
+3. Controlla che la lista "Migliora le tue Competenze Digitali" abbia 3 punti elenco e non sia duplicata.
+
+
+

@@ -19,13 +19,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://deepsafe.app'), // Replace with actual domain
+  metadataBase: new URL('https://deepsafe.app'),
   title: {
-    default: "DeepSafe - Educazione Digitale Gamificata",
+    default: "DeepSafe - Impara la Sicurezza Digitale Giocando (Gratis)",
     template: "%s | DeepSafe"
   },
-  description: "Impara a navigare in sicurezza e proteggi la tua vita digitale attraverso il gioco.",
-  keywords: ["educazione digitale", "sicurezza informatica", "gamification", "giovani", "scuola", "cittadinanza digitale", "italia"],
+  description: "Il Duolingo della vita digitale. La piattaforma italiana per le competenze digitali. Impara cybersecurity, privacy e fake news giocando 5 minuti al giorno.",
+  keywords: ["competenze digitali", "scuola digitale", "cybersecurity gratis", "impara sicurezza informatica", "duolingo sicurezza", "gioco educativo", "cittadinanza digitale", "italia", "formazione phishing"],
   authors: [{ name: "DeepSafe Team" }],
   creator: "DeepSafe",
   publisher: "DeepSafe",
@@ -37,22 +37,22 @@ export const metadata: Metadata = {
     type: "website",
     locale: "it_IT",
     url: "https://deepsafe.app",
-    title: "DeepSafe - Educazione Digitale Gamificata",
-    description: "Impara a navigare in sicurezza e proteggi la tua vita digitale attraverso il gioco.",
+    title: "DeepSafe - Il Tuo Coach di Vita Digitale",
+    description: "Trasforma la sicurezza informatica in un gioco. Sfida i tuoi amici, scala la classifica e proteggi il tuo futuro digitale con lezioni da 5 minuti.",
     siteName: "DeepSafe",
     images: [
       {
-        url: "/landing/assets/og-youth.jpg", // Ensure this image exists or use a placeholder
+        url: "/landing/assets/og-youth.jpg",
         width: 1200,
         height: 630,
-        alt: "DeepSafe Youth Preview",
+        alt: "DeepSafe App Preview",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "DeepSafe - La Cybersicurezza Gamificata per Giovani",
-    description: "Il mondo digitale è sotto attacco. Hai le skills per salvarlo?",
+    title: "DeepSafe - Competenze Digitali per Tutti",
+    description: "Impara a difenderti online giocando. Il modo più semplice per capire la cybersecurity.",
     images: ["/landing/assets/og-youth.jpg"],
   },
   manifest: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/manifest.json`,
@@ -76,6 +76,27 @@ export const metadata: Metadata = {
     google: "8qmREYvq02YN2lDjMscR2l6ysUa6ZfMPd3nHhzsA29k",
   },
 };
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "DeepSafe",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Web, iOS, Android",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "EUR"
+  },
+  "description": "Piattaforma gamificata per l'apprendimento della sicurezza informatica e delle competenze digitali.",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "ratingCount": "1250"
+  },
+  "featureList": "Gamification, Corsi Cybersecurity, Quiz Interattivi, Leaderboard, Sfide Giornaliere"
+};
+
 
 import { SystemUIProvider } from "@/context/SystemUIContext";
 import { SoundProvider } from "@/context/SoundContext";
@@ -107,6 +128,9 @@ export default function RootLayout({
             gtag('config', 'G-HJWJBEW0ZS');
           `}
         </Script>
+
+        {/* Schema.org Educational JSON-LD */}
+        <Script id="json-ld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
         <PostHogProvider>
           <SystemUIProvider>

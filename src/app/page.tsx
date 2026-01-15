@@ -19,21 +19,22 @@ export default function LandingPage() {
 
                 <div className="container mx-auto px-4 relative z-10 flex flex-col items-center gap-12 md:gap-24">
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight uppercase tracking-wide text-white drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">
-                        L'Italia del Futuro <br /> <span className="text-[#00f3ff]">Ha Bisogno di Te</span>
+                        Impara la Cybersecurity <br /> <span className="text-[#00f3ff]">Giocando</span>
                     </h1>
-                    <p className="text-lg md:text-xl max-w-[600px] mx-auto opacity-90 text-gray-300 text-center">
-                        La sicurezza digitale dell'Italia passa dalla consapevolezza di ognuno.
-                        Ogni giorno, nuove minacce mettono a rischio identità e risparmi.
-                        <br className="hidden md:block" />
-                        DeepSafe ti dà gli strumenti per difendere te stesso e il tuo futuro.
+                    <p className="text-lg md:text-xl max-w-[700px] mx-auto opacity-90 text-gray-300 text-center">
+                        La prima piattaforma italiana per le <strong>competenze digitali</strong> che ti insegna a difenderti online.
+                        Immagina di imparare cybersecurity, privacy e gestione dei dati nello stesso modo in cui impari una lingua:
+                        giocando 5 minuti al giorno, scalando classifiche e guadagnando ricompense.
+                        <br className="hidden md:block mt-2" />
+                        DeepSafe rende la sicurezza informatica accessibile a tutti, gratis.
                     </p>
 
                     <div className="flex flex-col md:flex-row gap-6 justify-center items-center w-full max-w-2xl mx-auto md:max-w-none">
                         <Link href="/dashboard" className="w-full md:w-auto text-center py-4 px-10 rounded-xl bg-[#00f3ff] text-black hover:bg-[#00d2dd] transition-all font-bold text-lg md:text-xl">
-                            PROVA LA WEB APP
+                            INIZIA ORA GRATIS
                         </Link>
                         <a href="#features" className="hidden md:inline-block py-4 px-10 rounded-xl border border-white text-white hover:bg-white hover:text-black transition-all font-bold text-lg md:text-xl">
-                            SCOPRI DI PIÙ
+                            COME FUNZIONA
                         </a>
                     </div>
                 </div>
@@ -44,21 +45,20 @@ export default function LandingPage() {
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
                         <div className="flex-1 min-w-[300px]">
-                            <h2 className="text-3xl md:text-4xl font-bold mb-6 uppercase tracking-wide text-white drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">Potenzia le Tue Abilità</h2>
+                            <h2 className="text-3xl md:text-4xl font-bold mb-6 uppercase tracking-wide text-white drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">Migliora le tue Competenze Digitali</h2>
                             <p className="mb-6 text-gray-300 leading-relaxed">
-                                Non è solo un corso, è una missione. Viaggia attraverso le regioni italiane in un futuro
-                                cyberpunk.
-                                Ogni territorio ha una minaccia diversa:
+                                Dimentica i noiosi corsi aziendali. DeepSafe è una missione attraverso un'Italia futuristica.
+                                Lezioni brevi e interattive progettate per rafforzare la tua sicurezza digitale reale:
                             </p>
                             <ul className="mb-8 space-y-3">
                                 <li className="flex items-center text-gray-300">
-                                    <span className="text-[#00f3ff] mr-3">►</span> Sconfiggi i Malware
+                                    <span className="text-[#00f3ff] mr-3">►</span> Riconosci il Phishing in un secondo
                                 </li>
                                 <li className="flex items-center text-gray-300">
-                                    <span className="text-[#00f3ff] mr-3">►</span> Smaschera le Fake News
+                                    <span className="text-[#00f3ff] mr-3">►</span> Smaschera le Fake News e l'AI ingannevole
                                 </li>
                                 <li className="flex items-center text-gray-300">
-                                    <span className="text-[#00f3ff] mr-3">►</span> Proteggi la tua Identità
+                                    <span className="text-[#00f3ff] mr-3">►</span> Proteggi i tuoi risparmi e la tua identità
                                 </li>
                             </ul>
                         </div>
@@ -69,7 +69,7 @@ export default function LandingPage() {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section >
 
             {/* Profile Section */}
             <section className="py-20 bg-[#0a0a12]">
