@@ -15,6 +15,16 @@ Creare una pagina dedicata che illustri in modo elegante e coinvolgente il perco
 - **Navbar**:
     - Aggiunto link "MISSIONI" nel menu principale (Desktop e Mobile) tra "CHI SIAMO" e "PREZZI".
 
+## Skill Tree (2026-01-15)
+- **Pagina**: `src/app/skill-tree/page.tsx`
+- **Descrizione**: Visualizzazione interattiva ad albero delle competenze acquisibili.
+- **Tech**: SVG per le connessioni, Framer Motion per le animazioni, JSON dataset per la struttura (`src/data/skills_dataset.json`).
+- **Features**:
+    - Zoom-in animation all'ingresso.
+    - Hover effects sui nodi.
+    - Side-panel dettagliato al click su un nodo.
+    - Responsive layout (coordinate percentuali).
+
 ## Design
 - Stile "DeepSafe Dark": Background scuro (`#0a0a12`), accenti Neon Cyan (`#00f3ff`).
 - Hero Section suggestiva con gradiente radiale.

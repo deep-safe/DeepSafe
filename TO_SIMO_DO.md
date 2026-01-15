@@ -204,6 +204,12 @@ Per testare il sistema di premi settimanali/mensili senza aspettare la data effe
 3. Verifica che le missioni e province siano visibili e corrette.
 4. Controlla la responsiveness su mobile.
 
+## 18. Verifica Skill Tree (2026-01-15)
+1. Vai su `/skill-tree`.
+2. Verifica che l'animazione iniziale e le linee di connessione appaiano corrette.
+3. Clicca su un nodo (es. "Cittadino Digitale") e controlla che si apra il pannello laterale.
+4. Controlla che le skill siano coerenti con `src/data/skills_dataset.json`.
+
 
 
 

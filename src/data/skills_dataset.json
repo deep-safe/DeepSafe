@@ -1,0 +1,135 @@
+{
+    "nodes": [
+        {
+            "id": "root",
+            "title": "Cittadino Digitale",
+            "description": "Il punto di partenza per la tua sicurezza online.",
+            "category": "core",
+            "icon": "🛡️",
+            "level": 1,
+            "x": 50,
+            "y": 10
+        },
+        {
+            "id": "passwords",
+            "title": "Gestione Password",
+            "description": "Password complesse e Manager.",
+            "category": "defense",
+            "icon": "🔑",
+            "parentId": "root",
+            "level": 2,
+            "x": 25,
+            "y": 35
+        },
+        {
+            "id": "phishing",
+            "title": "Riconoscimento Phishing",
+            "description": "Identificare mail e siti falsi.",
+            "category": "awareness",
+            "icon": "🎣",
+            "parentId": "root",
+            "level": 2,
+            "x": 75,
+            "y": 35
+        },
+        {
+            "id": "mfa",
+            "title": "Autenticazione 2FA",
+            "description": "Il secondo livello di sicurezza.",
+            "category": "defense",
+            "icon": "📲",
+            "parentId": "passwords",
+            "level": 3,
+            "x": 15,
+            "y": 60
+        },
+        {
+            "id": "hardware",
+            "title": "Hardware Security",
+            "description": "Proteggere i dispositivi fisici.",
+            "category": "defense",
+            "icon": "💾",
+            "parentId": "passwords",
+            "level": 3,
+            "x": 35,
+            "y": 60
+        },
+        {
+            "id": "social_eng",
+            "title": "Social Engineering",
+            "description": "Psicologia della truffa.",
+            "category": "awareness",
+            "icon": "🎭",
+            "parentId": "phishing",
+            "level": 3,
+            "x": 65,
+            "y": 60
+        },
+        {
+            "id": "fake_news",
+            "title": "Disinformation Hunting",
+            "description": "Smascherare le Fake News.",
+            "category": "awareness",
+            "icon": "📰",
+            "parentId": "phishing",
+            "level": 3,
+            "x": 85,
+            "y": 60
+        },
+        {
+            "id": "quantum",
+            "title": "Quantum Resistance",
+            "description": "Prepararsi al futuro post-quantistico.",
+            "category": "future",
+            "icon": "⚛️",
+            "parentId": "mfa",
+            "level": 4,
+            "x": 15,
+            "y": 85
+        },
+        {
+            "id": "ai_defense",
+            "title": "AI Defense Strategy",
+            "description": "Difendersi da Deepfakes e Voice Cloning.",
+            "category": "future",
+            "icon": "🤖",
+            "parentId": "social_eng",
+            "level": 4,
+            "x": 65,
+            "y": 85
+        },
+        {
+            "id": "blockchain",
+            "title": "Blockchain Forensics",
+            "description": "Tracciare transazioni e Smart Contracts.",
+            "category": "analyst",
+            "icon": "🔗",
+            "parentId": "hardware",
+            "level": 4,
+            "x": 35,
+            "y": 85
+        }
+    ],
+    "categories": {
+        "core": {
+            "color": "#ffffff",
+            "name": "Fondamentali"
+        },
+        "defense": {
+            "color": "#00f3ff",
+            "name": "Difesa Attiva"
+        },
+        "awareness": {
+            "color": "#ff00ff",
+            "name": "Consapevolezza"
+        },
+        "future": {
+            "color": "#7000ff",
+            "name": "Tecnologie Future"
+        },
+        "analyst": {
+            "color": "#00ff9d",
+            "name": "Analisi Forense"
+        }
+    }
+}

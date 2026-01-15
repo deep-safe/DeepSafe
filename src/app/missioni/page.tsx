@@ -39,7 +39,7 @@ export default function MissionsPage() {
                         <span className="inline-block py-1 px-3 rounded-full bg-[#00f3ff]/10 border border-[#00f3ff]/30 text-[#00f3ff] text-sm font-bold mb-6 tracking-widest uppercase">
                             Roadmap Educativa
                         </span>
-                        <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white drop-shadow-[0_0_15px_rgba(0,243,255,0.3)]">
+                        <h1 className="text-4xl md:text-7xl font-bold mb-6 text-white drop-shadow-[0_0_15px_rgba(0,243,255,0.3)]">
                             Le Tue <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00f3ff] to-[#7000ff]">Missioni</span>
                         </h1>
                         <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">

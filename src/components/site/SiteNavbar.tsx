@@ -21,6 +21,9 @@ export default function SiteNavbar() {
                         <Link href="/missioni" className="text-gray-300 hover:text-[#00f3ff] transition-colors font-['Outfit'] font-bold text-lg tracking-wide whitespace-nowrap">
                             MISSIONI
                         </Link>
+                        <Link href="/skill-tree" className="text-gray-300 hover:text-[#00f3ff] transition-colors font-['Outfit'] font-bold text-lg tracking-wide whitespace-nowrap">
+                            SKILL TREE
+                        </Link>
                         <Link href="/prezzi" className="text-gray-300 hover:text-[#00f3ff] transition-colors font-['Outfit'] font-bold text-lg tracking-wide whitespace-nowrap">
                             PREZZI
                         </Link>
