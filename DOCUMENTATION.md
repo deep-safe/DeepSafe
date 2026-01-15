@@ -1173,5 +1173,6 @@ Aumentare la percezione del valore dell'abbonamento PRO e incentivare il feedbac
 ## Refinement (2026-01-15, v2)
 - **Semplificazione UI**: Rimossi descrizioni e pulsanti dai banner Shop.
 - **Header**: Aggiunta intestazione "ABBONAMENTI" con icona Corona.
+- **Headers Extra**: Aggiunte intestazioni "MONETE" e "POTENZIAMENTI" per una migliore organizzazione.
 - **Focus**: Design minimale centrato su Nome, Prezzo e Icona per massimo impatto visivo.
 

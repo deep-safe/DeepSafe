@@ -306,7 +306,10 @@ function ShopContent() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {/* PRO PLAN */}
-                                <a href="/prezzi" className="block relative group overflow-hidden rounded-2xl border border-[#00f3ff]/30 bg-gradient-to-br from-[#1a1a2e] to-[#161622] p-6 hover:border-[#00f3ff] transition-all duration-300 hover:scale-[1.02]">
+                                <div
+                                    onClick={() => setShowFeatureModal(true)}
+                                    className="cursor-pointer relative group overflow-hidden rounded-2xl border border-[#00f3ff]/30 bg-gradient-to-br from-[#1a1a2e] to-[#161622] p-6 hover:border-[#00f3ff] transition-all duration-300 hover:scale-[1.02]"
+                                >
                                     <div className="absolute top-0 right-0 bg-[#00f3ff] text-black text-[10px] font-bold px-3 py-1 rounded-bl-xl font-orbitron z-10">
                                         POPOLARE
                                     </div>
@@ -324,10 +327,13 @@ function ShopContent() {
                                             <span className="text-gray-400 text-sm mb-1">/mese</span>
                                         </div>
                                     </div>
-                                </a>
+                                </div>
 
                                 {/* ELITE PLAN */}
-                                <a href="/prezzi" className="block relative group overflow-hidden rounded-2xl border border-purple-500/30 bg-gradient-to-br from-[#1a1a2e] to-[#161622] p-6 hover:border-purple-500 transition-all duration-300 hover:scale-[1.02]">
+                                <div
+                                    onClick={() => setShowFeatureModal(true)}
+                                    className="cursor-pointer relative group overflow-hidden rounded-2xl border border-purple-500/30 bg-gradient-to-br from-[#1a1a2e] to-[#161622] p-6 hover:border-purple-500 transition-all duration-300 hover:scale-[1.02]"
+                                >
                                     <div className="absolute top-0 right-0 bg-purple-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl font-orbitron z-10">
                                         ELITE
                                     </div>
@@ -345,55 +351,62 @@ function ShopContent() {
                                             <span className="text-gray-400 text-sm mb-1">/mese</span>
                                         </div>
                                     </div>
-                                </a>
+                                </div>
                             </div>
                         </section>
 
                         {/* Credit Packs Section */}
-                        <section className="grid grid-cols-3 gap-4 mb-8">
-                            <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 flex flex-col items-center text-center hover:border-cyan-500 transition-colors group relative overflow-hidden">
-                                <div className="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                                <Coins className="w-8 h-8 text-cyan-400 mb-2" />
-                                <h3 className="font-bold text-white text-sm">1000 NC</h3>
-                                <p className="text-xs text-slate-400 mb-3">Starter Pack</p>
-                                <button
-                                    onClick={() => handleBuyCredits('small')}
-                                    className="relative z-10 w-full py-1.5 bg-slate-800 hover:bg-cyan-600 text-white text-xs font-bold rounded transition-colors"
-                                >
-                                    €0.99
-                                </button>
+                        <section className="space-y-3 mb-12">
+                            <div className="flex items-center gap-2 px-1">
+                                <Coins className="w-5 h-5 text-yellow-500" />
+                                <h2 className="text-base font-bold text-white font-orbitron tracking-wider">MONETE</h2>
                             </div>
-                            <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 flex flex-col items-center text-center hover:border-cyan-500 transition-colors group relative overflow-hidden">
-                                <div className="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <div className="absolute top-0 right-0 bg-cyan-500 text-black text-[9px] font-bold px-2 py-0.5 rounded-bl">POPOLARE</div>
-                                <Coins className="w-8 h-8 text-cyan-400 mb-2" />
-                                <h3 className="font-bold text-white text-sm">2500 NC</h3>
-                                <p className="text-xs text-slate-400 mb-3">Bonus +68%</p>
-                                <button
-                                    onClick={() => handleBuyCredits('medium')}
-                                    className="w-full py-1.5 bg-slate-800 hover:bg-cyan-600 text-white text-xs font-bold rounded transition-colors"
-                                >
-                                    €1.49
-                                </button>
-                            </div>
-                            <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 flex flex-col items-center text-center hover:border-cyan-500 transition-colors group relative overflow-hidden">
-                                <div className="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <div className="absolute top-0 right-0 bg-yellow-500 text-black text-[9px] font-bold px-2 py-0.5 rounded-bl">MIGLIOR VALORE</div>
-                                <Coins className="w-8 h-8 text-yellow-400 mb-2" />
-                                <h3 className="font-bold text-white text-sm">7000 NC</h3>
-                                <p className="text-xs text-slate-400 mb-3">Bonus +50%</p>
-                                <button
-                                    onClick={() => handleBuyCredits('large')}
-                                    className="w-full py-1.5 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-black text-xs font-bold rounded transition-colors"
-                                >
-                                    €3.99
-                                </button>
+
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 flex flex-col items-center text-center hover:border-cyan-500 transition-colors group relative overflow-hidden">
+                                    <div className="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                                    <Coins className="w-8 h-8 text-cyan-400 mb-2" />
+                                    <h3 className="font-bold text-white text-sm">1000 NC</h3>
+                                    <p className="text-xs text-slate-400 mb-3">Starter Pack</p>
+                                    <button
+                                        onClick={() => handleBuyCredits('small')}
+                                        className="relative z-10 w-full py-1.5 bg-slate-800 hover:bg-cyan-600 text-white text-xs font-bold rounded transition-colors"
+                                    >
+                                        €0.99
+                                    </button>
+                                </div>
+                                <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 flex flex-col items-center text-center hover:border-cyan-500 transition-colors group relative overflow-hidden">
+                                    <div className="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="absolute top-0 right-0 bg-cyan-500 text-black text-[9px] font-bold px-2 py-0.5 rounded-bl">POPOLARE</div>
+                                    <Coins className="w-8 h-8 text-cyan-400 mb-2" />
+                                    <h3 className="font-bold text-white text-sm">2500 NC</h3>
+                                    <p className="text-xs text-slate-400 mb-3">Bonus +68%</p>
+                                    <button
+                                        onClick={() => handleBuyCredits('medium')}
+                                        className="w-full py-1.5 bg-slate-800 hover:bg-cyan-600 text-white text-xs font-bold rounded transition-colors"
+                                    >
+                                        €1.49
+                                    </button>
+                                </div>
+                                <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 flex flex-col items-center text-center hover:border-cyan-500 transition-colors group relative overflow-hidden">
+                                    <div className="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="absolute top-0 right-0 bg-yellow-500 text-black text-[9px] font-bold px-2 py-0.5 rounded-bl">MIGLIOR VALORE</div>
+                                    <Coins className="w-8 h-8 text-yellow-400 mb-2" />
+                                    <h3 className="font-bold text-white text-sm">7000 NC</h3>
+                                    <p className="text-xs text-slate-400 mb-3">Bonus +50%</p>
+                                    <button
+                                        onClick={() => handleBuyCredits('large')}
+                                        className="w-full py-1.5 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-black text-xs font-bold rounded transition-colors"
+                                    >
+                                        €3.99
+                                    </button>
+                                </div>
                             </div>
                         </section>
 
                         {/* Daily Deal Section */}
                         {dailyDealItem && (
-                            <section className="relative overflow-hidden rounded-2xl border border-yellow-500/30 bg-gradient-to-br from-yellow-950/20 to-slate-900 p-6">
+                            <section className="relative overflow-hidden rounded-2xl border border-yellow-500/30 bg-gradient-to-br from-yellow-950/20 to-slate-900 p-6 mb-8">
                                 <div className="absolute top-0 right-0 bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-bl-lg font-orbitron">
                                     OFFERTA DEL GIORNO -50%
                                 </div>
@@ -420,7 +433,7 @@ function ShopContent() {
                         )}
 
                         {/* Mystery Boxes - 3 Rarity Tiers */}
-                        <section className="space-y-3">
+                        <section className="space-y-3 mb-12">
                             <div className="flex items-center gap-2 px-1">
                                 <Gift className="w-5 h-5 text-purple-400" />
                                 <h2 className="text-base font-bold text-white font-orbitron tracking-wider">CASSE CRITTOGRAFATE</h2>
@@ -556,50 +569,57 @@ function ShopContent() {
                         />
 
                         {/* Regular Items Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {regularItems.map(item => (
-                                <div key={item.id} className="relative overflow-hidden bg-slate-900/50 border border-slate-800 rounded-xl p-4 hover:border-cyan-500/50 transition-colors group">
-                                    {item.label && (
-                                        <div className="absolute top-0 right-0 bg-cyan-500 text-black text-[9px] font-bold px-2 py-0.5 rounded-bl z-10">
-                                            {item.label}
-                                        </div>
-                                    )}
-                                    <div className="flex justify-between items-start mb-4">
-                                        <div className="p-3 rounded-lg bg-slate-800 group-hover:bg-cyan-950/30 transition-colors text-3xl">
-                                            {item.icon}
-                                        </div>
-                                        {item.is_limited && (
-                                            <span className="text-[10px] font-bold text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full bg-red-950/30">
-                                                SOLO {item.stock} RIMASTI
-                                            </span>
+                        <section className="space-y-3">
+                            <div className="flex items-center gap-2 px-1">
+                                <Shield className="w-5 h-5 text-cyan-400" />
+                                <h2 className="text-base font-bold text-white font-orbitron tracking-wider">POTENZIAMENTI</h2>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {regularItems.map(item => (
+                                    <div key={item.id} className="relative overflow-hidden bg-slate-900/50 border border-slate-800 rounded-xl p-4 hover:border-cyan-500/50 transition-colors group">
+                                        {item.label && (
+                                            <div className="absolute top-0 right-0 bg-cyan-500 text-black text-[9px] font-bold px-2 py-0.5 rounded-bl z-10">
+                                                {item.label}
+                                            </div>
                                         )}
-                                    </div>
-
-                                    <h3 className="font-bold text-white mb-1">{item.name}</h3>
-                                    <p className="text-xs text-slate-400 mb-4 h-10 leading-relaxed overflow-hidden">{item.description}</p>
-
-                                    <button
-                                        onClick={() => handleBuyClick(item)}
-                                        disabled={isBuying === item.id || credits < item.cost}
-                                        className={`w-full py-2 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all ${credits >= item.cost
-                                            ? 'bg-slate-800 hover:bg-cyan-600 text-white hover:shadow-[0_0_15px_rgba(8,145,178,0.4)]'
-                                            : 'bg-slate-900 text-slate-600 cursor-not-allowed'
-                                            }`}
-                                    >
-                                        {isBuying === item.id ? (
-                                            <span className="animate-pulse">ELABORAZIONE...</span>
-                                        ) : (
-                                            <>
-                                                <span>ACQUISTA</span>
-                                                <span className={`text-xs ${credits >= item.cost ? 'text-cyan-400 group-hover:text-white' : 'text-slate-600'}`}>
-                                                    {item.cost} NC
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div className="p-3 rounded-lg bg-slate-800 group-hover:bg-cyan-950/30 transition-colors text-3xl">
+                                                {item.icon}
+                                            </div>
+                                            {item.is_limited && (
+                                                <span className="text-[10px] font-bold text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full bg-red-950/30">
+                                                    SOLO {item.stock} RIMASTI
                                                 </span>
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
+                                            )}
+                                        </div>
+
+                                        <h3 className="font-bold text-white mb-1">{item.name}</h3>
+                                        <p className="text-xs text-slate-400 mb-4 h-10 leading-relaxed overflow-hidden">{item.description}</p>
+
+                                        <button
+                                            onClick={() => handleBuyClick(item)}
+                                            disabled={isBuying === item.id || credits < item.cost}
+                                            className={`w-full py-2 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all ${credits >= item.cost
+                                                ? 'bg-slate-800 hover:bg-cyan-600 text-white hover:shadow-[0_0_15px_rgba(8,145,178,0.4)]'
+                                                : 'bg-slate-900 text-slate-600 cursor-not-allowed'
+                                                }`}
+                                        >
+                                            {isBuying === item.id ? (
+                                                <span className="animate-pulse">ELABORAZIONE...</span>
+                                            ) : (
+                                                <>
+                                                    <span>ACQUISTA</span>
+                                                    <span className={`text-xs ${credits >= item.cost ? 'text-cyan-400 group-hover:text-white' : 'text-slate-600'}`}>
+                                                        {item.cost} NC
+                                                    </span>
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
                     </>
                 )}
 
