@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { X, Save, Trash2, Plus, Zap, Percent, Coins, Clock, Gift, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -28,6 +28,13 @@ export function LootManagerModal({ isOpen, onClose, boxId, initialLoot, onSave }
         weight: 10,
         description: ''
     });
+
+    // Sync local state with initialLoot prop when it changes or modal opens
+    useEffect(() => {
+        if (isOpen) {
+            setLoot(initialLoot);
+        }
+    }, [initialLoot, isOpen]);
 
     const totalWeight = loot.reduce((acc, item) => acc + item.weight, 0);
 

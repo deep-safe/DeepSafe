@@ -219,28 +219,7 @@ function ShopContent() {
         setConfirmModalOpen(true);
     };
 
-    // Wrapper for the specific "Cassa Crittografata" section
-    const handleMysteryBoxSection = async () => {
-        if (!(await checkAuth())) return;
 
-        const mysteryBoxItem = shopItems.find(i => i.id === 'mystery_box') || {
-            id: 'mystery_box',
-            name: 'Cassa Crittografata',
-            description: 'Tenta la fortuna! Contiene premi casuali.',
-            cost: 1000,
-            icon: '🎁',
-            effect_type: 'mystery_box'
-        } as ShopItem;
-
-        if (credits < mysteryBoxItem.cost) {
-            setFeedback({ type: 'error', message: 'Crediti insufficienti!' });
-            setTimeout(() => setFeedback(null), 3000);
-            return;
-        }
-
-        setItemToBuy(mysteryBoxItem);
-        setConfirmModalOpen(true);
-    };
 
     // Modified confirmPurchase to handle Mystery Box specifically
     const confirmPurchase = async () => {
@@ -276,7 +255,7 @@ function ShopContent() {
     // Hide items that are limited AND have 0 or less stock
     const availableItems = shopItems.filter(i => !i.is_limited || (i.stock !== null && i.stock > 0));
 
-    const regularItems = availableItems.filter(i => i.id !== 'mystery_box' && i.id !== 'system_reboot'); // Exclude special display items if needed
+    const regularItems = availableItems.filter(i => i.effect_type !== 'mystery_box' && i.id !== 'system_reboot');
     const dailyDealItem = availableItems.find(i => i.id === 'system_reboot');
 
     return (
@@ -388,27 +367,112 @@ function ShopContent() {
                             </section>
                         )}
 
-                        {/* Mystery Box */}
-                        <section className="relative overflow-hidden rounded-2xl border border-purple-500/30 bg-gradient-to-br from-purple-950/20 to-slate-900 p-6 text-center">
-                            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10 pointer-events-none" />
-                            <Gift className={`w-12 h-12 text-purple-400 mx-auto mb-4 ${isBuying === 'mystery_box' ? 'animate-bounce' : ''}`} />
-                            <h3 className="text-xl font-bold text-white font-orbitron mb-2">Cassa Crittografata</h3>
-                            <p className="text-sm text-slate-400 mb-6">Tenta la fortuna! Contiene premi casuali.</p>
+                        {/* Mystery Boxes - 3 Rarity Tiers */}
+                        <section className="space-y-3">
+                            <div className="flex items-center gap-2 px-1">
+                                <Gift className="w-5 h-5 text-purple-400" />
+                                <h2 className="text-base font-bold text-white font-orbitron tracking-wider">CASSE CRITTOGRAFATE</h2>
+                            </div>
 
-                            <button
-                                onClick={handleMysteryBoxSection}
-                                disabled={isBuying === 'mystery_box'}
-                                className="relative z-10 w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)] flex items-center justify-center gap-2 cursor-pointer active:scale-95"
-                            >
-                                {isBuying === 'mystery_box' ? 'DECRITTAZIONE...' : (
-                                    <>
-                                        <span>APRI</span>
-                                        <span className="bg-black/20 px-2 py-0.5 rounded text-xs">
-                                            {shopItems.find(i => i.id === 'mystery_box')?.cost || 500} NC
-                                        </span>
-                                    </>
-                                )}
-                            </button>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                {availableItems
+                                    .filter(item => item.effect_type === 'mystery_box')
+                                    .sort((a, b) => a.cost - b.cost)
+                                    .map((box, index) => {
+                                        // Determine rarity styling based on order/cost
+                                        const isBasic = index === 0;
+                                        const isRare = index === 1;
+                                        const isLegendary = index === 2;
+
+                                        const themeColors = isBasic
+                                            ? {
+                                                border: 'border-purple-500/40',
+                                                bg: 'bg-gradient-to-br from-purple-500/10 via-slate-900/95 to-slate-900',
+                                                glow: 'shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)]',
+                                                iconBg: 'bg-purple-500/20',
+                                                iconBorder: 'border-purple-500/40',
+                                                iconGlow: 'shadow-[0_0_25px_rgba(168,85,247,0.4)]',
+                                                button: 'bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400',
+                                                buttonGlow: 'shadow-[0_4px_20px_rgba(168,85,247,0.4)]',
+                                                badge: null
+                                            }
+                                            : isRare
+                                                ? {
+                                                    border: 'border-cyan-500/40',
+                                                    bg: 'bg-gradient-to-br from-cyan-500/10 via-slate-900/95 to-slate-900',
+                                                    glow: 'shadow-[0_0_30px_-5px_rgba(6,182,212,0.3)]',
+                                                    iconBg: 'bg-cyan-500/20',
+                                                    iconBorder: 'border-cyan-500/40',
+                                                    iconGlow: 'shadow-[0_0_25px_rgba(6,182,212,0.4)]',
+                                                    button: 'bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400',
+                                                    buttonGlow: 'shadow-[0_4px_20px_rgba(6,182,212,0.4)]',
+                                                    badge: { text: 'POPOLARE', color: 'bg-cyan-500' }
+                                                }
+                                                : {
+                                                    border: 'border-yellow-500/50',
+                                                    bg: 'bg-gradient-to-br from-yellow-500/15 via-slate-900/95 to-slate-900',
+                                                    glow: 'shadow-[0_0_35px_-5px_rgba(234,179,8,0.4)]',
+                                                    iconBg: 'bg-yellow-500/20',
+                                                    iconBorder: 'border-yellow-500/50',
+                                                    iconGlow: 'shadow-[0_0_30px_rgba(234,179,8,0.5)]',
+                                                    button: 'bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:via-yellow-400 hover:to-yellow-500',
+                                                    buttonGlow: 'shadow-[0_4px_25px_rgba(234,179,8,0.5)]',
+                                                    badge: { text: 'MIGLIORE VALORE', color: 'bg-yellow-500' }
+                                                };
+
+                                        return (
+                                            <div
+                                                key={box.id}
+                                                className={`relative rounded-2xl border-2 ${themeColors.border} ${themeColors.bg} ${themeColors.glow} overflow-hidden group transition-all duration-300 hover:scale-[1.02]`}
+                                            >
+                                                {/* Badge */}
+                                                {themeColors.badge && (
+                                                    <div className={`absolute top-0 right-0 ${themeColors.badge.color} text-black text-[9px] font-bold px-2.5 py-1 rounded-bl-xl font-orbitron z-20`}>
+                                                        {themeColors.badge.text}
+                                                    </div>
+                                                )}
+
+                                                {/* Background Pattern */}
+                                                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5 pointer-events-none" />
+
+                                                {/* Legendary Glow Effect */}
+                                                {isLegendary && (
+                                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-yellow-500/20 blur-3xl rounded-full animate-pulse pointer-events-none" />
+                                                )}
+
+                                                <div className="relative z-10 p-5 flex flex-col items-center">
+                                                    {/* Icon Container */}
+                                                    <div className={`w-20 h-20 rounded-2xl ${themeColors.iconBg} border-2 ${themeColors.iconBorder} ${themeColors.iconGlow} flex items-center justify-center mb-4 transition-transform ${isBuying === box.id ? 'animate-bounce' : 'group-hover:scale-110'}`}>
+                                                        <span className="text-5xl">{box.icon}</span>
+                                                    </div>
+
+                                                    {/* Title */}
+                                                    <h3 className="text-2xl font-black text-white font-orbitron mb-6 tracking-wide">
+                                                        {box.name}
+                                                    </h3>
+
+                                                    {/* CTA Button */}
+                                                    <button
+                                                        onClick={() => handleBuyClick(box)}
+                                                        disabled={isBuying === box.id || credits < box.cost}
+                                                        className={`w-full py-3 rounded-xl font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2 ${credits >= box.cost
+                                                            ? `${themeColors.button} ${themeColors.buttonGlow} text-white active:scale-95`
+                                                            : 'bg-slate-800/50 text-slate-600 cursor-not-allowed border border-slate-700/50'
+                                                            }`}
+                                                    >
+                                                        {isBuying === box.id ? (
+                                                            <span className="animate-pulse">DECRITTAZIONE...</span>
+                                                        ) : (
+                                                            <span className="font-mono text-base font-bold">
+                                                                {box.cost} NC
+                                                            </span>
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                            </div>
                         </section>
 
                         <MysteryBoxModal

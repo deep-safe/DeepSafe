@@ -134,3 +134,219 @@ Per testare l'invio email:
 - La API key è configurata a livello database per sicurezza
 - Il template email supporta personalizzazione completa del messaggio
 
+# Sistema Multi-Casse Crittografate (2026-01-15)
+
+## Obiettivo
+Implementare 3 livelli di rarità per le casse crittografate nello shop, con prezzi diversi e probabilità variabili di ottenere ricompense migliori.
+
+## Sistema Implementato
+
+### 3 Tipologie di Casse
+1. **Cassa Crittografata Base** (🎁)
+   - **Prezzo**: 300 NC (ridotto dalla vecchia cassa singola a 500 NC)
+   - **Probabilità**: Alta per ricompense comuni, bassa per ricompense rare
+
+2. **Cassa Crittografata Rara** (💎)
+   - **Prezzo**: 800 NC
+   - **Probabilità**: Equilibrata tra ricompense comuni e rare
+   - **Badge**: "POPOLARE"
+
+3. **Cassa Crittografata Leggendaria** (⭐)
+   - **Prezzo**: 2000 NC
+   - **Probabilità**: Alta per ricompense rare ed epiche
+   - **Badge**: "MIGLIORE VALORE"
+   - **Effetto**: Glow dorato animato
+
+### Pool di Ricompense
+Tutte le casse condividono lo stesso pool di ricompense, ma con probabilità diverse:
+- **Avatar Recluta** (Common) - ID: `avatar_rookie`
+- **Avatar Cyber Ninja** (Rare) - ID: `avatar_ninja`
+- **Avatar Elite Hacker** (Epic) - ID: `avatar_hacker`
+- **Avatar Architetto** (Legendary) - ID: `avatar_architect`
+- **100 NeuroCredits**
+- **500 NeuroCredits**
+
+### Distribuzione Probabilità (Pesi)
+
+#### Cassa Base
+- avatar_rookie: 50 (molto comune)
+- credits 100: 60 (molto comune)
+- avatar_ninja: 15 (raro)
+- avatar_hacker: 5 (molto raro)
+- credits 500: 5 (molto raro)
+- avatar_architect: 1 (leggendario)
+
+#### Cassa Rara
+- avatar_rookie: 30 (comune)
+- credits 100: 30 (comune)
+- avatar_ninja: 40 (frequente)
+- avatar_hacker: 20 (raro)
+- credits 500: 15 (raro)
+- avatar_architect: 5 (leggendario)
+
+#### Cassa Leggendaria
+- avatar_rookie: 10 (raro)
+- credits 100: 10 (raro)
+- avatar_ninja: 30 (frequente)
+- avatar_hacker: 40 (molto frequente)
+- credits 500: 30 (molto frequente)
+- avatar_architect: 20 (frequente)
+
+## Modifiche Database
+
+### Migration SQL
+- **File**: `supabase/migrations/20250115_add_multiple_mystery_boxes.sql`
+- **Azioni**:
+  1. Nasconde la vecchia `mystery_box` (mantiene storico, `is_visible = false`)
+  2. Crea 3 nuove voci in `shop_items`: `mystery_box_basic`, `mystery_box_rare`, `mystery_box_legendary`
+  3. Popola `mystery_box_loot` con loot tables specifiche per ogni cassa (18 righe totali)
+  4. Nessuna modifica alla funzione `purchase_item` (già supporta box multipli dinamicamente)
+
+### Tabelle Modificate
+- **`shop_items`**: +3 righe nuove, 1 riga nascosta
+- **`mystery_box_loot`**: +18 righe (6 per tipo di cassa)
+
+## Modifiche Frontend
+
+### File Modificati
+1. **`src/app/shop/page.tsx`**
+   - **Rimossa**: Sezione hardcoded per singola cassa (linee 391-412)
+   - **Aggiunta**: Sezione dinamica con griglia 3 colonne per le casse
+   - **Rimossa**: Funzione `handleMysteryBoxSection()` (obsoleta)
+   - **Logica**: Le casse vengono caricate da database, filtrate per `effect_type = 'mystery_box'`, ordinate per costo
+
+### Design UI
+Ogni cassa ha stile personalizzato basato sulla rarità:
+
+| Elemento | Base | Rara | Leggendaria |
+|----------|------|------|-------------|
+| Bordo | `border-purple-500/30` | `border-cyan-500/30` | `border-yellow-500/30` |
+| Sfondo | `from-purple-950/20` | `from-cyan-950/20` | `from-yellow-950/20` |
+| Bottone | `bg-purple-600` | `bg-cyan-600` | `bg-gradient-to-r from-yellow-600 to-yellow-500` |
+| Ombra | Purple glow | Cyan glow | Gold glow + pulse |
+| Badge | - | "POPOLARE" (cyan) | "MIGLIORE VALORE" (gold) |
+
+### Responsive Design
+- **Desktop**: Griglia a 3 colonne
+- **Mobile**: Griglia a 1 colonna (stack verticale)
+- **Hover**: Effetto scale-up leggero su desktop
+
+## Funzionalità Mantenute
+- ✅ Modal di decrittazione con animazioni
+- ✅ Sistema di probabilità con pesi (weighted random)
+- ✅ Gestione duplicati avatar (rimborso 50 NC)
+- ✅ Feedback visivo durante acquisto
+- ✅ Verifica crediti insufficienti
+- ✅ Auth guard per utenti non loggati
+
+## Testing Consigliato
+1. **Database**: Verificare creazione corretta delle 3 casse e loot tables in Supabase
+2. **UI**: Testare visualizzazione responsive su desktop e mobile
+3. **Funzionale**: Acquistare ogni tipo di cassa e verificare distribuzione ricompense
+4. **Edge Cases**: Testare con crediti insufficienti, avatar duplicati
+
+## Note Tecniche
+- Il sistema usa **weighted random selection**: somma dei pesi → numero random → scansione cumulativa
+- La funzione `purchase_item` è generica e funziona con qualsiasi `box_id`
+- La vecchia cassa resta nel database per non rompere gli storico acquisti precedenti
+- I prezzi sono facilmente modificabili dalla tabella `shop_items` senza toccare il codice
+
+## File Coinvolti
+- ✅ `supabase/migrations/20250115_add_multiple_mystery_boxes.sql` (NEW)
+- ✅ `src/app/shop/page.tsx` (MODIFIED)
+- ✅ `TO_SIMO_DO.md` (UPDATED)
+- ✅ `DOCUMENTATION.md` (UPDATED)
+
+# Fix Persistenza Loot Table Shop Manager (2026-01-15)
+
+## Problema
+Nel pannello amministratore dello shop (`/admin/shop`), quando si configurava la loot table di una Cassa Crittografata usando il pulsante "CONFIGURE LOOT TABLE", i dati sembravano salvarsi correttamente ma dopo un refresh della pagina tutte le configurazioni venivano perse.
+
+## Causa Radice
+Il bug era nel componente `LootManagerModal.tsx` alla linea 24. Il problema riguardava la sincronizzazione dello stato locale del modal con i dati passati dal componente padre:
+
+```typescript
+// PRIMA (BUGGY)
+const [loot, setLoot] = useState<LootItem[]>(initialLoot);
+```
+
+Il problema è che `useState` inizializza lo stato solo al **primo render del componente**. Quando il modal veniva riaperto dopo aver caricato i dati dal database, lo stato locale non si aggiornava con i nuovi dati passati tramite la prop `initialLoot`.
+
+**Flusso del bug**:
+1. ✅ Utente apre item mystery box esistente
+2. ✅ Parent component carica loot dal database (`mystery_box_loot`)
+3. ✅ Utente clicca "CONFIGURE LOOT TABLE"
+4. ❌ Modal si apre con lo stato locale STALE (vecchi dati)
+5. ✅ Utente modifica/aggiunge loot, clicca "SAVE CONFIGURATION"
+6. ✅ Modal chiama `onSave(loot)` che aggiorna il parent
+7. ✅ Parent salva correttamente in database via `handleSave()`
+8. ❌ Al refresh: dati caricati dal DB OK, ma modal non sincronizza lo stato locale
+
+## Soluzione Implementata
+
+Aggiunto un `useEffect` hook per sincronizzare lo stato locale del modal ogni volta che:
+- La prop `initialLoot` cambia (nuovi dati dal database)
+- Il modal viene aperto (`isOpen` diventa `true`)
+
+```typescript
+// DOPO (FIXED)
+import React, { useState, useEffect } from 'react';
+
+// ...
+
+useEffect(() => {
+    if (isOpen) {
+        setLoot(initialLoot);
+    }
+}, [initialLoot, isOpen]);
+```
+
+Questo garantisce che ogni volta che il modal si apre, lo stato locale viene aggiornato con i dati più recenti caricati dal database.
+
+## File Modificati
+
+### `src/components/admin/shop/LootManagerModal.tsx`
+- **Linea 1**: Aggiunto import di `useEffect` da React
+- **Linee 31-36**: Aggiunto `useEffect` hook per sincronizzazione stato
+
+```diff
+- import React, { useState } from 'react';
++ import React, { useState, useEffect } from 'react';
+
+  export function LootManagerModal({ isOpen, onClose, boxId, initialLoot, onSave }: LootManagerModalProps) {
+      const [loot, setLoot] = useState<LootItem[]>(initialLoot);
+      // ...
+      
++     // Sync local state with initialLoot prop when it changes or modal opens
++     useEffect(() => {
++         if (isOpen) {
++             setLoot(initialLoot);
++         }
++     }, [initialLoot, isOpen]);
+```
+
+## Funzionalità Ripristinate
+- ✅ Configurazione loot table persiste dopo salvataggio
+- ✅ Dati vengono correttamente caricati dal database al refresh
+- ✅ Modal mostra sempre i dati aggiornati quando viene aperto
+- ✅ Modifica loot esistenti funziona correttamente
+- ✅ Aggiunta/rimozione item nel loot manager funziona come previsto
+
+## Testing
+Per verificare la fix:
+1. Aprire `/admin/shop`
+2. Modificare un mystery box esistente o crearne uno nuovo con `effect_type = 'mystery_box'`
+3. Cliccare "CONFIGURE LOOT TABLE"
+4. Aggiungere 2-3 ricompense con pesi e descrizioni diverse
+5. Cliccare "SAVE CONFIGURATION" → "SAVE ITEM"
+6. Refreshare la pagina (F5 o Cmd+R)
+7. Riaprire lo stesso item e cliccare "CONFIGURE LOOT TABLE"
+8. **Risultato Atteso**: Tutte le ricompense configurate sono visibili
+9. **Risultato Prima del Fix**: Loot table era vuota
+
+## Impatto
+- **Complessità**: Bassa (aggiunta di 6 righe di codice)
+- **Rischio**: Minimo (fix standard di React state sync)
+- **Ambito**: Solo `LootManagerModal` component
+- **Breaking Changes**: Nessuno
+
