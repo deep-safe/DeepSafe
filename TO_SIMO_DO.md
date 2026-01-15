@@ -132,3 +132,20 @@ Dopo aver ricaricato l'applicazione:
 1. Apri la dashboard (Mappa Italia).
 2. Osserva la barra in alto.
 3. Verifica che il conteggio mostri "X/107" (dove X è il n. di province completate) e non un numero altissimo come 1000+.
+
+## 10. Verifica Responsività Mappa (2026-01-15)
+
+1. Clicca su una regione qualsiasi.
+2. Nota che lo zoom è ora più rapido (0.4s).
+3. Clicca su "TORNA ALL'ITALIA".
+4. Nota che il reset della vista è più rapido (0.5s).
+
+## 11. Verifica Centramento Mappa (2026-01-15)
+
+1. Ricarica la pagina Dashboard.
+2. Verifica che la mappa sia centrata verticalmente e non spostata verso il basso.
+
+## 12. Verifica Scala Regioni (2026-01-15)
+
+1. Clicca su una regione.
+2. Verifica che la regione non occupi tutto lo schermo (meno zoom) e sia centrata più in alto.

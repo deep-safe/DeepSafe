@@ -288,15 +288,18 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
 
         if (!bbox) return initialItalyViewBox;
 
-        // Add 20% padding
-        const paddingX = bbox.width * 0.2;
-        const paddingY = bbox.height * 0.2;
+        // Add 60% padding (makes region look smaller/less zoomed)
+        const paddingX = bbox.width * 0.6;
+        const paddingY = bbox.height * 0.6;
         const minX = bbox.minX - paddingX / 2;
         const minY = bbox.minY - paddingY / 2;
         const width = bbox.width + paddingX;
         const height = bbox.height + paddingY;
 
-        return `${minX} ${minY} ${width} ${height}`;
+        // Add vertical offset to move region UP
+        const yOffset = bbox.height * 0.15;
+
+        return `${minX} ${minY + yOffset} ${width} ${height}`;
     };
 
     // Initialize State based on URL param
@@ -324,15 +327,18 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
 
         if (!bbox) return initialItalyViewBox;
 
-        // Add 20% padding
-        const paddingX = bbox.width * 0.2;
-        const paddingY = bbox.height * 0.2;
+        // Add 60% padding (makes region look smaller/less zoomed)
+        const paddingX = bbox.width * 0.6;
+        const paddingY = bbox.height * 0.6;
         const minX = bbox.minX - paddingX / 2;
         const minY = bbox.minY - paddingY / 2;
         const width = bbox.width + paddingX;
         const height = bbox.height + paddingY;
 
-        return `${minX} ${minY} ${width} ${height}`;
+        // Add vertical offset to move region UP
+        const yOffset = bbox.height * 0.15;
+
+        return `${minX} ${minY + yOffset} ${width} ${height}`;
     };
 
     const router = useRouter(); // Initialize router

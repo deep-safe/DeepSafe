@@ -1235,6 +1235,19 @@ Ridurre i tempi di attesa percepiti durante la navigazione nella mappa (zoom ing
 ## Risultato
 L'ingresso nelle regioni e il ritorno alla vista nazionale sono ora due volte più veloci, migliorando notevolmente l'esperienza utente.
 
+# Centramento e Scala Regioni (2026-01-15)
+
+## Obiettivo
+Migliorare la visualizzazione delle singole regioni, che risultavano troppo zoomate (grandi) e non perfettamente centrate (spostate in basso).
+
+## Modifiche
+- **`src/components/dashboard/ItalyMapDashboard.tsx`**:
+    - Aumentato il padding del ViewBox regionale dal 20% al **60%** (`0.6`). Questo riduce lo zoom effettivo rendendo la regione più piccola e leggibile.
+    - Aggiunto lo stesso offset verticale (**15%**) usato per la mappa nazionale, per spostare la regione verso l'alto.
+
+## Risultato
+Le regioni ora appaiono più distanziate dai bordi e centrate verticalmente in modo coerente con la mappa nazionale.
+
 # Centramento Mappa Italia (2026-01-15)
 
 ## Obiettivo
