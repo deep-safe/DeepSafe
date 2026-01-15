@@ -10,6 +10,7 @@ import { SystemModal } from "@/components/ui/SystemModal";
 import { GiftOverlay } from '@/components/gamification/GiftOverlay';
 import { BiometricGuard } from '@/components/auth/BiometricGuard';
 import { CookieConsent } from '@/components/ui/CookieConsent';
+import { FeedbackWidget } from '@/components/ui/FeedbackWidget';
 import { useHeartRefill } from '@/hooks/useHeartRefill';
 import { useUserStore } from '@/store/useUserStore';
 
@@ -91,6 +92,7 @@ export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
                 <CyberToast />
                 <SystemModal />
                 <GiftOverlay />
+                <FeedbackWidget />
                 <CookieConsent />
             </div>
         </BiometricGuard>

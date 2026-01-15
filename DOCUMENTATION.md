@@ -1122,3 +1122,31 @@ Fornire agli amministratori una visione d'insieme chiara e immediata delle perfo
 
 ## Accesso
 Accessibile dalla Dashboard Admin principale tramite il pulsante "REFERRALS".
+
+# Feedback Widget Non-Intrusivo (2026-01-15)
+
+## Obiettivo
+Implementare un meccanismo di feedback leggero e non intrusivo per raccogliere l'opinione degli utenti ("Ti piace DeepSafe?") senza interrompere la loro esperienza.
+
+## Implementazione
+
+### Componenti UI
+- **`src/components/ui/FeedbackWidget.tsx`**: Un componente toast personalizzato che appare in basso a destra.
+    - **Stati**: Iniziale (pollice su/giù), Positivo (invito alla recensione), Negativo (campo testo), Grazie.
+    - **Logica di Apparizione**: 
+        - Appare dopo 10 secondi.
+        - **Persistenza**: Se l'utente chiude, non ricompare per 7 giorni. Se dà feedback, non ricompare per 30 giorni.
+    - **Integrazione Dati**: Salva direttamente nella tabella `feedback` di Supabase.
+
+### Integrazione Globale
+- Inserito in **`src/components/layout/LayoutWrapper.tsx`** per essere visibile in tutta l'applicazione (eccetto landing page e admin).
+
+### Backend
+- Utilizza la tabella esistente `feedback` su Supabase via client-side insert.
+- **Payload**: `user_id`, `type` ('like'/'dislike'), `message`, `device_info`.
+
+## Come Testare
+1. Ricaricare la dashboard e attendere 10 secondi.
+2. Interagire con il widget (Pollice Su o Giù).
+3. Verificare che il feedback venga salvato nel database.
+4. Chiudere il widget e ricaricare per verificare che non riappaia immediatamente (cooldown).

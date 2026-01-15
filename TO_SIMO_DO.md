@@ -1,39 +1,3 @@
-
-
-### Test 2: Condivisione Codice (Mobile)
-1. Apri l'app su un dispositivo mobile
-2. Vai su `/profile`
-3. Clicca "Condividi" nella sezione "Invita Amici"
-4. Verifica che si apra il menu di condivisione nativo
-
-### Test 3: Riscatto Codice durante Registrazione ✅
-**IMPLEMENTATO!** Il campo "Codice Amico" è ora presente nel form di registrazione.
-
-Per testare:
-1. Vai su `/login` e clicca "REGISTRATI"
-2. Compila Username, Email, Password
-3. Nel campo "**Codice Amico (Opzionale)**" inserisci un codice valido (es: ABC123)
-4. Registrati normalmente
-5. Il codice verrà automatically riscattato dopo la creazione account
-6. Verifica che entrambi gli utenti (referrer e nuovo) abbiano ricevuto +10 cuori
-
-**Nota**: Il riscatto codice è automatico e non-bloccante. Se il codice è invalido, la registrazione procede comunque ma viene loggato un warning in console.
-
-### Test 4: Attivazione PRO
-1. Inserisci manualmente dei mesi guadagnati (per test):
-```sql
-UPDATE profiles SET pro_months_earned = 3 WHERE id = 'TUO_USER_ID';
-```
-2. Vai su `/profile`
-3. Nella sezione "Status PRO" dovresti vedere:
-   - Progress bar: 3/12
-   - Pulsante "ATTIVA PRO (3 MESI)"
-4. Clicca il pulsante
-5. Verifica che:
-   - Appaia il badge "PRO ATTIVO"
-   - La data di scadenza sia corretta (oggi + 3 mesi)
-   - Il pulsante scompaia
-
 ### Test 5: Scadenza PRO
 1. Imposta manualmente una data di scadenza passata:
 ```sql
@@ -155,19 +119,3 @@ Dovresti vedere un job chiamato `daily_pro_check`.
 ### 3. Verifica Lazy Check
 Il controllo avviene anche ogni volta che l'utente apre il profilo (`get_referral_stats`).
 Per testarlo, imposta una data di scadenza nel passato e ricarica il profilo: è immediato.
-
-
-## 8. Admin Referral Analytics (NUOVO - 2026-01-15)
-
-È stata aggiunta una dashboard dedicata per monitorare i referral.
-
-### 1. Applicare Migrazione
-Esegui lo script SQL:
-`supabase/migrations/20260115_admin_referral_analytics.sql`
-
-Questo creerà la funzione `get_admin_referral_stats`.
-
-### 2. Accesso
-1. Vai su `/admin` (devi essere admin e aver sbloccato con codice).
-2. Clicca sul nuovo pulsante "REFERRALS".
-3. Verifica che i grafici e la classifica (leaderboard) si carichino correttamente.
