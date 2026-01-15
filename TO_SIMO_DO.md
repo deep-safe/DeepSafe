@@ -126,3 +126,9 @@ Dopo aver ricaricato l'applicazione:
 1. Apri una provincia che hai già completato.
 2. Clicca sul pulsante "RIVEDI DOMANDE" (ex "COMPLETATA").
 3. Verifica che ti porti alla schermata della missione per poter rileggere il contenuto.
+
+## 9. Verifica Conteggio Barra Superiore (2026-01-15)
+
+1. Apri la dashboard (Mappa Italia).
+2. Osserva la barra in alto.
+3. Verifica che il conteggio mostri "X/107" (dove X è il n. di province completate) e non un numero altissimo come 1000+.

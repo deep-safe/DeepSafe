@@ -1197,3 +1197,28 @@ Permettere agli utenti di cliccare sulle missioni già completate (status verde)
 2. Verificare che il pulsante "MISSIONE COMPLETATA" sia cliccabile.
 3. Cliccare e verificare che si apra la pagina della missione correttamente.
 
+
+# Fix Conteggio Barra Superiore (2026-01-15)
+
+## Obiettivo
+Correggere il conteggio mostrato nella barra superiore della dashboard (mappa Italia). In precedenza mostrava il numero totale di missioni (es. 0/1000+), che risultava confuso. L'obiettivo è mostrare il numero di **Province Completate** su Totale Province (es. 5/107).
+
+## Implementazione
+
+### Modifiche Frontend
+- **File**: `src/components/dashboard/ItalyMapDashboard.tsx`
+- **Modifica**: Aggiornato il componente `<TopBar />` per passare esplicitamente le props `progress` e `total`.
+- **Valori**:
+    - `progress`: `completedCount` (numero di province completate calcolato localmente)
+    - `total`: `totalProvinces` (lunghezza dell'array `dynamicProvincesData`)
+
+```tsx
+// Prima
+<TopBar />
+
+// Dopo
+<TopBar progress={completedCount} total={totalProvinces} />
+```
+
+### Risultato
+La barra ora mostra correttamente il progresso basato sulle province (es. "5/107") invece che sulle missioni, allineandosi col contesto della mappa regionale.
