@@ -1340,3 +1340,22 @@ Allineare lo stile della homepage (`/`) con le pagine più recenti come `/prezzi
 ## Risultato
 La homepage ora condivide lo stesso look & feel "Dark Cyber" delle altre sezioni pubbliche del sito, con una navigazione coerente e senza dipendenze CSS esterne obsolete.
 
+
+# Fix Next.js Build & Configuration (2026-01-15)
+
+## Problema
+- **Errore Build**: Falliva a causa di import Deno-specifi in `supabase/functions` intercettati dal compilatore TypeScript di Next.js.
+- **Errore Parsing JSON**: `tsconfig.json` riportava errori di sintassi (mancanza di virgole o struttura corrotta).
+- **Dipendenze Obsolete**: Warning su `baseline-browser-mapping` vecchio.
+
+## Soluzione
+1. **Aggiornamento `tsconfig.json`**:
+   - Ricreato il file da zero per garantire integrità sintattica.
+   - Aggiunta esclusione esplicita per `./supabase` nel campo logic `exclude`.
+   
+2. **Aggiornamento Dipendenze**:
+   - Eseguito `npm i baseline-browser-mapping@latest -D`.
+
+## Verifica
+- **Comando**: `npm run build`
+- **Risultato**: ✅ Build completata con successo.

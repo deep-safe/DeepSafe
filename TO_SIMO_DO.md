@@ -209,7 +209,3 @@ Per testare il sistema di premi settimanali/mensili senza aspettare la data effe
 2. Verifica che l'animazione iniziale e le linee di connessione appaiano corrette.
 3. Clicca su un nodo (es. "Cittadino Digitale") e controlla che si apra il pannello laterale.
 4. Controlla che le skill siano coerenti con `src/data/skills_dataset.json`.
-
-
-
-
