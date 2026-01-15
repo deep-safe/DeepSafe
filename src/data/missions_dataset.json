@@ -1,67 +1,195 @@
 [
     {
-        "region_id": "MOL",
-        "region_name": "Molise",
-        "is_unlocked": true,
+        "region_id": "VDA",
+        "region_name": "Valle d'Aosta",
+        "is_unlocked": false,
         "provinces": [
             {
-                "id": "CB",
-                "name": "Campobasso",
-                "status": "active",
+                "id": "AO",
+                "name": "Aosta",
+                "status": "locked",
                 "missions": [
                     {
-                        "id": "m1_cb",
-                        "title": "Il Sovraccarico Dati",
-                        "description": "L'hub neurale di Campobasso sta emettendo frequenze dissonanti. I cittadini soffrono di emicranie digitali. Orion ha bisogno del tuo aiuto per ricalibrare i flussi.",
+                        "id": "m1_ao",
+                        "title": "Cyber-Trekking",
+                        "description": "Una guida alpina ha perso i dati dei rifugi per colpa di un ransomware. Recupera i backup prima della tempesta.",
                         "difficulty": "Easy",
-                        "topic": "Digital Wellbeing",
+                        "topic": "Backup & Recovery",
                         "character": {
-                            "name": "Orion",
-                            "role": "IA Allocazione Risorse",
-                            "avatar_style": "Ologramma Stellare"
+                            "name": "Alpina",
+                            "role": "Guardia Forestale Cyber",
+                            "avatar_style": "Park Ranger Tech"
                         }
                     },
                     {
-                        "id": "m2_cb",
-                        "title": "Il Dilemma Deepfake",
-                        "description": "Un politico locale appare in video compromettenti, ma Echo ha rilevato artefatti visivi. Analizza i frame per smascherare la frode.",
+                        "id": "m2_ao",
+                        "title": "Password in Quota",
+                        "description": "L'accesso alla funivia Skyway è protetto da password deboli '123456'. Rinforza le difese.",
+                        "difficulty": "Easy",
+                        "topic": "Password Security",
+                        "character": {
+                            "name": "Alpina",
+                            "role": "Guardia Forestale Cyber",
+                            "avatar_style": "Park Ranger Tech"
+                        }
+                    },
+                    {
+                        "id": "m3_ao",
+                        "title": "Phishing Glaciale",
+                        "description": "Email false promettono abbonamenti sciistici gratuiti per rubare credenziali. Segnala i siti fake.",
                         "difficulty": "Medium",
-                        "topic": "Identity Theft",
+                        "topic": "Phishing Awareness",
                         "character": {
-                            "name": "Echo",
-                            "role": "Sfera Senziente",
-                            "avatar_style": "Sfera Cromata Fluttuante"
+                            "name": "Alpina",
+                            "role": "Guardia Forestale Cyber",
+                            "avatar_style": "Park Ranger Tech"
                         }
-                    },
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "region_id": "PIE",
+        "region_name": "Piemonte",
+        "is_unlocked": false,
+        "provinces": [
+            {
+                "id": "TO",
+                "name": "Torino",
+                "status": "locked",
+                "missions": [
                     {
-                        "id": "m3_cb",
-                        "title": "Divario di Rete Rurale",
-                        "description": "Le comunità montane sono isolate dal Net. Tala sta costruendo ponti radio, ma i vecchi protocolli bloccano il segnale.",
+                        "id": "m1_to",
+                        "title": "Intro agli Algoritmi",
+                        "description": "Capire come l'IA decide cosa mostrarti nel feed dei social media.",
                         "difficulty": "Easy",
-                        "topic": "Connectivity",
+                        "topic": "Algorithms",
                         "character": {
-                            "name": "Tala",
-                            "role": "Attivista Tech Rurale",
-                            "avatar_style": "Punk-Pastore"
+                            "name": "Ing. Gianduja",
+                            "role": "Ingegnere Meccatronico",
+                            "avatar_style": "Steampunk Industriale"
                         }
                     }
                 ]
             },
             {
-                "id": "IS",
-                "name": "Isernia",
+                "id": "VC",
+                "name": "Vercelli",
                 "status": "locked",
                 "missions": [
                     {
-                        "id": "m1_is",
-                        "title": "Droni da Pascolo Impazziti",
-                        "description": "I droni che sorvegliano le greggi sintetiche stanno attaccando i turisti. Un malware ha corrotto il loro modulo IFF.",
+                        "id": "m1_vc",
+                        "title": "Scoppiare la Bolla",
+                        "description": "Come uscire dalla tua 'Filter Bubble' e vedere opinioni diverse.",
                         "difficulty": "Medium",
-                        "topic": "Malware Analysis",
+                        "topic": "Filter Bubbles",
                         "character": {
-                            "name": "Nonno Bit",
-                            "role": "Pastore Cybernetico",
-                            "avatar_style": "Anziano con Visore AR"
+                            "name": "Mondina.net",
+                            "role": "Data Analyst",
+                            "avatar_style": "Contadina Cyber"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "NO",
+                "name": "Novara",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_no",
+                        "title": "Privacy & Data Brokers",
+                        "description": "Chi sta vendendo i tuoi dati personali alle aziende pubblicitarie?",
+                        "difficulty": "Hard",
+                        "topic": "Data Privacy",
+                        "character": {
+                            "name": "Ghost",
+                            "role": "Privacy Watchdog",
+                            "avatar_style": "Anonimo Digitale"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "CN",
+                "name": "Cuneo",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_cn",
+                        "title": "Pensiero Critico",
+                        "description": "Riconoscere i Bias Cognitivi che ti rendono vulnerabile alla manipolazione.",
+                        "difficulty": "Medium",
+                        "topic": "Critical Thinking",
+                        "character": {
+                            "name": "Prof. Logic",
+                            "role": "Insegnante AI",
+                            "avatar_style": "Accademico Olografico"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "region_id": "LGM",
+        "region_name": "Liguria",
+        "is_unlocked": false,
+        "provinces": [
+            {
+                "id": "GE",
+                "name": "Genova",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_ge",
+                        "title": "Attacco alla Supply Chain",
+                        "description": "Hacker hanno infiltrato il software di gestione del porto tramite una dipendenza open-source compromessa.",
+                        "difficulty": "Hard",
+                        "topic": "Supply Chain Security",
+                        "character": {
+                            "name": "Capitan Tech",
+                            "role": "Supervisore Portuale",
+                            "avatar_style": "Marinaio Cyber"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "SP",
+                "name": "La Spezia",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_sp",
+                        "title": "Minaccia Air-Gapped",
+                        "description": "I sistemi di controllo navale sono isolati da internet, ma un virus è entrato comunque. Trova l'origine fisica.",
+                        "difficulty": "Hard",
+                        "topic": "OT Security",
+                        "character": {
+                            "name": "Radar",
+                            "role": "Analista Militare",
+                            "avatar_style": "Uniforme Tattica"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "IM",
+                "name": "Imperia",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_im",
+                        "title": "Minaccia Quantistica",
+                        "description": "Il Festival si prepara al Q-Day. Proteggi le comunicazioni con crittografia Post-Quantum.",
+                        "difficulty": "Hard",
+                        "topic": "Quantum Security",
+                        "character": {
+                            "name": "Melody",
+                            "role": "Crittografa Musicale",
+                            "avatar_style": "Pop Star Cyber"
                         }
                     }
                 ]
@@ -80,22 +208,10 @@
                 "missions": [
                     {
                         "id": "m1_mi",
-                        "title": "Anomalia Energetica",
-                        "description": "Il Duomo Tech sta assorbendo troppa energia, minacciando un blackout totale. Gestisci la griglia intelligente prima del collasso.",
+                        "title": "CEO Fraud & BEC",
+                        "description": "Una mail urgente dall'Amministratore Delegato chiede un bonifico immediato. È una truffa Business Email Compromise.",
                         "difficulty": "Medium",
-                        "topic": "Smart City Infrastructure",
-                        "character": {
-                            "name": "Architetto Zero",
-                            "role": "Urbanista Quantico",
-                            "avatar_style": "Minimalista Geometrico"
-                        }
-                    },
-                    {
-                        "id": "m2_mi",
-                        "title": "Attacco alla Borsa Dati",
-                        "description": "Un gruppo hacker sta manipolando i valori delle criptovalute regionali tramite phishing mirato ai broker.",
-                        "difficulty": "Hard",
-                        "topic": "Phishing & Finance",
+                        "topic": "Business Email Compromise",
                         "character": {
                             "name": "Broker X",
                             "role": "Analista Finanziario",
@@ -111,14 +227,348 @@
                 "missions": [
                     {
                         "id": "m1_bg",
-                        "title": "Ransomware in Fabbrica",
-                        "description": "Le linee di produzione automatizzate sono bloccate da un ransomware che chiede Bitcoin. Negoziare o decriptare?",
-                        "difficulty": "Medium",
+                        "title": "Ransomware Industriale",
+                        "description": "Le fabbriche sono ferme. Un ransomware a doppia estorsione minaccia di pubblicare i brevetti rubati.",
+                        "difficulty": "Hard",
                         "topic": "Ransomware",
                         "character": {
                             "name": "Capo Mastro 4.0",
                             "role": "Supervisore Industriale",
                             "avatar_style": "Elmetto Smart"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "BS",
+                "name": "Brescia",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_bs",
+                        "title": "Fatture False",
+                        "description": "Un attacco Man-in-the-Middle ha modificato l'IBAN sulle fatture dei fornitori di acciaio.",
+                        "difficulty": "Medium",
+                        "topic": "Man-in-the-Middle",
+                        "character": {
+                            "name": "Steel Bot",
+                            "role": "Contabile Automatizzato",
+                            "avatar_style": "Metallo Lucido"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "region_id": "TAA",
+        "region_name": "Trentino-Alto Adige",
+        "is_unlocked": false,
+        "provinces": [
+            {
+                "id": "TN",
+                "name": "Trento",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_tn",
+                        "title": "Smart Home Sicura",
+                        "description": "La tua casa domotica in montagna è stata hackerata. Il riscaldamento è impazzito. Metti in sicurezza l'IoT.",
+                        "difficulty": "Medium",
+                        "topic": "IoT Security",
+                        "character": {
+                            "name": "Eco System",
+                            "role": "Tecnico Domotica",
+                            "avatar_style": "Tuta Termica Hi-Tech"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "BZ",
+                "name": "Bolzano",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_bz",
+                        "title": "Wearable Tracking",
+                        "description": "Il tuo smartwatch sta inviando la tua posizione GPS a sconosciuti. Gestisci i permessi delle app.",
+                        "difficulty": "Easy",
+                        "topic": "Mobile Privacy",
+                        "character": {
+                            "name": "Hiker GPS",
+                            "role": "Guida Alpina",
+                            "avatar_style": "Sportivo Tech"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "region_id": "VEN",
+        "region_name": "Veneto",
+        "is_unlocked": false,
+        "provinces": [
+            {
+                "id": "VE",
+                "name": "Venezia",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_ve",
+                        "title": "Phishing in Laguna",
+                        "description": "Siti falsi che imitano portali ufficiali (Typosquatting) cercano di rubare le credenziali dei turisti.",
+                        "difficulty": "Medium",
+                        "topic": "Social Engineering",
+                        "character": {
+                            "name": "Doge Cyber",
+                            "role": "Guardia Lagunare",
+                            "avatar_style": "Maschera Veneziana Neon"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "VR",
+                "name": "Verona",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_vr",
+                        "title": "Romance Scams",
+                        "description": "Profili falsi sui siti di incontri cercano di estorcere denaro con storie strappalacrime (e Sextortion).",
+                        "difficulty": "Hard",
+                        "topic": "Scams",
+                        "character": {
+                            "name": "Romeo.sec",
+                            "role": "Investigatore Social",
+                            "avatar_style": "Armatura Rinascimentale Tech"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "region_id": "FVG",
+        "region_name": "Friuli-Venezia Giulia",
+        "is_unlocked": false,
+        "provinces": [
+            {
+                "id": "TS",
+                "name": "Trieste",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_ts",
+                        "title": "Wi-Fi Pubblico",
+                        "description": "I bar storici offrono Wi-Fi gratuito ma non sicuro. Usa una VPN per proteggere i tuoi dati.",
+                        "difficulty": "Easy",
+                        "topic": "Network Security",
+                        "character": {
+                            "name": "Caffè Sicuro",
+                            "role": "Barista Digitale",
+                            "avatar_style": "Grembiule & Tablet"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "UD",
+                "name": "Udine",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_ud",
+                        "title": "Difesa Endpoint",
+                        "description": "Un malware si sta diffondendo nella rete aziendale. Configura l'EDR per bloccarlo.",
+                        "difficulty": "Medium",
+                        "topic": "Endpoint Security",
+                        "character": {
+                            "name": "Sentinel",
+                            "role": "SysAdmin",
+                            "avatar_style": "Armatura Firewall"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "region_id": "EMR",
+        "region_name": "Emilia-Romagna",
+        "is_unlocked": false,
+        "provinces": [
+            {
+                "id": "MO",
+                "name": "Modena",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_mo",
+                        "title": "Car Hacking",
+                        "description": "Attacco al CAN Bus delle supercar. Prendi il controllo dei freni da remoto per evitare incidenti.",
+                        "difficulty": "Hard",
+                        "topic": "Automotive Security",
+                        "character": {
+                            "name": "Racer X",
+                            "role": "Tester Automotive",
+                            "avatar_style": "Tuta da Gara Smart"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "BO",
+                "name": "Bologna",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_bo",
+                        "title": "Smart City V2X",
+                        "description": "I semafori intelligenti comunicano con le auto (V2X). Proteggi il protocollo da iniezioni di dati falsi.",
+                        "difficulty": "Hard",
+                        "topic": "Smart City",
+                        "character": {
+                            "name": "Dotta",
+                            "role": "Ricercatrice InfoSec",
+                            "avatar_style": "Laurea & Hoodie"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "region_id": "TOS",
+        "region_name": "Toscana",
+        "is_unlocked": false,
+        "provinces": [
+            {
+                "id": "FI",
+                "name": "Firenze",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_fi",
+                        "title": "NFT & Rug Pulls",
+                        "description": "Il mercato dell'arte digitale è pieno di truffe. Riconosci i progetti 'Rug Pull' prima di investire.",
+                        "difficulty": "Medium",
+                        "topic": "Crypto Scams",
+                        "character": {
+                            "name": "Dante.ai",
+                            "role": "Critics d'Arte",
+                            "avatar_style": "Poeta Cyberpunk"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "SI",
+                "name": "Siena",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_si",
+                        "title": "Banking Security",
+                        "description": "La banca più antica del mondo è sotto attacco SWIFT. Ferma le transazioni fraudolente.",
+                        "difficulty": "Hard",
+                        "topic": "Financial Security",
+                        "character": {
+                            "name": "Banker",
+                            "role": "Tesoriere",
+                            "avatar_style": "Rinascimento Gold"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "region_id": "UMB",
+        "region_name": "Umbria",
+        "is_unlocked": false,
+        "provinces": [
+            {
+                "id": "PG",
+                "name": "Perugia",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_pg",
+                        "title": "Crittografia Dolce",
+                        "description": "Messaggi segreti nascosti nelle immagini dei cioccolatini (Steganografia). Decifra il codice.",
+                        "difficulty": "Medium",
+                        "topic": "Cryptography",
+                        "character": {
+                            "name": "Sweet Byte",
+                            "role": "Analista Crittografo",
+                            "avatar_style": "Grembiule Tech"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "TR",
+                "name": "Terni",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_tr",
+                        "title": "Violazione GDPR",
+                        "description": "Un'azienda ha subito un Data Breach. Gestisci la notifica al Garante e agli utenti.",
+                        "difficulty": "Hard",
+                        "topic": "GDPR & Compliance",
+                        "character": {
+                            "name": "DPO Bot",
+                            "role": "Responsabile Dati",
+                            "avatar_style": "Ufficiale Normativo"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "region_id": "MAR",
+        "region_name": "Marche",
+        "is_unlocked": false,
+        "provinces": [
+            {
+                "id": "AN",
+                "name": "Ancona",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_an",
+                        "title": "Igiene Digitale",
+                        "description": "Plugin del browser malevoli stanno spiando la navigazione. Fai pulizia di estensioni e cookie.",
+                        "difficulty": "Easy",
+                        "topic": "Web Hygiene",
+                        "character": {
+                            "name": "Sonar",
+                            "role": "Specialista Browser",
+                            "avatar_style": "Muta Subacquea Smart"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "PU",
+                "name": "Pesaro e Urbino",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_pu",
+                        "title": "Mobile Rooting",
+                        "description": "Un dipendente ha fatto il root del telefono aziendale, esponendolo a virus. Ripristina la sicurezza.",
+                        "difficulty": "Medium",
+                        "topic": "Mobile Security",
+                        "character": {
+                            "name": "Android",
+                            "role": "Tecnico Mobile",
+                            "avatar_style": "Robot Verde"
                         }
                     }
                 ]
@@ -137,26 +587,161 @@
                 "missions": [
                     {
                         "id": "m1_rm",
-                        "title": "Difesa del Database Centrale",
-                        "description": "LIVELLO CRITICO. Il database anagrafico nazionale è sotto attacco da una APT straniera. Proteggi i dati sensibili a ogni costo.",
-                        "difficulty": "Hard",
-                        "topic": "National Security",
+                        "title": "AGI & Warfare",
+                        "description": "Un'Intelligenza Artificiale Generale militare è fuori controllo. Evita l'escalation bellica.",
+                        "difficulty": "Expert",
+                        "topic": "AI Safety",
                         "character": {
                             "name": "Centurione Cyber",
-                            "role": "Guardia Pretoriana Digitale",
+                            "role": "Difesa Nazionale",
                             "avatar_style": "Armatura Tattica Romana"
                         }
                     },
                     {
                         "id": "m2_rm",
-                        "title": "Spionaggio Satellitare",
-                        "description": "I satelliti meteo sopra il Colosseo sono stati dirottati. Riprendi il controllo dell'orbita.",
+                        "title": "Politica & Deepfakes",
+                        "description": "Video falsi di leader politici circolano prima delle elezioni. Rileva i Deepfakes.",
                         "difficulty": "Hard",
-                        "topic": "Infrastructure Security",
+                        "topic": "Disinformation",
                         "character": {
-                            "name": "Astra",
-                            "role": "Ingegnere Aerospaziale",
-                            "avatar_style": "Tuta Spaziale Leggera"
+                            "name": "Senatore.ai",
+                            "role": "Analista Politico",
+                            "avatar_style": "Toga Digitale"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "region_id": "ABR",
+        "region_name": "Abruzzo",
+        "is_unlocked": false,
+        "provinces": [
+            {
+                "id": "AQ",
+                "name": "L'Aquila",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_aq",
+                        "title": "Disaster Recovery",
+                        "description": "Il Data Center principale è offline. Attiva il piano di Disaster Recovery e ripristina dai backup 3-2-1.",
+                        "difficulty": "Hard",
+                        "topic": "Resilience",
+                        "character": {
+                            "name": "Geo Ward",
+                            "role": "Responsabile Continuità",
+                            "avatar_style": "Elmetto e Tablet Rugged"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "PE",
+                "name": "Pescara",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_pe",
+                        "title": "Wi-Fi Pineapple",
+                        "description": "Un hacker sta usando un finto hotspot Wi-Fi in spiaggia per rubare dati (Man-in-the-Middle).",
+                        "difficulty": "Medium",
+                        "topic": "Wireless Attacks",
+                        "character": {
+                            "name": "Surfer Net",
+                            "role": "Guardia Costiera",
+                            "avatar_style": "Tavola & Antenna"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "region_id": "MOL",
+        "region_name": "Molise",
+        "is_unlocked": true,
+        "provinces": [
+            {
+                "id": "CB",
+                "name": "Campobasso",
+                "status": "active",
+                "missions": [
+                    {
+                        "id": "m1_cb",
+                        "title": "Phishing & Social Eng.",
+                        "description": "Email ingannevoli mirano ai dipendenti pubblici. Riconosci i segnali di Social Engineering.",
+                        "difficulty": "Easy",
+                        "topic": "Social Engineering",
+                        "character": {
+                            "name": "Orion",
+                            "role": "Formatore Anti-Phishing",
+                            "avatar_style": "Ologramma Stellare"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "IS",
+                "name": "Isernia",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_is",
+                        "title": "Disinformation Defense",
+                        "description": "Fake news coordinate cercano di creare panico. Verifica le fonti e smentisci le bufale.",
+                        "difficulty": "Medium",
+                        "topic": "Fake News",
+                        "character": {
+                            "name": "FactChecker",
+                            "role": "Giornalista Digitale",
+                            "avatar_style": "Reporter Cyber"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "region_id": "CAM",
+        "region_name": "Campania",
+        "is_unlocked": false,
+        "provinces": [
+            {
+                "id": "NA",
+                "name": "Napoli",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_na",
+                        "title": "Zero-Click & BEC",
+                        "description": "BOSS FINALE. Attacco sofisticato senza interazione utente (Zero-Click) combinato con frode aziendale.",
+                        "difficulty": "Expert",
+                        "topic": "Advanced Threats",
+                        "character": {
+                            "name": "O' Guardiano",
+                            "role": "CISO Partenopeo",
+                            "avatar_style": "Corno Portafortuna Neon"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "BN",
+                "name": "Benevento",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_bn",
+                        "title": "Forensics & Metadata",
+                        "description": "Le uniche tracce sono nei metadati dei file cancellati. Recupera le prove digitali.",
+                        "difficulty": "Hard",
+                        "topic": "Digital Forensics",
+                        "character": {
+                            "name": "Witch Hunter",
+                            "role": "Investigatore Forense",
+                            "avatar_style": "Strega Cyber"
                         }
                     }
                 ]
@@ -175,33 +760,123 @@
                 "missions": [
                     {
                         "id": "m1_ba",
-                        "title": "Disinformazione Virale",
-                        "description": "Una ondata di fake news sta destabilizzando l'opinione pubblica locale. Usa gli algoritmi di verità per filtrare il feed.",
+                        "title": "Difesa Perimetrale",
+                        "description": "Configura il Firewall per bloccare connessioni non autorizzate in uscita (Egress Filtering).",
                         "difficulty": "Medium",
-                        "topic": "Deepfake & Social",
+                        "topic": "Network Defense",
                         "character": {
-                            "name": "Nonna Social",
-                            "role": "Influencer della Verità",
-                            "avatar_style": "Anziana con Tablet Olografico"
+                            "name": "Mura Digitali",
+                            "role": "Network Admin",
+                            "avatar_style": "Castello Normanno Tech"
                         }
                     }
                 ]
             },
             {
-                "id": "LE",
-                "name": "Lecce",
+                "id": "TA",
+                "name": "Taranto",
                 "status": "locked",
                 "missions": [
                     {
-                        "id": "m1_le",
-                        "title": "Trappole per Turisti 2.0",
-                        "description": "Siti di prenotazione falsi stanno truffando i visitatori del Salento. Chiudi i portali fraudolenti.",
-                        "difficulty": "Easy",
-                        "topic": "Scams & Phishing",
+                        "id": "m1_ta",
+                        "title": "SCADA & Air Gap",
+                        "description": "Il mito dell'Air Gap è caduto. Proteggi i sistemi industriali dell'acciaieria da attacchi remoti.",
+                        "difficulty": "Hard",
+                        "topic": "ICS Security",
                         "character": {
-                            "name": "Sole",
-                            "role": "Guida Turistica AI",
-                            "avatar_style": "Barocco Digitale"
+                            "name": "Steel Defender",
+                            "role": "OT Security Manager",
+                            "avatar_style": "Robot Industriale"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "region_id": "BAS",
+        "region_name": "Basilicata",
+        "is_unlocked": false,
+        "provinces": [
+            {
+                "id": "MT",
+                "name": "Matera",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_mt",
+                        "title": "Wallet Security",
+                        "description": "Phishing mirato alle Seed Phrase dei wallet crypto. Non condividere mai le tue chiavi private.",
+                        "difficulty": "Medium",
+                        "topic": "Blockchain",
+                        "character": {
+                            "name": "Lithos",
+                            "role": "Custode Crypto",
+                            "avatar_style": "Roccia & Circuiti"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "PZ",
+                "name": "Potenza",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_pz",
+                        "title": "DeFi Hacks",
+                        "description": "Sfruttamento di Flash Loans per svuotare i pool di liquidità. Analizza lo Smart Contract.",
+                        "difficulty": "Expert",
+                        "topic": "DeFi Security",
+                        "character": {
+                            "name": "Miner",
+                            "role": "Analista Blockchain",
+                            "avatar_style": "Casco da Minatore Tech"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "region_id": "CAL",
+        "region_name": "Calabria",
+        "is_unlocked": false,
+        "provinces": [
+            {
+                "id": "RC",
+                "name": "Reggio Calabria",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_rc",
+                        "title": "Harvest Now, Decrypt Later",
+                        "description": "Gli hacker rubano dati criptati oggi per decifrarli domani con i computer quantistici.",
+                        "difficulty": "Expert",
+                        "topic": "Future Threats",
+                        "character": {
+                            "name": "Magna Grecia",
+                            "role": "Storica del Futuro",
+                            "avatar_style": "Dea Greca Cyber"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "CS",
+                "name": "Cosenza",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_cs",
+                        "title": "Algoritmo di Shor",
+                        "description": "La crittografia RSA è a rischio. Prepara la migrazione a sistemi Post-Quantum.",
+                        "difficulty": "Expert",
+                        "topic": "Quantum Computing",
+                        "character": {
+                            "name": "Q-Bit",
+                            "role": "Fisico Teorico",
+                            "avatar_style": "Particelle Entangled"
                         }
                     }
                 ]
@@ -220,13 +895,13 @@
                 "missions": [
                     {
                         "id": "m1_pa",
-                        "title": "Pizzo Elettronico",
-                        "description": "Un malware estorsivo minaccia i commercianti del mercato storico. Traccia i flussi crypto per trovare i colpevoli.",
-                        "difficulty": "Hard",
-                        "topic": "Crypto Extortion",
+                        "title": "Tor Network & Onion",
+                        "description": "Navigare nel Deep Web richiede precauzioni speciali. Capire come funziona il routing a cipolla.",
+                        "difficulty": "Medium",
+                        "topic": "Anonymity",
                         "character": {
                             "name": "Falcone.exe",
-                            "role": "Investigatore Forense",
+                            "role": "Investigatore Antimafia",
                             "avatar_style": "Detective Noir Cyber"
                         }
                     }
@@ -239,14 +914,78 @@
                 "missions": [
                     {
                         "id": "m1_ct",
-                        "title": "Sensori Vulcanici Compromessi",
-                        "description": "I sensori dell'Etna inviano falsi allarmi di eruzione. Qualcuno vuole causare il panico. Verifica i dati sismici.",
-                        "difficulty": "Medium",
-                        "topic": "IoT Security",
+                        "title": "Dark Markets",
+                        "description": "Mercati illegali vendono dati rubati. Monitora il Dark Web per prevenire furti d'identità.",
+                        "difficulty": "Hard",
+                        "topic": "Dark Web Monitoring",
                         "character": {
                             "name": "Vulcan",
-                            "role": "Geologo Robotico",
+                            "role": "Sentinella Digitale",
                             "avatar_style": "Magma Plating"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "region_id": "SAR",
+        "region_name": "Sardegna",
+        "is_unlocked": false,
+        "provinces": [
+            {
+                "id": "CA",
+                "name": "Cagliari",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_ca",
+                        "title": "BadUSB & Hardware",
+                        "description": "Non inserire chiavette USB trovate per terra! Potrebbero essere Rubber Ducky che iniettano comandi.",
+                        "difficulty": "Easy",
+                        "topic": "Hardware Attacks",
+                        "character": {
+                            "name": "Nuraghe Net",
+                            "role": "Guardiano Hardware",
+                            "avatar_style": "Pietra Antica & LED"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "NU",
+                "name": "Nuoro",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_nu",
+                        "title": "TEMPEST & Esposizione",
+                        "description": "Spiare uno schermo leggendo le radiazioni elettromagnetiche emesse (Van Eck Phreaking).",
+                        "difficulty": "Expert",
+                        "topic": "Side-Channel Attacks",
+                        "character": {
+                            "name": "Grazia.ai",
+                            "role": "Analista emissioni",
+                            "avatar_style": "Tradizione & Ologrammi"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "SU",
+                "name": "Sud Sardegna",
+                "status": "locked",
+                "missions": [
+                    {
+                        "id": "m1_su",
+                        "title": "Air Gap Exfiltration",
+                        "description": "Estrarre dati da computer disconnessi usando il lampeggiamento dei LED dell'hard disk.",
+                        "difficulty": "Expert",
+                        "topic": "Advanced Exfiltration",
+                        "character": {
+                            "name": "Miner",
+                            "role": "Ricercatore Security",
+                            "avatar_style": "Casco da Minatore Tech"
                         }
                     }
                 ]
