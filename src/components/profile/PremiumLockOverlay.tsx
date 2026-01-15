@@ -29,7 +29,7 @@ export const PremiumLockOverlay: React.FC<PremiumLockOverlayProps> = ({ onUnlock
                     STATISTICHE CLASSIFICATE
                 </h3>
                 <p className="text-slate-400 text-sm max-w-[280px] mb-6 leading-relaxed">
-                    L'accesso ai dati avanzati sulle prestazioni è limitato agli agenti con autorizzazione <span className="text-amber-400 font-bold">PREMIUM</span>.
+                    L'accesso ai dati avanzati sulle prestazioni è limitato agli agenti con autorizzazione <span className="text-amber-400 font-bold">PRO</span>.
                 </p>
 
                 <button

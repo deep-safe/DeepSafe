@@ -61,7 +61,7 @@ export const PremiumModal: React.FC<PremiumModalProps> = ({ isOpen, onClose, onU
                                 <FeatureItem
                                     icon={<Shield className="w-5 h-5 text-amber-400" />}
                                     title="Badge Esclusivi"
-                                    description="Accesso a badge rari riservati ai membri Premium."
+                                    description="Accesso a badge rari riservati ai membri PRO."
                                 />
                             </div>
 
@@ -71,7 +71,7 @@ export const PremiumModal: React.FC<PremiumModalProps> = ({ isOpen, onClose, onU
                                 className="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 font-bold font-orbitron text-lg rounded-xl transition-all shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 flex items-center justify-center gap-2 group"
                             >
                                 <Crown className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                                ATTIVA PREMIUM ORA
+                                ATTIVA PRO ORA
                             </button>
                             <p className="text-center text-[10px] text-slate-500 mt-4 font-mono">
                                 * Simulazione: Nessun pagamento reale richiesto.

@@ -67,6 +67,10 @@ export interface Database {
                     created_at: string | null
                     map_tier: 'level_1' | 'level_2' | 'level_3'
                     completed_tiers: string[]
+                    pro_months_earned: number | null
+                    pro_expires_at: string | null
+                    pro_activated_at: string | null
+                    has_submitted_feedback: boolean | null
                 }
                 Insert: {
                     avatar_url?: string | null
@@ -93,6 +97,10 @@ export interface Database {
                     has_seen_tutorial?: boolean | null
                     map_tier?: 'level_1' | 'level_2' | 'level_3'
                     completed_tiers?: string[] // JSONB array
+                    pro_months_earned?: number | null
+                    pro_expires_at?: string | null
+                    pro_activated_at?: string | null
+                    has_submitted_feedback?: boolean | null
                 }
                 Update: {
                     avatar_url?: string | null
@@ -120,6 +128,10 @@ export interface Database {
                     has_seen_tutorial?: boolean | null
                     map_tier?: 'level_1' | 'level_2' | 'level_3'
                     completed_tiers?: string[]
+                    pro_months_earned?: number | null
+                    pro_expires_at?: string | null
+                    pro_activated_at?: string | null
+                    has_submitted_feedback?: boolean | null
                 }
                 Relationships: [
                     {
@@ -668,6 +680,7 @@ export interface Database {
                     status: 'new' | 'read' | 'archived'
                     device_info: Json
                     created_at: string
+                    pro_reward_given: boolean | null
                 }
                 Insert: {
                     id?: string
@@ -717,6 +730,45 @@ export interface Database {
                     created_at?: string
                 }
                 Relationships: []
+            }
+            referrals: {
+                Row: {
+                    id: string
+                    referrer_id: string
+                    referred_user_id: string
+                    referral_code: string
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    referrer_id: string
+                    referred_user_id: string
+                    referral_code: string
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    referrer_id?: string
+                    referred_user_id?: string
+                    referral_code?: string
+                    created_at?: string
+                }
+                Relationships: [
+                    {
+                        foreignKeyName: "referrals_referrer_id_fkey"
+                        columns: ["referrer_id"]
+                        isOneToOne: false
+                        referencedRelation: "profiles"
+                        referencedColumns: ["id"]
+                    },
+                    {
+                        foreignKeyName: "referrals_referred_user_id_fkey"
+                        columns: ["referred_user_id"]
+                        isOneToOne: false
+                        referencedRelation: "profiles"
+                        referencedColumns: ["id"]
+                    }
+                ]
             }
         }
         Views: {
@@ -804,6 +856,18 @@ export interface Database {
             get_admin_user_emails: {
                 Args: Record<PropertyKey, never>
                 Returns: Json
+            }
+            get_referral_stats: {
+                Args: Record<PropertyKey, never>
+                Returns: Json
+            }
+            activate_pro_subscription: {
+                Args: Record<PropertyKey, never>
+                Returns: Json
+            }
+            check_pro_expiration: {
+                Args: Record<PropertyKey, never>
+                Returns: undefined
             }
         }
         Enums: {

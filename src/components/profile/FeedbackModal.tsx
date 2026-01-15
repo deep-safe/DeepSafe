@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, Bug, Lightbulb, ThumbsUp, ThumbsDown, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
+import { ProMonthRewardModal } from '@/components/ui/ProMonthRewardModal';
 
 // Client is already initialized
 
@@ -10,21 +11,32 @@ interface FeedbackModalProps {
     isOpen: boolean;
     onClose: () => void;
     userId: string;
+    onFeedbackSubmitted?: () => void; // Callback to refresh profile/Pro status
 }
 
 type FeedbackType = 'bug' | 'feature' | 'like' | 'dislike';
 
-export function FeedbackModal({ isOpen, onClose, userId }: FeedbackModalProps) {
+export function FeedbackModal({ isOpen, onClose, userId, onFeedbackSubmitted }: FeedbackModalProps) {
     const [type, setType] = useState<FeedbackType>('bug');
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [showProReward, setShowProReward] = useState(false); // NUOVO: mostra modal Pro reward
 
     const handleSubmit = async () => {
         if (!message.trim()) return;
         setLoading(true);
 
         try {
+            // NUOVO: Controlla pro_months_earned PRIMA dell'invio
+            const { data: beforeData } = await supabase
+                .from('profiles')
+                .select('pro_months_earned')
+                .eq('id', userId)
+                .single();
+
+            const monthsBefore = beforeData?.pro_months_earned || 0;
+
             const { error } = await supabase.from('feedback').insert({
                 user_id: userId,
                 type,
@@ -38,12 +50,31 @@ export function FeedbackModal({ isOpen, onClose, userId }: FeedbackModalProps) {
 
             if (error) throw error;
 
+            // NUOVO: Controlla se ha guadagnato un mese Pro
+            const { data: afterData } = await supabase
+                .from('profiles')
+                .select('pro_months_earned')
+                .eq('id', userId)
+                .single();
+
+            const monthsAfter = afterData?.pro_months_earned || 0;
+            const earnedProMonth = monthsAfter > monthsBefore;
+
             setSuccess(true);
+
+            // Refresh Pro status to reflect new Pro month earned
+            onFeedbackSubmitted?.();
+
             setTimeout(() => {
                 setSuccess(false);
                 setMessage('');
                 setType('bug');
                 onClose();
+
+                // NUOVO: Mostra modal premio se guadagnato mese Pro
+                if (earnedProMonth) {
+                    setShowProReward(true);
+                }
             }, 2000);
         } catch (error) {
             console.error('Error sending feedback:', error);
@@ -172,6 +203,13 @@ export function FeedbackModal({ isOpen, onClose, userId }: FeedbackModalProps) {
                     </motion.div>
                 </motion.div>
             )}
+
+            {/* Pro Month Reward Modal */}
+            <ProMonthRewardModal
+                isOpen={showProReward}
+                onClose={() => setShowProReward(false)}
+                source="feedback"
+            />
         </AnimatePresence>
     );
 }

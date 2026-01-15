@@ -53,7 +53,7 @@ export const StatisticsSection: React.FC<StatisticsSectionProps> = ({ isPremium,
                     PRESTAZIONI AGENTE
                     {isPremium && (
                         <span className="ml-2 px-2 py-0.5 bg-amber-500/20 border border-amber-500/50 rounded text-[10px] font-bold text-amber-400 uppercase tracking-wider">
-                            PREMIUM
+                            PRO
                         </span>
                     )}
                 </h3>

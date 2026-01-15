@@ -350,3 +350,692 @@ Per verificare la fix:
 - **Ambito**: Solo `LootManagerModal` component
 - **Breaking Changes**: Nessuno
 
+---
+
+# Sistema Codici Invito con Abbonamento PRO (2026-01-15)
+
+## Obiettivo
+Implementare un sistema di referral dove gli utenti possono invitare amici tramite codici invito personali e guadagnare mesi di abbonamento PRO gratuito. Ogni invito con successo (amico che si iscrive e riscatta il codice) fa guadagnare 1 mese PRO, fino a un massimo di 12 mesi (1 anno).
+
+## Funzionalità Implementate
+
+### 1. Codici Invito Personali
+- Ogni utente ha un codice invito univoco di 6 caratteri alfanumerici (es: `ABC123`)
+- Il codice viene generato automaticamente alla registrazione
+- Gli utenti possono condividere il loro codice tramite:
+  - **Copia negli appunti**: Button "Copia" con feedback visivo
+  - **Condivisione nativa**: Button "Condividi" che usa Web Share API su mobile
+
+### 2. Sistema di Ricompense Referral
+- **Referrer (chi invita)**: 
+  - +10 cuori (cap massimo a 5)
+  - +1 mese PRO guadagnato
+- **Nuovo utente (chi riscatta)**:
+  - +10 cuori (cap massimo a 5)
+- **Nessun bonus XP** (rimosso rispetto al sistema precedente)
+
+### 3. Tracciamento Referral
+- Tabella `referrals` che registra:
+  - ID del referrer
+  - ID dell'utente invitato
+  - Codice invito utilizzato
+  - Data dell'invito
+- Constraint di unicità: un utente può essere invitato una sola volta
+- Limite massimo: 12 referral per utente
+
+### 4. Abbonamento PRO
+- **Mesi Guadagnati**: Campo `pro_months_earned` in profiles (0-12)
+- **Attivazione Manuale**: L'utente decide quando attivare il PRO tramite pulsante
+- **Scadenza Automatica**: Campo `pro_expires_at` calcolato come `activation_date + (months_earned * 1 month)`
+- **Tracking Attivazione**: Campo `pro_activated_at` per sapere quando l'utente ha attivato
+
+### 5. UI/UX nel Profilo
+
+#### Sezione "Invita Amici" (`InviteCodeCard`)
+- Design cyber-themed con effetti glow
+- Display del codice invito in formato grande e chiaro
+- Pulsanti "Copia" e "Condividi" con animazioni
+- Informazioni: "Massimo 12 inviti = 1 anno PRO"
+
+#### Sezione "Status PRO" (`ProStatusCard`)
+- **Badge "PRO ATTIVO"**: Visibile solo se abbonamento attivo
+- **Progress bar**: Visualizza mesi guadagnati (X/12) con segmenti
+- **Stats Grid**:
+  - Amici invitati (X/12)
+  - Data di scadenza PRO
+- **Pulsante "ATTIVA PRO"**: 
+  - Visibile solo se `pro_months_earned > 0` e PRO non attivo
+  - Glow animato dorato
+  - Mostra numero di mesi da attivare
+- **Lista Referral**: Ultimi 5 inviti con username e data
+
+## Modifiche Database
+
+### Migration SQL
+**File**: `supabase/migrations/20250115_invite_code_system.sql`
+
+#### Nuove Tabelle
+```sql
+CREATE TABLE referrals (
+    id UUID PRIMARY KEY,
+    referrer_id UUID REFERENCES profiles(id),
+    referred_user_id UUID REFERENCES profiles(id),
+    referral_code TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(referrer_id, referred_user_id),
+    CHECK (referrer_id != referred_user_id)
+);
+```
+
+#### Nuovi Campi in `profiles`
+- `pro_months_earned INTEGER` - Mesi PRO guadagnati (0-12)
+- `pro_expires_at TIMESTAMPTZ` - Data di scadenza abbonamento PRO
+- `pro_activated_at TIMESTAMPTZ` - Data di attivazione PRO
+
+#### Nuove Funzioni RPC
+
+##### `redeem_code(code TEXT)` - AGGIORNATA
+Riscatta un codice invito:
+- Verifica validità del codice
+- Impedisce auto-riscatto
+- Verifica che utente non abbia già riscattato un codice
+- Verifica limite 12 referral per referrer
+- Crea record in `referrals`
+- Dà +10 cuori a entrambi (cap a 5)
+- Incrementa `pro_months_earned` del referrer
+
+**Returns**: JSON `{ success: boolean, message: string }`
+
+##### `get_referral_stats()` - NUOVA
+Ottiene statistiche referral dell'utente:
+```json
+{
+  "referral_count": 3,
+  "pro_months_earned": 3,
+  "is_pro_active": true,
+  "pro_expires_at": "2026-04-15T10:00:00Z",
+  "pro_activated_at": "2026-01-15T10:00:00Z",
+  "referrals": [
+    {
+      "referred_user_id": "uuid",
+      "username": "amico1",
+      "created_at": "2026-01-10T..."
+    }
+  ]
+}
+```
+
+##### `activate_pro_subscription()` - NUOVA
+Attiva manualmente l'abbonamento PRO:
+- Verifica che `pro_months_earned > 0`
+- Verifica che PRO non sia già attivo
+- Calcola `pro_expires_at`
+- Imposta `is_premium = true`
+- Registra `pro_activated_at`
+
+**Returns**: JSON `{ success: boolean, message: string, expires_at?: string, months_activated?: number }`
+
+##### `check_pro_expiration()` - NUOVA
+Verifica e disattiva abbonamenti PRO scaduti:
+- Esegue `UPDATE` per impostare `is_premium = false` dove `pro_expires_at < NOW()`
+- Da chiamare periodicamente (es: al login o tramite cron job)
+
+## Modifiche Frontend
+
+### File TypeScript
+**`src/types/supabase.ts`**
+- Aggiornato tipo `profiles.Row` con nuovi campi Pro
+- Aggiunta tabella `referrals` con relazioni
+- Aggiunti tipi per nuove funzioni RPC
+
+### Componenti Creati
+
+#### `InviteCodeCard.tsx`
+**Props**: `{ referralCode: string }`
+
+**Features**:
+- Copia codice negli appunti con feedback visivo (icona Check)
+- Condivisione nativa (Web Share API o fallback a copia)
+- Design cyber con scanner line e glow effects
+- Responsive
+
+**Location**: `src/components/profile/InviteCodeCard.tsx`
+
+#### `ProStatusCard.tsx`
+**Props**: `{ onProActivated?: () => void }`
+
+**Features**:
+- Carica statistiche via `get_referral_stats()`
+- Progress bar animata con segmenti
+- Badge Pro ATTIVO con animazione scale
+- Pulsante attivazione Pro con glow dorato
+- Lista referral con scroll custom
+- Modal di successo/errore via `useSystemUI`
+
+**Location**: `src/components/profile/ProStatusCard.tsx`
+
+### Integrazione Profilo
+**File**: `src/app/profile/page.tsx`
+
+**Posizione**: Dopo `MedagliereSection`, prima di `StatisticsSection`
+
+```tsx
+{/* Section A.6: Invite Friends */}
+{profile?.referral_code && (
+    <InviteCodeCard referralCode={profile.referral_code} />
+)}
+
+{/* Section A.7: PRO Status & Referrals */}
+<ProStatusCard onProActivated={() => refreshProfile()} />
+```
+
+## Testing
+
+### Test Manuale Consigliati
+
+1. **Generazione Codice**: Verificare che ogni utente abbia un codice referral univoco
+2. **Copia Codice**: Testare funzionalità copia su desktop e mobile
+3. **Condivisione**: Testare Web Share API su mobile
+4. **Riscatto Codice**: Verificare validazione e ricompense
+5. **Attivazione PRO**: Testare flow completo di attivazione
+6. **Scadenza PRO**: Testare con date manuali la funzione di scadenza
+7. **Limite 12 Referral**: Verificare che dopo 12 inviti non si possa più invitare
+
+### Query SQL Utili
+
+```sql
+-- Vedere tutti i referral attivi
+SELECT 
+    p1.username as referrer,
+    p2.username as referred,
+    r.created_at,
+    p1.pro_months_earned
+FROM referrals r
+JOIN profiles p1 ON r.referrer_id = p1.id
+JOIN profiles p2 ON r.referred_user_id = p2.id
+ORDER BY r.created_at DESC;
+
+-- Utenti con PRO attivo
+SELECT username, pro_months_earned, pro_expires_at, is_premium
+FROM profiles
+WHERE is_premium = true;
+
+-- Top referrers
+SELECT p.username, COUNT(r.id) as invites, p.pro_months_earned
+FROM profiles p
+LEFT JOIN referrals r ON r.referrer_id = p.id
+GROUP BY p.id
+ORDER BY invites DESC
+LIMIT 10;
+```
+
+## Limitazioni Conosciute
+
+### UI per Riscatto Codice Non Implementata
+Al momento non c'è un'interfaccia utente per inserire il codice invito dopo la registrazione. La funzione RPC `redeem_code` funziona, ma serve implementare:
+- **Opzione 1**: Modale al primo login
+- **Opzione 2**: Sezione nel profilo "Hai un codice invito?"
+- **Opzione 3**: Pagina dedicata `/redeem`
+
+Attualmente il codice può essere riscattato solo manualmente via SQL:
+```sql
+SELECT redeem_code('ABC123');
+```
+
+### Scadenza PRO Non Automatica
+La funzione `check_pro_expiration()` esiste ma deve essere chiamata:
+- Manualmente via SQL Editor
+- Al login dell'utente (richiede integrazione futura)
+- Tramite Supabase Edge Function schedulata (cron job)
+
+## File Coinvolti
+
+### Database
+- ✅ `supabase/migrations/20250115_invite_code_system.sql` (NEW)
+
+### TypeScript Types
+- ✅ `src/types/supabase.ts` (MODIFIED)
+
+### Components
+- ✅ `src/components/profile/InviteCodeCard.tsx` (NEW)
+- ✅ `src/components/profile/ProStatusCard.tsx` (NEW)
+- ✅ `src/app/profile/page.tsx` (MODIFIED)
+
+### Documentation
+- ✅ `TO_SIMO_DO.md` (UPDATED) - Azioni manuali richieste
+- ✅ `DOCUMENTATION.md` (UPDATED) - Questa documentazione
+- ✅ `task.md` (ARTIFACT) - Checklist implementazione
+- ✅ `implementation_plan.md` (ARTIFACT) - Piano tecnico dettagliato
+
+## Note Tecniche
+
+### Sicurezza
+- Le funzioni RPC usano `SECURITY DEFINER` per eseguire con privilegi database
+- Row Level Security (RLS) attiva su tabella `referrals`
+- Gli utenti possono vedere solo i propri referral
+
+### Performance
+- Indici creati su `referrals(referrer_id)`, `referrals(referred_user_id)`, `referrals(created_at)`
+- Indice su `profiles(pro_expires_at)` per query di scadenza efficienti
+
+### Scalabilità
+- Il sistema supporta teoricamente referral illimitati per il deployment
+- Il limite di 12 per utente è configurabile tramite CHECK constraint
+- La funzione `get_referral_stats()` ritorna max 5 referral recenti (lista troncata)
+
+## Prossimi Passi (TODO)
+
+1. **UI Riscatto Codice**: Implementare interfaccia per inserire codice invito
+2. **Scadenza Automatica**: Schedulare `check_pro_expiration()` con Supabase Edge Function
+3. **Email Notifiche**: Inviare email quando si guadagna un mese PRO
+4. **Analytics**: Tracciare metriche referral con PostHog
+5. **A/B Testing**: Testare diversi incentivi (10 vs 15 cuori, 1 vs 2 mesi PRO)
+
+---
+
+# Integrazione Feedback con Sistema PRO (2026-01-15)
+
+## Obiettivo
+Integrare il sistema di feedback esistente con il nuovo sistema di abbonamento PRO, premiando automaticamente gli utenti che inviano il primo feedback con 1 mese PRO gratuito.
+
+## Implementazione
+
+### Database Migration
+**File**: `supabase/migrations/20250115_feedback_pro_reward.sql`
+
+#### Nuovi Campi
+
+##### Tabella `feedback`
+- `pro_reward_given BOOLEAN` - Indica se questo feedback ha assegnato un mese PRO
+
+##### Tabella `profiles`
+- `has_submitted_feedback BOOLEAN` - Traccia se l'utente ha inviato almeno un feedback
+
+#### Trigger Automatico
+Creato trigger `trigger_reward_pro_for_feedback` che:
+- Si attiva **prima** dell'inserimento in tabella `feedback`
+- Verifica se è il primo feedback dell'utente
+- Controlla che l'utente non abbia già 12 mesi PRO
+- Incrementa `pro_months_earned` di +1
+- Imposta `has_submitted_feedback = true`
+- Marca `pro_reward_given = true` sul record feedback
+
+**Logica del Trigger**:
+```sql
+CREATE OR REPLACE FUNCTION reward_pro_for_feedback()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM profiles 
+        WHERE id = NEW.user_id 
+        AND has_submitted_feedback = TRUE
+    ) THEN
+        UPDATE profiles
+        SET 
+            pro_months_earned = LEAST(12, COALESCE(pro_months_earned, 0) + 1),
+            has_submitted_feedback = TRUE
+        WHERE id = NEW.user_id
+        AND COALESCE(pro_months_earned, 0) < 12;
+        
+        NEW.pro_reward_given := TRUE;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+### Frontend Changes
+
+#### TypeScript Types
+**File**: `src/types/supabase.ts`
+
+- Aggiunto `has_submitted_feedback: boolean | null` a `profiles.Row/Insert/Update`
+- Aggiunto `pro_reward_given: boolean | null` a `feedback.Row`
+
+#### FeedbackModal Component
+**File**: `src/components/profile/FeedbackModal.tsx`
+
+**Modifiche**:
+1. Aggiunta prop `onFeedbackSubmitted?: () => void`
+2. Invocazione callback dopo successo invio feedback:
+```typescript
+setSuccess(true);
+
+// Refresh Pro status to reflect new Pro month earned
+onFeedbackSubmitted?.();
+
+setTimeout(() => { /* ... */ }, 2000);
+```
+
+#### Profile Page Integration
+**File**: `src/app/profile/page.tsx`
+
+```typescript
+<FeedbackModal
+    isOpen={isFeedbackOpen}
+    onClose={() => setIsFeedbackOpen(false)}
+    userId={user.id}
+    onFeedbackSubmitted={() => refreshProfile()} // ← NUOVO
+/>
+```
+
+### Flusso Utente
+
+1. **Utente invia primo feedback** via FeedbackModal
+2. **Trigger database** incrementa `pro_months_earned` (se < 12)
+3. **Callback** `onFeedbackSubmitted()` chiama `refreshProfile()`
+4. **ProStatusCard** si aggiorna automaticamente mostrando +1 mese
+5. **Modal "Feedback Inviato"** appare per 2 secondi
+6. **Utente vede** il nuovo counter aggiornato (es. da 2/12 a 3/12)
+
+## Benefici
+
+✅ **Automatico**: Nessun intervento manuale admin richiesto  
+✅ **Tracciabile**: Campo `pro_reward_given` permette audit  
+✅ **Equo**: Solo il primo feedback viene ricompensato (no spam)  
+✅ **Limitato**: Rispetta il cap di 12 mesi massimo  
+✅ **Real-time**: Il counter si aggiorna immediatamente  
+
+## Testing
+
+### Test Manuale
+
+1. Login con account di test
+2. Verificare `pro_months_earned` attuale (es. tramite ProStatusCard)
+3. Andare in profilo → "Invia Feedback"
+4. Compilare e inviare un feedback (tipo + messaggio)
+5. Attendere chiusura modale (2 secondi)
+6. Verificare che ProStatusCard mostri +1 mese
+7. Aprire di nuovo feedback modal e inviare altro feedback
+8. Verificare che il counter **NON** aumenti (solo primo feedback)
+
+### Query SQL di Verifica
+
+```sql
+-- Vedere utenti che hanno ricevuto Pro da feedback
+SELECT 
+    p.username,
+    p.pro_months_earned,
+    p.has_submitted_feedback,
+    COUNT(f.id) as total_feedback,
+    SUM(CASE WHEN f.pro_reward_given THEN 1 ELSE 0 END) as rewarded_feedback
+FROM profiles p
+LEFT JOIN feedback f ON f.user_id = p.id
+WHERE p.has_submitted_feedback = true
+GROUP BY p.id
+ORDER BY p.pro_months_earned DESC;
+
+-- Vedere tutti i feedback che hanno dato ricompensa
+SELECT 
+    f.id,
+    p.username,
+    f.type,
+    f.message,
+    f.pro_reward_given,
+    f.created_at
+FROM feedback f
+JOIN profiles p ON p.id = f.user_id
+WHERE f.pro_reward_given = true
+ORDER BY f.created_at DESC;
+```
+
+## Note Tecniche
+
+### Perché BEFORE Trigger?
+Il trigger usa `BEFORE INSERT` invece di `AFTER INSERT` perché:
+- Può modificare `NEW.pro_reward_given` prima del salvataggio
+- Più performante (single transaction)
+- Garantisce atomicità
+
+### Backfill
+La migration **non assegna retroattivamente** Pro months agli utenti che hanno già inviato feedback. Marca solo `has_submitted_feedback = true` per evitare doppi premi futuri.
+
+Per assegnare retroattivamente (se necessario):
+```sql
+UPDATE profiles
+SET pro_months_earned = LEAST(12, COALESCE(pro_months_earned, 0) + 1)
+WHERE has_submitted_feedback = true
+AND COALESCE(pro_months_earned, 0) < 12;
+```
+
+### Sicurezza
+- Trigger usa `SECURITY DEFINER` per eseguire con privilegi database
+- RLS policies già attive su tabella `feedback`
+- Gli utenti possono vedere solo i propri feedback
+
+## File Modificati
+
+### Database
+- ✅ `supabase/migrations/20250115_feedback_pro_reward.sql` (NEW)
+
+### TypeScript Types
+- ✅ `src/types/supabase.ts` (MODIFIED)
+
+### Components
+- ✅ `src/components/profile/FeedbackModal.tsx` (MODIFIED)
+- ✅ `src/app/profile/page.tsx` (MODIFIED)
+
+### Documentation
+- ✅ `DOCUMENTATION.md` (UPDATED) - Questa documentazione
+
+---
+
+# UI Inserimento Codice Invito Durante Registrazione (2026-01-15)
+
+## Obiettivo
+Implementare un campo "Codice Amico" nel form di registrazione per permettere ai nuovi utenti di inserire il codice referral di chi li ha invitati, riscattandolo automaticamente all'iscrizione.
+
+## Implementazione
+
+### Frontend Changes
+
+#### Login/Signup Page
+**File**: `src/app/login/page.tsx`
+
+**Modifiche**:
+
+1. **Nuovo State**:
+```typescript
+const [referralCode, setReferralCode] = useState(''); // Codice amico
+```
+
+2. **Nuovo Campo Input** (visibile solo in modalità signup):
+```tsx
+<div className="relative group">
+    <Shield className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 group-focus-within:text-amber-400 transition-colors" />
+    <input
+        type="text"
+        placeholder="Codice Amico (Opzionale)"
+        value={referralCode}
+        onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+        maxLength={6}
+        className="w-full bg-[#1F2833] border border-amber-500/20 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder:text-zinc-600 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 outline-none transition-all font-mono text-sm uppercase"
+        disabled={loading}
+    />
+    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] text-amber-500/60 font-mono">
+        +10 ❤️
+    </div>
+</div>
+```
+
+**Design Features**:
+- ✅ Border color ambra per distinguerlo dagli altri campi
+- ✅ Icona Shield (scudo) a sinistra
+- ✅ Badge "+10 ❤️" a destra come incentivo visivo
+- ✅ Auto-conversione a maiuscolo
+- ✅ Limite di 6 caratteri
+- ✅ Completamente opzionale
+
+3. **Auto-Redemption Logic**:
+```typescript
+if (isSignUp) {
+    const { data: authData, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+            emailRedirectTo: `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH || ''}/auth/callback`,
+            data: {
+                username: username,
+                referral_code: referralCode || null // Salvato in user metadata
+            }
+        },
+    });
+    if (error) throw error;
+    
+    // Auto-redeem if code was provided
+    if (referralCode && referralCode.trim() !== '' && authData.user) {
+        try {
+            const { data: redeemData } = await supabase.rpc('redeem_code', { 
+                code: referralCode.toUpperCase().trim() 
+            });
+            
+            const result = redeemData as { success: boolean; message: string };
+            if (result && result.success) {
+                console.log('Referral code redeemed successfully:', result.message);
+            } else {
+                console.warn('Referral code redemption failed:', result?.message);
+            }
+        } catch (redeemError) {
+            // Non-blocking: registrazione procede comunque
+            console.error('Error redeeming referral code:', redeemError);
+        }
+    }
+    
+    setShowConfirmationModal(true);
+}
+```
+
+**Logica**:
+- Il codice viene salvato nei metadati utente (`user.user_metadata.referral_code`)
+- Dopo signup, se il codice è presente, chiama automaticamente `redeem_code()`
+- **Non-bloccante**: Se il riscatto fallisce, la registrazione procede comunque
+- Logging in console per debug
+
+## Flusso Utente Completo
+
+1. **Nuovo utente visita `/login`**
+2. Clicca "**REGISTRATI**"
+3. Compila:
+   - Username
+   - **Codice Amico** (opzionale) ← **NUOVO**
+   - Email
+   - Password
+4. Clicca "**REGISTRA IDENTITÀ**"
+5. Il sistema:
+   - Crea account
+   - **Se codice presente**: Chiama `redeem_code()`
+     - ✅ Referrer riceve +10 cuori e +1 mese PRO
+     - ✅ Nuovo utente riceve +10 cuori
+   - Mostra modale "Controlla la tua email"
+6. Utente conferma email e può effettuare login
+
+## Vantaggi
+
+✅ **UX Fluida**: Un solo form, nessun passaggio extra  
+✅ **Incentivo Visivo**: "+10 ❤️" mostra subito il beneficio  
+✅ **Opzionale**: Non obbligatorio, non blocca la registrazione  
+✅ **Error-Tolerant**: Codice invalido non impedisce signup  
+✅ **Auto-Capitalizzazione**: Converte automaticamente in maiuscolo  
+✅ **Distinguibile**: Colore ambra diverso dagli altri campi  
+
+## Testing
+
+### Test Manuale
+
+1. **Registrazione con codice valido**:
+   - Vai su `/login` → "REGISTRATI"
+   - Inserisci un codice valido di un altro utente
+   - Completa registrazione
+   - Verifica console: "Referral code redeemed successfully"
+   - Controlla database: entrambi hanno +10 cuori, referrer ha +1 mese PRO
+
+2. **Registrazione con codice invalido**:
+   - Inserisci "INVALID"
+   - Completa registrazione
+   - Verifica console: "Referral code redemption failed"
+   - **Registrazione procede comunque** ✅
+
+3. **Registrazione senza codice**:
+   - Lascia campo vuoto
+   - Completa registrazione
+   - Nessun errore, registrazione normale
+
+4. **Codice proprio** (edge case):
+   - Utente A prova a usare il proprio codice
+   - Sistema ritorna errore "Cannot redeem your own code"
+   - Registrazione procede comunque
+
+### Query SQL Verifica
+
+```sql
+-- Vedere referral con codice riscattato
+SELECT 
+    p.username as nuovo_utente,
+    p.created_at,
+    r.referral_code,
+    pr.username as referrer
+FROM profiles p
+LEFT JOIN referrals r ON r.referred_user_id = p.id
+LEFT JOIN profiles pr ON pr.id = r.referrer_id
+WHERE r.id IS NOT NULL
+ORDER BY p.created_at DESC;
+
+-- User metadata con codice referral
+SELECT 
+    id,
+    email,
+    raw_user_meta_data->>'username' as username,
+    raw_user_meta_data->>'referral_code' as referral_code_used,
+    created_at
+FROM auth.users
+WHERE raw_user_meta_data->>'referral_code' IS NOT NULL
+ORDER BY created_at DESC;
+```
+
+## Risoluzione Limitazione Precedente
+
+Questa implementazione risolve la limitazione documentata in `implementation_plan.md`:
+
+> **Limitazione**: UI per Riscatto Codice Non Implementata
+> 
+> ~~Al momento non c'è un'interfaccia utente per inserire il codice invito dopo la registrazione.~~
+
+✅ **RISOLTO**: Il codice può ora essere inserito **durante** la registrazione, rendendo il flusso più fluido.
+
+## Note Tecniche
+
+### User Metadata
+Il codice referral viene salvato in `auth.users.raw_user_meta_data`:
+```json
+{
+  "username": "newuser",
+  "referral_code": "ABC123"
+}
+```
+
+Questo permette:
+- Audit trail completo
+- Possibile recupero in caso di errori
+- Debugging facilitato
+
+### Non-Blocking Design
+La chiamata `redeem_code()` è wrappata in try/catch:
+- ✅ Se succede: bonus assegnati
+- ❌ Se fallisce: solo log, registrazione OK
+- Questo previene che codici invalidi blocchino nuove registrazioni
+
+### Sicurezza
+- Validazione lato client (6 char, uppercase)
+- Validazione lato server (in `redeem_code` RPC)
+- Rate limiting Supabase apply
+- RLS policies attive
+
+## File Modificati
+
+### Frontend
+- ✅ `src/app/login/page.tsx` (MODIFIED) - Aggiunto campo input e logica auto-redeem
+
+### Documentation
+- ✅ `TO_SIMO_DO.md` (UPDATED) - Rimossa nota "Da Implementare"
+- ✅ `DOCUMENTATION.md` (UPDATED) - Questa documentazione
+

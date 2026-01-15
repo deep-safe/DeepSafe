@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Search, UserPlus, Check, Loader2, Share2 } from 'lucide-react';
+import { X, Search, UserPlus, Check, Loader2, Share2, Shield, Copy, Crown } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/types/supabase';
 import { useAvatars } from '@/hooks/useAvatars';
@@ -23,7 +23,24 @@ export function AddFriendModal({ isOpen, onClose, currentUserId }: AddFriendModa
     const [loading, setLoading] = useState(false);
     const [sentRequests, setSentRequests] = useState<Set<string>>(new Set());
     const [inviteCopied, setInviteCopied] = useState(false);
+    const [referralCode, setReferralCode] = useState<string | null>(null); // NUOVO: codice referral utente
     const { avatars } = useAvatars();
+
+    // NUOVO: Fetch referral code when modal opens
+    useEffect(() => {
+        if (isOpen && !referralCode) {
+            supabase
+                .from('profiles')
+                .select('referral_code')
+                .eq('id', currentUserId)
+                .single()
+                .then(({ data }) => {
+                    if (data?.referral_code) {
+                        setReferralCode(data.referral_code);
+                    }
+                });
+        }
+    }, [isOpen, referralCode, currentUserId]);
 
     const handleSearch = async () => {
         if (!searchQuery.trim()) return;
@@ -107,7 +124,7 @@ export function AddFriendModal({ isOpen, onClose, currentUserId }: AddFriendModa
                             </button>
                         </div>
 
-                        <div className="space-y-2 max-h-60 overflow-y-auto">
+                        <div className="space-y-2 max-h-[80vh] overflow-y-auto custom-scrollbar">
                             {searchResults.map(user => {
                                 // Resolve Avatar
                                 const avatarDef = avatars.find(a => a.id === user.avatar_url);
@@ -142,23 +159,82 @@ export function AddFriendModal({ isOpen, onClose, currentUserId }: AddFriendModa
                                 );
                             })}
                             {searchResults.length === 0 && searchQuery && !loading && (
-                                <div className="text-center py-8 space-y-3">
+                                <div className="text-center py-6 space-y-4">
                                     <p className="text-zinc-400 text-sm">
                                         Nessun agente trovato con questo nome.
                                     </p>
-                                    <div className="flex flex-col items-center gap-2">
-                                        <p className="text-xs text-zinc-500">Il tuo amico non è ancora su DeepSafe?</p>
-                                        <button
-                                            onClick={() => {
-                                                navigator.clipboard.writeText(window.location.origin + '/login');
-                                                setInviteCopied(true);
-                                                setTimeout(() => setInviteCopied(false), 2000);
-                                            }}
-                                            className="flex items-center gap-2 bg-cyber-blue/10 border border-cyber-blue/30 px-4 py-2 rounded-lg text-cyber-blue text-sm font-bold hover:bg-cyber-blue/20 transition-all"
-                                        >
-                                            {inviteCopied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-                                            {inviteCopied ? 'LINK COPIATO!' : 'INVITA UN AMICO'}
-                                        </button>
+                                    <p className="text-xs text-zinc-500 mb-2">
+                                        Il tuo amico non è ancora su DeepSafe?
+                                    </p>
+
+                                    {/* Invite Section - Direct Show */}
+                                    <div className="bg-gradient-to-br from-cyber-blue/5 to-purple-500/5 border border-cyber-blue/20 rounded-xl p-4 space-y-4">
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-center gap-2 text-cyber-blue">
+                                                <Crown className="w-5 h-5" />
+                                                <p className="text-sm font-bold font-orbitron">INVITA E GUADAGNA</p>
+                                            </div>
+
+                                            {/* Referral Code Display */}
+                                            <div className="bg-black/40 border border-amber-500/30 rounded-lg p-4 relative overflow-hidden">
+                                                {/* Animated glow */}
+                                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500/10 to-transparent animate-pulse" />
+
+                                                <div className="relative text-center">
+                                                    <p className="text-3xl font-bold font-mono text-amber-400 tracking-[0.3em] text-glow select-all">
+                                                        {referralCode || 'LOADING...'}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* Rewards Info */}
+                                            <div className="grid grid-cols-2 gap-2 text-[10px]">
+                                                <div className="bg-red-500/10 border border-red-500/30 rounded p-2 text-center">
+                                                    <p className="text-red-400 font-bold">+10 ❤️</p>
+                                                    <p className="text-zinc-500">Per Entrambi</p>
+                                                </div>
+                                                <div className="bg-amber-500/10 border border-amber-500/30 rounded p-2 text-center">
+                                                    <p className="text-amber-400 font-bold">+1 Mese PRO</p>
+                                                    <p className="text-zinc-500">Per Te</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Action Buttons */}
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => {
+                                                    if (referralCode) {
+                                                        navigator.clipboard.writeText(referralCode);
+                                                        setInviteCopied(true);
+                                                        setTimeout(() => setInviteCopied(false), 2000);
+                                                    }
+                                                }}
+                                                className="flex-1 flex items-center justify-center gap-2 bg-cyber-blue/10 border border-cyber-blue/30 px-3 py-2 rounded-lg text-cyber-blue text-xs font-bold hover:bg-cyber-blue/20 transition-all font-mono"
+                                            >
+                                                {inviteCopied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                                {inviteCopied ? 'COPIATO!' : 'COPIA'}
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    if (referralCode && navigator.share) {
+                                                        navigator.share({
+                                                            title: 'Unisciti a DeepSafe!',
+                                                            text: `Usa il mio codice invito ${referralCode} per ottenere +10 cuori gratis! 🎁`,
+                                                            url: window.location.origin + '/login'
+                                                        });
+                                                    } else if (referralCode) {
+                                                        navigator.clipboard.writeText(`Usa il mio codice invito ${referralCode} su ${window.location.origin}/login per ottenere +10 cuori gratis!`);
+                                                        setInviteCopied(true);
+                                                        setTimeout(() => setInviteCopied(false), 2000);
+                                                    }
+                                                }}
+                                                className="flex-1 flex items-center justify-center gap-2 bg-purple-500/10 border border-purple-500/30 px-3 py-2 rounded-lg text-purple-400 text-xs font-bold hover:bg-purple-500/20 transition-all font-mono"
+                                            >
+                                                <Share2 className="w-3 h-3" />
+                                                CONDIVIDI
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             )}

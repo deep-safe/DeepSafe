@@ -14,6 +14,7 @@ function LoginContent() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
+    const [referralCode, setReferralCode] = useState(''); // NUOVO: Codice amico
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [localError, setLocalError] = useState<string | null>(null);
 
@@ -108,17 +109,38 @@ function LoginContent() {
         setLoading(true);
         try {
             if (isSignUp) {
-                const { error } = await supabase.auth.signUp({
+                const { data: authData, error } = await supabase.auth.signUp({
                     email,
                     password,
                     options: {
                         emailRedirectTo: `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH || ''}/auth/callback`,
                         data: {
-                            username: username
+                            username: username,
+                            referral_code: referralCode || null // Pass referral code to user metadata
                         }
                     },
                 });
                 if (error) throw error;
+
+                // If user provided a referral code, automatically redeem it after signup
+                if (referralCode && referralCode.trim() !== '' && authData.user) {
+                    try {
+                        const { data: redeemData } = await supabase.rpc('redeem_code', {
+                            code: referralCode.toUpperCase().trim()
+                        });
+
+                        const result = redeemData as { success: boolean; message: string };
+                        if (result && result.success) {
+                            console.log('Referral code redeemed successfully:', result.message);
+                        } else {
+                            console.warn('Referral code redemption failed:', result?.message);
+                        }
+                    } catch (redeemError) {
+                        // Non-blocking: log but don't stop registration flow
+                        console.error('Error redeeming referral code:', redeemError);
+                    }
+                }
+
                 setShowConfirmationModal(true);
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
@@ -337,18 +359,36 @@ function LoginContent() {
                     <form onSubmit={handleEmailAuth} className="space-y-4 mb-6">
                         <div className="space-y-4">
                             {isSignUp && (
-                                <div className="relative group">
-                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 group-focus-within:text-cyan-400 transition-colors" />
-                                    <input
-                                        type="text"
-                                        placeholder="Username Unico"
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
-                                        maxLength={15}
-                                        className="w-full bg-[#1F2833] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder:text-zinc-600 focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/50 outline-none transition-all font-mono text-sm"
-                                        disabled={loading}
-                                    />
-                                </div>
+                                <>
+                                    <div className="relative group">
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 group-focus-within:text-cyan-400 transition-colors" />
+                                        <input
+                                            type="text"
+                                            placeholder="Username Unico"
+                                            value={username}
+                                            onChange={(e) => setUsername(e.target.value)}
+                                            maxLength={15}
+                                            className="w-full bg-[#1F2833] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder:text-zinc-600 focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/50 outline-none transition-all font-mono text-sm"
+                                            disabled={loading}
+                                        />
+                                    </div>
+                                    {/* NUOVO: Campo Codice Amico */}
+                                    <div className="relative group">
+                                        <Shield className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 group-focus-within:text-amber-400 transition-colors" />
+                                        <input
+                                            type="text"
+                                            placeholder="Codice Amico (opzionale)"
+                                            value={referralCode}
+                                            onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                                            maxLength={6}
+                                            className="w-full bg-[#1F2833] border border-amber-500/20 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder:text-zinc-600 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 outline-none transition-all font-mono text-sm uppercase"
+                                            disabled={loading}
+                                        />
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] text-amber-500/60 font-mono">
+                                            +10❤️
+                                        </div>
+                                    </div>
+                                </>
                             )}
                             <div className="relative group">
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 group-focus-within:text-cyan-400 transition-colors" />

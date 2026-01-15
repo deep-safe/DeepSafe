@@ -41,6 +41,7 @@ interface Profile {
     emeralds: number;
     highest_streak: number;
     rank?: number;
+    referral_code?: string | null;
 }
 
 import { AvatarSelector } from '@/components/profile/AvatarSelector';
@@ -56,6 +57,8 @@ import { CyberLoading } from '@/components/ui/CyberLoading';
 import { FeedbackModal } from '@/components/profile/FeedbackModal';
 import { DeleteAccountModal } from '@/components/profile/DeleteAccountModal';
 import { LogoutModal } from '@/components/profile/LogoutModal';
+import { InviteCodeCard } from '@/components/profile/InviteCodeCard';
+import { ProStatusCard } from '@/components/profile/ProStatusCard';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useLocalNotifications } from '@/hooks/useLocalNotifications';
 import { useBiometrics } from '@/hooks/useBiometrics';
@@ -499,6 +502,14 @@ export default function ProfilePage() {
                 )
             }
 
+            {/* Section A.6: Invite Friends */}
+            {profile?.referral_code && (
+                <InviteCodeCard referralCode={profile.referral_code} />
+            )}
+
+            {/* Section A.7: PRO Status & Referrals */}
+            <ProStatusCard onProActivated={() => refreshProfile()} />
+
             {/* Section B: Premium Statistics */}
             <StatisticsSection isPremium={isPremium} stats={agentStats} />
 
@@ -627,7 +638,7 @@ export default function ProfilePage() {
                     </div>
 
                     <p className="text-[10px] text-center text-amber-500 font-bold font-mono animate-pulse flex items-center justify-center gap-2 pt-1">
-                        <ArrowUp className="w-3 h-3" /> CLICCA QUI PER VINCERE 1 MESE PRO <ArrowUp className="w-3 h-3" />
+                        <ArrowUp className="w-3 h-3" /> CLICCA QUI PER OTTENERE 1 MESE PRO <ArrowUp className="w-3 h-3" />
                     </p>
 
                     {/* Logout Button */}
@@ -739,6 +750,7 @@ export default function ProfilePage() {
                         isOpen={isFeedbackOpen}
                         onClose={() => setIsFeedbackOpen(false)}
                         userId={user.id}
+                        onFeedbackSubmitted={() => refreshProfile()}
                     />
                 )
             }
