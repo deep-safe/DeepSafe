@@ -1222,3 +1222,15 @@ Correggere il conteggio mostrato nella barra superiore della dashboard (mappa It
 
 ### Risultato
 La barra ora mostra correttamente il progresso basato sulle province (es. "5/107") invece che sulle missioni, allineandosi col contesto della mappa regionale.
+
+# Ottimizzazione Responsività UI (2026-01-15)
+
+## Obiettivo
+Ridurre i tempi di attesa percepiti durante la navigazione nella mappa (zoom ingresso regione e reset vista Italia), rendendo l'interfaccia più scattante.
+
+## Modifiche
+- **`ItalyMapSVG.tsx`**: Ridotta la durata della transizione `framer-motion` da 0.8s a **0.4s**.
+- **`ItalyMapDashboard.tsx`**: Ridotta la durata dell'animazione di reset (`resetTransform`) da 1000ms a **500ms**.
+
+## Risultato
+L'ingresso nelle regioni e il ritorno alla vista nazionale sono ora due volte più veloci, migliorando notevolmente l'esperienza utente.

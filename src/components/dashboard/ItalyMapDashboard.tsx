@@ -449,7 +449,7 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
         playSound('click');
         triggerHaptic('light');
         if (transformComponentRef.current) {
-            transformComponentRef.current.resetTransform(1000, "easeOutQuad");
+            transformComponentRef.current.resetTransform(500, "easeOutQuad");
         }
     };
 
