@@ -149,3 +149,38 @@ Dopo aver ricaricato l'applicazione:
 
 1. Clicca su una regione.
 2. Verifica che la regione non occupi tutto lo schermo (meno zoom) e sia centrata più in alto.
+
+## 13. Verifica Premi Classifica (Rewards Leaderboard)
+
+Per testare il sistema di premi settimanali/mensili senza aspettare la data effettiva:
+
+1.  **Apri SQL Editor** in Supabase.
+2.  **Esegui il Trigger Manuale**:
+    ```sql
+    -- Simula la fine della settimana (premia il primo in classifica con 1000 NC)
+    SELECT process_leaderboard_rewards('weekly');
+    ```
+3.  **Verifica Frontend**:
+    - Vai alla Dashboard (Mappa Italia).
+    - Dovrebbe apparire una modale di celebrazione con i coriandoli.
+    - Controlla che il saldo NC sia aumentato di 1000.
+    
+4.  **Simula Premio Mensile**:
+    ```sql
+    SELECT process_leaderboard_rewards('monthly');
+    ```
+    - Verifica che arrivi la notifica per 5000 NC.
+
+5.  **Verifica Tabella Notifiche**:
+    ```sql
+    SELECT * FROM user_notifications ORDER BY created_at DESC;
+    ```
+
+## 14. Verifica Layout Homepage (2026-01-15)
+
+1. Apri la homepage (`/`).
+2. Verifica che lo stile sia coerente con le pagine `/prezzi` e `/chi-siamo` (background scuro, font Outfit).
+3. Controlla che il menù di navigazione (SiteNavbar) appaia e funzioni correttamente.
+4. Scorri la pagina per assicurarti che tutte le sezioni siano visibili e ben formattate.
+5. Verifica che i pulsanti abbiano uno stile moderno (bordi o sfondi colorati, niente stile legacy).
+

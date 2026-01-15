@@ -1259,3 +1259,52 @@ Correggere il posizionamento della mappa dell'Italia nella dashboard, che risult
 
 ## Risultato
 La mappa appare ora perfettamente centrata verticalmente all'apertura dell'app.
+
+# Leaderboard Rewards (2026-01-15)
+
+## Obiettivo
+Premiare automaticamente gli utenti più attivi (classificati al 1° posto nella classifica Globale) con monete NeuroCredits (NC) alla fine di ogni settimana e mese.
+
+## Funzionalità
+1.  **Premio Settimanale**:
+    - **Importo**: 1000 NC
+    - **Criterio**: 1° Classificato Globale (Rubini > Smeraldi > Crediti)
+    - **Schedulazione**: Ogni Lunedì alle 00:00 UTC
+2.  **Premio Mensile**:
+    - **Importo**: 5000 NC
+    - **Criterio**: 1° Classificato Globale
+    - **Schedulazione**: Il 1° di ogni mese alle 00:00 UTC
+3.  **Notifica In-App**:
+    - Modale celebrativa con coriandoli al login successivo.
+    - Aggiornamento immediato del saldo.
+
+## Implementazione Tecnica
+
+### Database (Supabase)
+- **Nuova Tabella**: `user_notifications` per tracciare le assegnazioni.
+- **Funzione SQL**: `process_leaderboard_rewards(period TEXT)` calcola il vincitore e assegna i crediti.
+- **Scheduling**: Job `pg_cron` configurati per invocare la funzione automaticamente.
+
+### Frontend
+- **Hook**: `useRewardNotifications` controlla le notifiche non lette.
+- **Componente**: `RewardNotificationModal` visualizza la vittoria con animazioni.
+- **Integrazione**: Aggiunto in `ItalyMapDashboard` per visibilità immediata.
+
+## Testing Manuale
+Vedi `TO_SIMO_DO.md` sezione 13 per i comandi SQL di simulazione.
+
+# Homepage Style Refresh (2026-01-15)
+
+## Obiettivo
+Allineare lo stile della homepage (`/`) con le pagine più recenti come `/prezzi` e `/chi-siamo`, eliminando CSS legacy e standardizzando l'header.
+
+## Modifiche
+- **`src/app/page.tsx`**:
+    - **Removed**: Legacy CSS import (`landing/css/shared.css`, `landing/css/theme.css`).
+    - **Refactored**: Sostituito il wrapper `theme-youth` con classi Tailwind standard (`min-h-screen`, `bg-[#0a0a12]`, `font-['Outfit']`).
+    - **Updated**: Aggiornati i pulsanti per usare classi Tailwind esplicite invece della classe legacy `.btn`.
+    - **Header**: Assicurata la coerenza dell'uso di `SiteNavbar`.
+
+## Risultato
+La homepage ora condivide lo stesso look & feel "Dark Cyber" delle altre sezioni pubbliche del sito, con una navigazione coerente e senza dipendenze CSS esterne obsolete.
+

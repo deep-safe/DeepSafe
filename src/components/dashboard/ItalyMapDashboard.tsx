@@ -27,6 +27,8 @@ const BadgeUnlockModal = dynamic(() => import('../gamification/BadgeUnlockModal'
 const TierAscensionModal = dynamic(() => import('./TierAscensionModal').then(mod => mod.TierAscensionModal), { ssr: false });
 const UnlockProtocolModal = dynamic(() => import('./UnlockProtocolModal').then(mod => mod.UnlockProtocolModal), { ssr: false });
 const RegionCompletionModal = dynamic(() => import('./RegionCompletionModal').then(mod => mod.RegionCompletionModal), { ssr: false });
+import { useRewardNotifications } from '@/hooks/useRewardNotifications';
+import { RewardNotificationModal } from '@/components/notifications/RewardNotificationModal';
 
 const ITALY_VIEWBOX = "0 0 800 1000";
 
@@ -58,6 +60,9 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
     const regionCosts = useUserStore(state => state.regionCosts);
     const unlockRegion = useUserStore(state => state.unlockRegion);
     const provinceMissionCounts = useUserStore(state => state.provinceMissionCounts);
+
+    // Leaderboard Rewards Hook
+    const { notification: rewardNotification, markAsRead: markRewardAsRead } = useRewardNotifications();
 
     const [isProfileLoaded, setIsProfileLoaded] = useState(false);
     const { streak: currentStreak, showModal: showStreakModal, closeModal: closeStreakModal, previousStreak, isFrozen } = useDailyStreak(isProfileLoaded);
@@ -751,6 +756,12 @@ const ItalyMapDashboard: React.FC<ItalyMapDashboardProps> = ({ className }) => {
                     onClose={() => setUnlockModalState(null)}
                 />
             )}
+
+            {/* Leaderboard Reward Modal */}
+            <RewardNotificationModal
+                notification={rewardNotification}
+                onClose={markRewardAsRead}
+            />
 
             {/* Toast Notification */}
             <AnimatePresence>
