@@ -1242,7 +1242,7 @@ Correggere il posizionamento della mappa dell'Italia nella dashboard, che risult
 
 ## Modifiche
 - **`src/components/dashboard/ItalyMapDashboard.tsx`**: Aggiunto un offset verticale positivo (`yOffset`) al calcolo del `viewBox` iniziale. Questo sposta l'area visibile verso il basso, con l'effetto visivo di spostare la mappa verso l'alto e centrarla meglio nello schermo.
-- Valore offset: circa 8% dell'altezza totale del bounding box.
+- Valore offset: circa 15% dell'altezza totale del bounding box.
 
 ## Risultato
 La mappa appare ora perfettamente centrata verticalmente all'apertura dell'app.
