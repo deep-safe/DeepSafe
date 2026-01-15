@@ -45,7 +45,7 @@ export default function PrezziPage() {
                     <div className="bg-gradient-to-b from-[#1a1a2e] to-[#161622] rounded-2xl p-8 border-2 border-[#00f3ff] shadow-[0_0_30px_rgba(0,243,255,0.15)] flex flex-col relative transform md:-translate-y-4">
                         <div className="absolute top-0 right-0 bg-[#00f3ff] text-black text-xs font-bold px-3 py-1 rounded-bl-lg">POPOLARE</div>
                         <h3 className="text-2xl font-bold text-white mb-2">PRO</h3>
-                        <div className="text-4xl font-bold text-[#00f3ff] mb-1">€4.99</div>
+                        <div className="text-4xl font-bold text-[#00f3ff] mb-1">€1.99</div>
                         <div className="text-sm text-gray-400 mb-6">/ mese</div>
                         <p className="text-gray-400 mb-8 h-12">Sblocca tutto il potenziale e accedi ai tool avanzati.</p>
 
@@ -68,8 +68,8 @@ export default function PrezziPage() {
 
                     {/* Premium Tier */}
                     <div className="bg-[#161622] rounded-2xl p-8 border border-[#333] flex flex-col relative overflow-hidden">
-                        <h3 className="text-2xl font-bold text-white mb-2">PREMIUM</h3>
-                        <div className="text-4xl font-bold text-[#e0e0e0] mb-1">€9.99</div>
+                        <h3 className="text-2xl font-bold text-white mb-2">ELITE</h3>
+                        <div className="text-4xl font-bold text-[#e0e0e0] mb-1">€4.99</div>
                         <div className="text-sm text-gray-400 mb-6">/ mese</div>
                         <p className="text-gray-400 mb-8 h-12">Formazione di alto livello e supporto dedicato.</p>
 

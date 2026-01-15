@@ -1150,3 +1150,28 @@ Implementare un meccanismo di feedback leggero e non intrusivo per raccogliere l
 2. Interagire con il widget (Pollice Su o Giù).
 3. Verificare che il feedback venga salvato nel database.
 4. Chiudere il widget e ricaricare per verificare che non riappaia immediatamente (cooldown).
+
+# Aggiornamento Prezzi e Shop (2026-01-15)
+
+## Obiettivo
+Aumentare la percezione del valore dell'abbonamento PRO e incentivare il feedback e i referral, mostrando i costi reali dei piani di abbonamento direttamente nello shop.
+
+## Modifiche
+
+### 1. Pagina Prezzi (`/prezzi`)
+- Aggiornati i prezzi per riflettere le nuove tier:
+    - **PRO**: €1.99 / mese (era €4.99)
+    - **ELITE (Premium)**: €4.99 / mese (era €9.99)
+
+### 2. Shop (`/shop`)
+- Aggiunta nuova sezione **"Abbonamenti"** in cima alla pagina.
+- Banner visivi per i piani:
+    - **PRO (€1.99)**: Stile "Cyber Blue", etichetta "POPOLARE".
+    - **ELITE (€4.99)**: Stile "Purple/Gold", etichetta "ELITE".
+- **Funzionamento**: I banner sono puramente visivi (ancore di prezzo) e cliccando portano alla pagina `/prezzi` per i dettagli.
+
+## Refinement (2026-01-15, v2)
+- **Semplificazione UI**: Rimossi descrizioni e pulsanti dai banner Shop.
+- **Header**: Aggiunta intestazione "ABBONAMENTI" con icona Corona.
+- **Focus**: Design minimale centrato su Nome, Prezzo e Icona per massimo impatto visivo.
+

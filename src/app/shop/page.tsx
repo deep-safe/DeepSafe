@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Zap, Shield, Gift, Clock, Lock, Coins, AlertTriangle } from 'lucide-react';
+import { ShoppingCart, Zap, Shield, Gift, Clock, Lock, Coins, AlertTriangle, Crown } from 'lucide-react';
 import { useUserStore } from '@/store/useUserStore';
 import TopBar from '@/components/dashboard/TopBar';
 import { provincesData } from '@/data/provincesData';
@@ -297,6 +297,58 @@ function ShopContent() {
                     <div className="text-center py-20 text-cyan-500 font-mono animate-pulse">CARICAMENTO MERCATO NERO...</div>
                 ) : (
                     <>
+                        {/* Subscription Plans Visual Section */}
+                        <section className="space-y-3 mb-12">
+                            <div className="flex items-center gap-2 px-1">
+                                <Crown className="w-5 h-5 text-amber-500" />
+                                <h2 className="text-base font-bold text-white font-orbitron tracking-wider">ABBONAMENTI</h2>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* PRO PLAN */}
+                                <a href="/prezzi" className="block relative group overflow-hidden rounded-2xl border border-[#00f3ff]/30 bg-gradient-to-br from-[#1a1a2e] to-[#161622] p-6 hover:border-[#00f3ff] transition-all duration-300 hover:scale-[1.02]">
+                                    <div className="absolute top-0 right-0 bg-[#00f3ff] text-black text-[10px] font-bold px-3 py-1 rounded-bl-xl font-orbitron z-10">
+                                        POPOLARE
+                                    </div>
+                                    <div className="absolute inset-0 bg-[#00f3ff]/5 opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" />
+
+                                    <div className="flex flex-col items-center justify-center text-center">
+                                        <div className="p-4 rounded-2xl bg-[#00f3ff]/10 border border-[#00f3ff]/30 text-[#00f3ff] mb-3 group-hover:scale-110 transition-transform duration-300">
+                                            <Zap className="w-8 h-8" />
+                                        </div>
+
+                                        <h3 className="text-2xl font-bold text-white mb-2 font-orbitron tracking-wide">PRO</h3>
+
+                                        <div className="flex items-end gap-1">
+                                            <span className="text-3xl font-bold text-white">€1.99</span>
+                                            <span className="text-gray-400 text-sm mb-1">/mese</span>
+                                        </div>
+                                    </div>
+                                </a>
+
+                                {/* ELITE PLAN */}
+                                <a href="/prezzi" className="block relative group overflow-hidden rounded-2xl border border-purple-500/30 bg-gradient-to-br from-[#1a1a2e] to-[#161622] p-6 hover:border-purple-500 transition-all duration-300 hover:scale-[1.02]">
+                                    <div className="absolute top-0 right-0 bg-purple-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl font-orbitron z-10">
+                                        ELITE
+                                    </div>
+                                    <div className="absolute inset-0 bg-purple-500/5 opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" />
+
+                                    <div className="flex flex-col items-center justify-center text-center">
+                                        <div className="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/30 text-purple-400 mb-3 group-hover:scale-110 transition-transform duration-300">
+                                            <Crown className="w-8 h-8" />
+                                        </div>
+
+                                        <h3 className="text-2xl font-bold text-white mb-2 font-orbitron tracking-wide">ELITE</h3>
+
+                                        <div className="flex items-end gap-1">
+                                            <span className="text-3xl font-bold text-white">€4.99</span>
+                                            <span className="text-gray-400 text-sm mb-1">/mese</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </section>
+
                         {/* Credit Packs Section */}
                         <section className="grid grid-cols-3 gap-4 mb-8">
                             <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-4 flex flex-col items-center text-center hover:border-cyan-500 transition-colors group relative overflow-hidden">
