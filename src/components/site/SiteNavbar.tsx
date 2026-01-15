@@ -18,6 +18,9 @@ export default function SiteNavbar() {
                         <Link href="/chi-siamo" className="text-gray-300 hover:text-[#00f3ff] transition-colors font-['Outfit'] font-bold text-lg tracking-wide whitespace-nowrap">
                             CHI SIAMO
                         </Link>
+                        <Link href="/missioni" className="text-gray-300 hover:text-[#00f3ff] transition-colors font-['Outfit'] font-bold text-lg tracking-wide whitespace-nowrap">
+                            MISSIONI
+                        </Link>
                         <Link href="/prezzi" className="text-gray-300 hover:text-[#00f3ff] transition-colors font-['Outfit'] font-bold text-lg tracking-wide whitespace-nowrap">
                             PREZZI
                         </Link>
@@ -49,6 +52,9 @@ export default function SiteNavbar() {
                     <div className="absolute top-full left-0 w-full bg-[#0a0a12]/95 backdrop-blur-md border-b border-[#333] p-4 flex flex-col gap-4 md:hidden text-center animate-in slide-in-from-top-4">
                         <Link href="/chi-siamo" onClick={() => setIsMenuOpen(false)} className="text-gray-300 hover:text-[#00f3ff] py-2 font-bold text-lg">
                             CHI SIAMO
+                        </Link>
+                        <Link href="/missioni" onClick={() => setIsMenuOpen(false)} className="text-gray-300 hover:text-[#00f3ff] py-2 font-bold text-lg">
+                            MISSIONI
                         </Link>
                         <Link href="/prezzi" onClick={() => setIsMenuOpen(false)} className="text-gray-300 hover:text-[#00f3ff] py-2 font-bold text-lg">
                             PREZZI

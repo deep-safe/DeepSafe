@@ -26,9 +26,9 @@ export default function LandingPage() {
                         Immagina di imparare cybersecurity, privacy e gestione dei dati nello stesso modo in cui impari una lingua:
                         giocando 5 minuti al giorno, scalando classifiche e guadagnando ricompense.
                         <br className="hidden md:block mt-2" />
+                        <br />
                         DeepSafe rende la sicurezza informatica accessibile a tutti, gratis.
                     </p>
-
                     <div className="flex flex-col md:flex-row gap-6 justify-center items-center w-full max-w-2xl mx-auto md:max-w-none">
                         <Link href="/dashboard" className="w-full md:w-auto text-center py-4 px-10 rounded-xl bg-[#00f3ff] text-black hover:bg-[#00d2dd] transition-all font-bold text-lg md:text-xl">
                             INIZIA ORA GRATIS

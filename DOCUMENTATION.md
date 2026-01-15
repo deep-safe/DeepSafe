@@ -1,3 +1,25 @@
+# Nuova Pagina Missioni (2026-01-15)
+
+## Obiettivo
+Creare una pagina dedicata che illustri in modo elegante e coinvolgente il percorso educativo ("roadmap") dell'utente attraverso le regioni e province italiane, ciascuna legata a temi specifici di cybersecurity.
+
+## Implementazione
+- **Nuova Pagina**: `src/app/missioni/page.tsx`
+    - Layout a griglia responsive.
+    - Card interattive per ogni Regione (clic per espandere).
+    - Visualizzazione delle Province e delle Missioni specifiche (es. "Il Sovraccarico Dati" a Campobasso).
+    - Utilizzo di `framer-motion` per animazioni fluide.
+- **Dati Dinamici**:
+    - Importazione diretta da `src/data/missions_dataset.json`.
+    - Mapping intelligente delle icone basato sui "topic" delle missioni (es. 💰 per Finance, 🦠 per Malware).
+- **Navbar**:
+    - Aggiunto link "MISSIONI" nel menu principale (Desktop e Mobile) tra "CHI SIAMO" e "PREZZI".
+
+## Design
+- Stile "DeepSafe Dark": Background scuro (`#0a0a12`), accenti Neon Cyan (`#00f3ff`).
+- Hero Section suggestiva con gradiente radiale.
+- Card con effetto hover e bordo luminoso.
+
 # Shop Updates (2025-12-24)
 
 ## Price Rebalancing

@@ -197,5 +197,13 @@ Per testare il sistema di premi settimanali/mensili senza aspettare la data effe
 2. Verifica che la Homepage carichi correttamente tutte le sezioni fino al footer (SiteFooter).
 3. Controlla che la lista "Migliora le tue Competenze Digitali" abbia 3 punti elenco e non sia duplicata.
 
+## 17. Verifica Pagina Missioni (2026-01-15)
+
+1. Naviga su `/missioni` dal link nella navbar.
+2. Clicca sulle card delle Regioni (es. Molise, Lombardia) per espandere i dettagli.
+3. Verifica che le missioni e province siano visibili e corrette.
+4. Controlla la responsiveness su mobile.
+
+
 
 
