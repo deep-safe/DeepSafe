@@ -214,3 +214,24 @@ Per testare il sistema di premi settimanali/mensili senza aspettare la data effe
 1. Avvia il server del blog (`hugo server` in `simo-hue.github.io`).
 2. Vai su `/blog/tech-project/deepsafe/`.
 3. Controlla che contenuti, link e immagini siano corretti per il progetto DeepSafe.
+
+## 20. Fix RLS User Notifications (2026-01-29)
+1. Esegui la migration per abilitare RLS su `user_notifications`:
+   ```bash
+   npx supabase db push
+   ```
+   Oppure copia ed esegui manualmente il file `supabase/migrations/20260129211320_fix_user_notifications_rls.sql` nell'SQL Editor di Supabase.
+
+## 21. Fix Security Linter Warnings (2026-01-29)
+1. Esegui la migration per fixare i warning del linter (search_path):
+   ```bash
+   npx supabase db push
+   ```
+   Oppure esegui `supabase/migrations/20260129213000_fix_security_warnings.sql` nell'SQL Editor.
+   *Nota: Il file SQL è stato aggiornato (V7) rimuovendo `drop_constraint_referencing` non presente nel DB. Ora è completamente allineato.*
+
+   > **Attenzione**: Il warning riguardante l'estensione `pg_net` rimarrà perché non è possibile spostarla in un altro schema senza ricrearla (rischio perdita dati).
+
+2. Abilita "Leaked Password Protection":
+   - Vai su Supabase Dashboard -> Authentication -> Security.
+   - Attiva il toggle "Enable Leaked Password Protection".

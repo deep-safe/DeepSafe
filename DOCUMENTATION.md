@@ -1366,3 +1366,36 @@ La homepage ora condivide lo stesso look & feel "Dark Cyber" delle altre sezioni
     - Replaced placeholder content with DeepSafe specific details (Gamified AI Safety, Italy Map, Shop, Tech Stack).
     - Updated tech stack references to Next.js 16, React 19, Supabase, Tailwind v4.
     - Added correct links to live demo and documentation.
+
+# Fix User Notifications RLS (2026-01-29)
+
+## Problema
+Supabase Linter segnalava "RLS Disabled in Public" per la tabella `public.user_notifications`. Questo rappresenta un rischio di sicurezza poiché la tabella era accessibile pubblicamente senza restrizioni a livello di riga.
+
+## Soluzione
+Creata migration `supabase/migrations/20260129211320_fix_user_notifications_rls.sql` che:
+1.  **Abilita RLS**: `ALTER TABLE public.user_notifications ENABLE ROW LEVEL SECURITY;`
+2.  **Policy SELECT**: "Users can view their own notifications" (solo `auth.uid() = user_id`).
+3.  **Policy UPDATE**: "Users can update their own notifications" (permette di modificare `read`, ecc.).
+4.  **Policy DELETE**: "Users can delete their own notifications".
+
+## Verifica
+
+# Security Hardening (2026-01-29)
+
+## Fix Supabase Linter Warnings
+Per migliorare la sicurezza del database e conformarsi alle best practice di Supabase, sono state apportate le seguenti modifiche:
+
+1.  **Fixed Search Path Mutable**:
+    - Tutte le funzioni `SECURITY DEFINER` verificate ora hanno un `search_path` esplicito (`public, extensions, pg_temp`).
+    - Alcune funzioni segnalate dal linter (`admin_reset_user`, `admin_update_profile_v2`, `admin_update_user_stats`, `complete_level_v2/v3`) **non** sono incluse nella migration perché non trovate nel codebase corrente (probabilmente versioni obsolete).
+    - File migration: `supabase/migrations/20260129213000_fix_security_warnings.sql`.
+
+2.  **Extension in Public**:
+    - **Nota**: L'estensione `pg_net` **non** è stata spostata nellon schema `extensions` poiché PostgreSQL non supporta `ALTER EXTENSION ... SET SCHEMA` per questa estensione specifica senza ricrearla.
+    - Il warning "Extension in Public" persisterà per `pg_net`. Questo è accettato per evitare perdita di dati o disservizi (code email pendenti).
+    - Tuttavia, `extensions` è stato aggiunto al `search_path` delle funzioni come best practice per il futuro.
+
+## Auth Configuration
+- Si raccomanda di abilitare "Leaked Password Protection" nella dashboard di Supabase Auth per prevenire l'uso di password compromesse.
+
