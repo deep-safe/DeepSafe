@@ -209,3 +209,8 @@ Per testare il sistema di premi settimanali/mensili senza aspettare la data effe
 2. Verifica che l'animazione iniziale e le linee di connessione appaiano corrette.
 3. Clicca su un nodo (es. "Cittadino Digitale") e controlla che si apra il pannello laterale.
 4. Controlla che le skill siano coerenti con `src/data/skills_dataset.json`.
+
+## 19. Verifica Blog Post (2026-01-19)
+1. Avvia il server del blog (`hugo server` in `simo-hue.github.io`).
+2. Vai su `/blog/tech-project/deepsafe/`.
+3. Controlla che contenuti, link e immagini siano corretti per il progetto DeepSafe.

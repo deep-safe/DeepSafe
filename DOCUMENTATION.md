@@ -1359,3 +1359,10 @@ La homepage ora condivide lo stesso look & feel "Dark Cyber" delle altre sezioni
 ## Verifica
 - **Comando**: `npm run build`
 - **Risultato**: ✅ Build completata con successo.
+
+# Blog Post Update (2026-01-19)
+- **Content**: Updated `content/english/blog/tech-project/DeepSafe/index.md` on the blog repository.
+- **Details**:
+    - Replaced placeholder content with DeepSafe specific details (Gamified AI Safety, Italy Map, Shop, Tech Stack).
+    - Updated tech stack references to Next.js 16, React 19, Supabase, Tailwind v4.
+    - Added correct links to live demo and documentation.
